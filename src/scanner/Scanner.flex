@@ -3,7 +3,7 @@ package scanner;
 %%
 
 %public
-%class Lexer
+%class Scanner
 %standalone
 %unicode
 
