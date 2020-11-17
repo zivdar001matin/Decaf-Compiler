@@ -1,14 +1,21 @@
 package scanner;
 
+import java_cup.runtime.*;
 %%
 
 %public
 %class Scanner
 %standalone
 %unicode
+%type Symbol
+%cup
 
 %{
     StringBuffer string = new StringBuffer();
+  public Symbol token(int tokenType){
+      System.out.println(yytext());
+      return new Symbol(tokenType, yytext());
+  }
 %}
 
 
@@ -50,6 +57,8 @@ package scanner;
 %%
 
 <YYINITIAL> {
+
+    //TODO return symbol insted of sout
 
     /* reserved */
     {Types}               {System.out.println(yytext());}

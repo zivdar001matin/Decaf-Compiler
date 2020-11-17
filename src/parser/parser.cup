@@ -1,0 +1,31 @@
+import java_cup.runtime.*;
+
+parser code {:
+    private Scanner scanner;
+
+    // Defining constructor to have an access in Syntax class
+     public parser(Scanner scanner){
+        this.scanner = scanner;
+     }
+
+:}
+
+scan with {: return scanner.next_token(); :}
+
+terminal SEMI, PLUS, MINUS, TIMES, DIVIDE, ASSIGN, NUMBER;
+terminal String IDENT;
+
+nonterminal stmt, expr;
+nonterminal Integer term, factor;
+
+precedence left PLUS, MINUS;
+precedence left TIMES, DIVIDE;
+
+// grammar
+stmt ::= expr SEMI;
+
+expr ::=    expr PLUS expr
+        |   expr MINUS expr
+        |   expr TIMES expr
+        |   expr DIVIDE expr
+        |   NUMBER;
