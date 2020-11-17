@@ -1,8 +1,11 @@
 
 # IntelliJ idea files
 .idea
+out/
 *.iml
 
 # Videos and stuff that I used for learning
-Source for project
+Source for project/
 
+# Test adn scripts should be updated so until then ignoring them :D #TODO
+**/testsANDscripts/
