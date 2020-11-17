@@ -1,5 +1,3 @@
-package scanner;
-
 import java_cup.runtime.*;
 %%
 
