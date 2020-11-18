@@ -16,33 +16,181 @@ scan with {: return scanner.next_token(); :}
 // Types
 terminal VOID, INT, DOUBLE, BOOL, STRING;
 // Boolean
-terminal BOOLCONST;
+terminal T_BOOLEANLITERAL;
 // Other reserved
-terminal CLASS, INTERFACE, NULL, THIS, EXTENDS, IMPLEMENTS, FOR, WHILE, IF, ELSE, RETURN, BREAK, CONTINUE, NEW, NEWARRAY, PRINT, READINT, READLN, DTOI, ITOD, BTOI, ITOB, PRIVATE, PROTECTED, PUBLIC;
+terminal CLASS, INTERFACE, NULL, THIS, EXTENDS, IMPLEMENTS, FOR, WHILE, IF, ELSE, RETURN, BREAK, CONTINUE, NEW, NEWARRAY, PRINT, READINTEGER, READLINE, DTOI, ITOD, BTOI, ITOB, PRIVATE, PROTECTED, PUBLIC;
 
 /* identifiers */
-terminal IDENTIFIER;
+terminal T_ID;
 
 /* literals */
-terminal INTCONST, DOUBLECONST;
+terminal T_INTLITERAL, T_DOUBLELITERAL, T_STRINGLITERAL;
 
 /* operators */
-terminal ASSIGN, EQ, ADD;
+terminal ASSIGN, EQ, PLUS;
 
 /* punctuations */
-terminal MINUS, PROD, DIV, MOD, LESS, LESSEQ, GR, GREQ, NOTEQ, NOT, LOGICAND, LOGICOR, SEMICOLON, COMMA, DOT, LBRACK, RBRACK, LPAREN, RPAREN;
+terminal MINUS, PROD, DIV, MOD, LESS, LESSEQ, GT, GTEQ, NOTEQ, NOT, AND, OR, SEMI, COMMA, DOT, LBRACK, RBRACK, LPAREN, RPAREN, OPENAC, CLOSEAC;
 
-nonterminal stmt, expr;
-nonterminal Integer term, factor;
+non terminal Initial Initial;
+non terminal ArrayList<Decl> Program;
+non terminal Decl Decl;
+non terminal VariableDecl VariableDecl,Variable;
+non terminal Type Type;
+non terminal FunctionDecl FunctionDecl;
+non terminal ArrayList<VariableDecl> Formals,TempFormals;
+non terminal ClassDecl ClassDecl;
+non terminal ClassType Extends;
+non terminal Decl Field;
+non terminal ArrayList<Decl> Fields;
+non terminal StmtBlock StmtBlock;
+non terminal ArrayList<VariableDecl> VarDecls;
+non terminal ArrayList<Stmt> Stmts;
+non terminal Stmt Stmt;
+non terminal WhileStmt WhileStmt;
+non terminal ForStmt ForStmt;
+non terminal ReturnStmt ReturnStmt;
+non terminal BreakStmt BreakStmt;
+non terminal PrintStmt PrintStmt;
+non terminal Expr Expr;
+non terminal LValue LValue;
+non terminal Call Call;
+non terminal ArrayList<Expr> Actuals;
+non terminal Constant Constant;
+non terminal ArrayList<Expr> Exprs;
+non terminal Expr ExprOrNot;
+// Matin
+nonterminal InterfaceDecl;
+nonterminal Implements, TempImplements;
+nonterminal AccessMode;
+nonterminal ProtoTypes, ProtoType;
+nonterminal IfStmt, ContinueStmt;
 
-precedence left ADD, MINUS;
-precedence left PROD, DIV;
+//precedence of operators
+precedence left ASSIGN;
+precedence left OR;
+precedence left AND;
+precedence left EQ, NOTEQ;
+precedence left LESS, LESSEQ, GT, GTEQ;
+precedence left PLUS, MINUS;
+precedence left PROD, DIV, MOD;
+precedence left NOT;
+precedence left DOT, LBRACK;
+precedence left LPAREN;
 
-// grammar  //TODO add all grammars
-stmt ::= expr SEMICOLON;
+// grammar
+start with Initial;
 
-expr ::=    expr ADD expr
-        |   expr MINUS expr
-        |   expr PROD expr
-        |   expr DIV expr
-        |   INTCONST;
+Initial      ::= Program;
+
+Program      ::=  Decl
+                | Program Decl;
+
+Decl         ::= VariableDecl | FunctionDecl | ClassDecl | InterfaceDecl;
+
+VariableDecl ::= Variable SEMI;
+
+Variable     ::= Type T_ID;
+
+Type         ::= INT | DOUBLE | BOOL | STRING | T_ID | Type LBRACK RBRACK;
+
+FunctionDecl ::= Type T_ID LPAREN Formals RPAREN StmtBlock
+               | VOID T_ID LPAREN Formals RPAREN StmtBlock ;
+
+Formals      ::= TempFormals  | /*epsilon*/ ;
+TempFormals  ::=  Variable  |
+                  TempFormals COMMA Variable ;
+
+ClassDecl    ::= CLASS T_ID Extends Implements OPENAC Fields CLOSEAC ;
+Extends      ::= EXTENDS T_ID  | /*epsilon*/ ;
+Implements   ::= IMPLEMENTS TempImplements;
+TempImplements ::= T_ID |
+                   TempImplements COMMA T_ID;
+Fields       ::= Fields Field | /*epsilon*/ ;
+
+Field        ::= AccessMode VariableDecl  | AccessMode FunctionDecl ;
+
+AccessMode   ::= PRIVATE | PROTECTED | PUBLIC | /*epsilon*/ ;
+
+InterfaceDecl::= INTERFACE T_ID OPENAC ProtoTypes CLOSEAC;
+ProtoTypes   ::= ProtoTypes ProtoType | /*epsilon*/ ;
+
+ProtoType    ::= Type T_ID LPAREN Formals RPAREN SEMI
+               | VOID T_ID LPAREN Formals RPAREN SEMI;
+
+StmtBlock    ::= OPENAC VarDecls Stmts CLOSEAC ;
+VarDecls     ::= VarDecls VariableDecl  | /*epsilon*/ ;
+Stmts        ::= Stmt Stmts | /*epsilon*/ ;
+
+Stmt         ::= Expr SEMI | /*epsilon*/ SEMI
+               | IfStmt
+               | WhileStmt
+               | ForStmt
+               | BreakStmt
+               | ContinueStmt
+               | ReturnStmt
+               | PrintStmt
+               | StmtBlock;
+
+IfStmt       ::= IF LPAREN Expr RPAREN Stmt
+               | IF LPAREN Expr RPAREN Stmt ELSE Stmt;
+
+WhileStmt    ::= WHILE LPAREN Expr RPAREN Stmt ;
+
+ForStmt      ::= FOR LPAREN ExprOrNot SEMI Expr SEMI ExprOrNot RPAREN Stmt ;
+ExprOrNot    ::= Expr  | /*epsilon*/ ;
+
+ReturnStmt   ::= RETURN ExprOrNot SEMI ;
+
+BreakStmt    ::= BREAK SEMI ;
+
+ContinueStmt ::= CONTINUE SEMI;
+
+PrintStmt    ::=    PRINT LPAREN Exprs RPAREN SEMI ;
+Exprs        ::=    Expr
+               |    Exprs COMMA Expr ;
+
+Expr         ::=    LValue ASSIGN Expr
+               |    Constant
+               |    LValue
+               |    THIS
+               |    Call
+               |    LPAREN Expr RPAREN
+               |    Expr PLUS Expr
+               |    Expr MINUS Expr
+               |    Expr PROD Expr
+               |    Expr DIV Expr
+               |    Expr MOD Expr
+               |    MINUS Expr
+               |    Expr LESS Expr
+               |    Expr LESSEQ Expr
+               |    Expr GT Expr
+               |    Expr GTEQ Expr
+               |    Expr EQ Expr
+               |    Expr NOTEQ Expr
+               |    Expr AND Expr
+               |    Expr OR Expr
+               |    NOT Expr
+               |    READINTEGER LPAREN RPAREN
+               |    READLINE LPAREN RPAREN
+               |    NEW T_ID
+               |    NEWARRAY LPAREN Expr COMMA Type RPAREN
+               |    ITOD LPAREN Expr RPAREN
+               |    DTOI LPAREN Expr RPAREN
+               |    ITOB LPAREN Expr RPAREN
+               |    BTOI LPAREN Expr RPAREN;
+
+LValue       ::=    T_ID
+               |    Expr DOT T_ID
+               |    Expr LBRACK Expr RBRACK ;
+
+Call         ::=    T_ID LPAREN Actuals RPAREN
+               |    Expr DOT T_ID LPAREN Actuals RPAREN ;
+
+Actuals      ::=    Exprs | /*epsilon*/ ;
+
+Constant    ::=    T_INTLITERAL
+               |   T_DOUBLELITERAL
+               |   T_BOOLEANLITERAL
+               |   T_STRINGLITERAL
+               |   NULL ;

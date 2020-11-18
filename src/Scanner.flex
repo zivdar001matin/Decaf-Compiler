@@ -65,7 +65,7 @@ import java_cup.runtime.*;
     "bool"               { return token(sym.BOOL); }
     "string"			 { return token(sym.STRING); }
     {Boolean}			{ System.out.println("T_BOOLEANLITERAL "+yytext());
-                           return token(sym.BOOLCONST); }
+                           return token(sym.T_BOOLEANLITERAL); }
     // {OtherReserved} = "class"| "interface"| "null"| "this"| "extends"| "implements"| "for"| "while"| "if"| "else"| "return"| "break"| "continue"| "new"| "NewArray"| "Print"| "ReadInteger"| "ReadLine"| "dtoi"| "itod"| "btoi"| "itob"| "private"| "protected"| "public"
     "class"              { return token(sym.CLASS);}
     "interface"          { return token(sym.INTERFACE);}
@@ -83,8 +83,8 @@ import java_cup.runtime.*;
     "new"                { return token(sym.NEW);}
     "NewArray"           { return token(sym.NEWARRAY);}
     "Print"              { return token(sym.PRINT);}
-    "ReadInteger"        { return token(sym.READINT);}
-    "ReadLine"           { return token(sym.READLN);}
+    "ReadInteger"        { return token(sym.READINTEGER);}
+    "ReadLine"           { return token(sym.READLINE);}
     "dtoi"               { return token(sym.DTOI);}
     "itod"               { return token(sym.ITOD);}
     "btoi"               { return token(sym.BTOI);}
@@ -95,17 +95,17 @@ import java_cup.runtime.*;
 
     /* identifiers */
     {Identifier}          { System.out.println("T_ID "+yytext());
-                            return token(sym.IDENTIFIER);}
+                            return token(sym.T_ID);}
     /* literals */
     {IntegerLiteral}      { System.out.println("T_INTLITERAL "+yytext());
-                            return token(sym.INTCONST);}
+                            return token(sym.T_INTLITERAL);}
     {DoubleLiteral}       { System.out.println("T_DOUBLELITERAL "+yytext());
-                            return token(sym.DOUBLECONST);}
+                            return token(sym.T_DOUBLELITERAL);}
     \"                    { string.setLength(0); yybegin(STRING); }
     /* operators */
 	"="					  { return token(sym.ASSIGN); }
     "=="				  { return token(sym.EQ); }
-	"+"					  { return token(sym.ADD); }
+	"+"					  { return token(sym.PLUS); }
     /* comments */
     {Comment}             { /* ignore */ }
     /* whitespace */
@@ -117,26 +117,29 @@ import java_cup.runtime.*;
 	"%"					 { return token(sym.MOD); }
     "<"					 { return token(sym.LESS); }
     "<="				 { return token(sym.LESSEQ); }
-    ">"					 { return token(sym.GR); }
-    ">="				 { return token(sym.GREQ); }
+    ">"					 { return token(sym.GT); }
+    ">="				 { return token(sym.GTEQ); }
     "!="				 { return token(sym.NOTEQ); }
 	"!"			    	 { return token(sym.NOT); }
-	"&&"				 { return token(sym.LOGICAND); }
-	"||"				 { return token(sym.LOGICOR); }
-	";"					 { return token(sym.SEMICOLON); }
+	"&&"				 { return token(sym.AND); }
+	"||"				 { return token(sym.OR); }
+	";"					 { return token(sym.SEMI); }
 	","					 { return token(sym.COMMA); }
 	"."					 { return token(sym.DOT); }
 	"["					 { return token(sym.LBRACK); }
 	"]"					 { return token(sym.RBRACK); }
 	"("					 { return token(sym.LPAREN); }
 	")"					 { return token(sym.RPAREN); }
+    "{"                  {return token(sym.OPENAC);}
+    "}"                  {return token(sym.CLOSEAC);}
 
 }
 
 <STRING> {
     \"                    { yybegin(YYINITIAL);
                             System.out.println("T_STRINGLITERAL \""+string.toString()+"\"");
-                            string = new StringBuffer();}
+                            string = new StringBuffer();
+                            return token(sym.T_STRINGLITERAL)}
     [^\n\r\"\\]+          { string.append( yytext() ); }
     \\t                   { string.append("\t"); }
     \\n                   { string.append("\n"); }
