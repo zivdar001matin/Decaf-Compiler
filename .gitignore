@@ -9,3 +9,9 @@ Source for project/
 
 # Test adn scripts should be updated so until then ignoring them :D #TODO
 **/testsANDscripts/
+
+# Files made with Flex and CUP
+src/Scanner.java
+src/Scanner.java~
+src/sym.java
+src/parser.java
