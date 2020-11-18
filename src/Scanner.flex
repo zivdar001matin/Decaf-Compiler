@@ -56,30 +56,80 @@ import java_cup.runtime.*;
 
 <YYINITIAL> {
 
-    //TODO return symbol insted of sout
 
     /* reserved */
-    {Types}               {System.out.println(yytext());}
-    {Boolean}             {System.out.println("T_BOOLEANLITERAL "+yytext());}
-    {OtherReserved}       {System.out.println(yytext());}
+    // {Types} = "void" | "int" | "double" | "bool" | "string"
+    "void"               { return token(sym.VOID); }
+    "int"                { return token(sym.INT); }
+    "double"             { return token(sym.DOUBLE); }
+    "bool"               { return token(sym.BOOL); }
+    "string"			 { return token(sym.STRING); }
+    {Boolean}			{ System.out.println("T_BOOLEANLITERAL "+yytext());
+                           return token(sym.BOOLCONST); }
+    // {OtherReserved} = "class"| "interface"| "null"| "this"| "extends"| "implements"| "for"| "while"| "if"| "else"| "return"| "break"| "continue"| "new"| "NewArray"| "Print"| "ReadInteger"| "ReadLine"| "dtoi"| "itod"| "btoi"| "itob"| "private"| "protected"| "public"
+    "class"              { return token(sym.CLASS);}
+    "interface"          { return token(sym.INTERFACE);}
+    "null"               { return token(sym.NULL);}
+    "this"               { return token(sym.THIS);}
+    "extends"            { return token(sym.EXTENDS);}
+    "implements"         { return token(sym.IMPLEMENTS);}
+    "for"                { return token(sym.FOR);}
+    "while"              { return token(sym.WHILE);}
+    "if"                 { return token(sym.IF);}
+    "else"               { return token(sym.ELSE);}
+    "return"             { return token(sym.RETURN);}
+    "break"              { return token(sym.BREAK);}
+    "continue"           { return token(sym.CONTINUE);}
+    "new"                { return token(sym.NEW);}
+    "NewArray"           { return token(sym.NEWARRAY);}
+    "Print"              { return token(sym.PRINT);}
+    "ReadInteger"        { return token(sym.READINT);}
+    "ReadLine"           { return token(sym.READLN);}
+    "dtoi"               { return token(sym.DTOI);}
+    "itod"               { return token(sym.ITOD);}
+    "btoi"               { return token(sym.BTOI);}
+    "itob"               { return token(sym.ITOB);}
+    "private"            { return token(sym.PRIVATE);}
+    "protected"          { return token(sym.PROTECTED);}
+    "public"             { return token(sym.PUBLIC);}
 
     /* identifiers */
-    {Identifier}          { System.out.println("T_ID "+yytext());}
+    {Identifier}          { System.out.println("T_ID "+yytext());
+                            return token(sym.IDENTIFIER);}
     /* literals */
-    {IntegerLiteral}      { System.out.println("T_INTLITERAL "+yytext());}
-    {DoubleLiteral}       { System.out.println("T_DOUBLELITERAL "+yytext());}
+    {IntegerLiteral}      { System.out.println("T_INTLITERAL "+yytext());
+                            return token(sym.INTCONST);}
+    {DoubleLiteral}       { System.out.println("T_DOUBLELITERAL "+yytext());
+                            return token(sym.DOUBLECONST);}
     \"                    { string.setLength(0); yybegin(STRING); }
     /* operators */
-    "="                   { System.out.println(yytext());}
-    "=="                  { System.out.println(yytext());}
-    "+"                   { System.out.println(yytext());}
+	"="					  { return token(sym.ASSIGN); }
+    "=="				  { return token(sym.EQ); }
+	"+"					  { return token(sym.ADD); }
     /* comments */
     {Comment}             { /* ignore */ }
     /* whitespace */
     {WhiteSpace}          { /* ignore */ }
     /* punctuations */
-    {Punctuations}        { System.out.println(yytext());}
-
+	"-"					 { return token(sym.MINUS); }
+	"*"					 { return token(sym.PROD); }
+	"/"					 { return token(sym.DIV); }
+	"%"					 { return token(sym.MOD); }
+    "<"					 { return token(sym.LESS); }
+    "<="				 { return token(sym.LESSEQ); }
+    ">"					 { return token(sym.GR); }
+    ">="				 { return token(sym.GREQ); }
+    "!="				 { return token(sym.NOTEQ); }
+	"!"			    	 { return token(sym.NOT); }
+	"&&"				 { return token(sym.LOGICAND); }
+	"||"				 { return token(sym.LOGICOR); }
+	";"					 { return token(sym.SEMICOLON); }
+	","					 { return token(sym.COMMA); }
+	"."					 { return token(sym.DOT); }
+	"["					 { return token(sym.LBRACK); }
+	"]"					 { return token(sym.RBRACK); }
+	"("					 { return token(sym.LPAREN); }
+	")"					 { return token(sym.RPAREN); }
 
 }
 

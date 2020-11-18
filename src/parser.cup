@@ -12,20 +12,37 @@ parser code {:
 
 scan with {: return scanner.next_token(); :}
 
-terminal SEMI, PLUS, MINUS, TIMES, DIVIDE, ASSIGN, NUMBER;
-terminal String IDENT;
+/*reserved*/
+// Types
+terminal VOID, INT, DOUBLE, BOOL, STRING;
+// Boolean
+terminal BOOLCONST;
+// Other reserved
+terminal CLASS, INTERFACE, NULL, THIS, EXTENDS, IMPLEMENTS, FOR, WHILE, IF, ELSE, RETURN, BREAK, CONTINUE, NEW, NEWARRAY, PRINT, READINT, READLN, DTOI, ITOD, BTOI, ITOB, PRIVATE, PROTECTED, PUBLIC;
+
+/* identifiers */
+terminal IDENTIFIER;
+
+/* literals */
+terminal INTCONST, DOUBLECONST;
+
+/* operators */
+terminal ASSIGN, EQ, ADD;
+
+/* punctuations */
+terminal MINUS, PROD, DIV, MOD, LESS, LESSEQ, GR, GREQ, NOTEQ, NOT, LOGICAND, LOGICOR, SEMICOLON, COMMA, DOT, LBRACK, RBRACK, LPAREN, RPAREN;
 
 nonterminal stmt, expr;
 nonterminal Integer term, factor;
 
-precedence left PLUS, MINUS;
-precedence left TIMES, DIVIDE;
+precedence left ADD, MINUS;
+precedence left PROD, DIV;
 
-// grammar
-stmt ::= expr SEMI;
+// grammar  //TODO add all grammars
+stmt ::= expr SEMICOLON;
 
-expr ::=    expr PLUS expr
+expr ::=    expr ADD expr
         |   expr MINUS expr
-        |   expr TIMES expr
-        |   expr DIVIDE expr
-        |   NUMBER;
+        |   expr PROD expr
+        |   expr DIV expr
+        |   INTCONST;
