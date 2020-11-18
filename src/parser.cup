@@ -30,35 +30,35 @@ terminal T_INTLITERAL, T_DOUBLELITERAL, T_STRINGLITERAL;
 terminal ASSIGN, EQ, PLUS;
 
 /* punctuations */
-terminal MINUS, PROD, DIV, MOD, LESS, LESSEQ, GT, GTEQ, NOTEQ, NOT, AND, OR, SEMI, COMMA, DOT, LBRACK, RBRACK, LPAREN, RPAREN, OPENAC, CLOSEAC;
+terminal MINUS, PROD, DIV, MOD, LESS, LESSEQ, GT, GTEQ, NOTEQ, NOT, AND, OR, SEMI, COMMA, DOT, LBRACK, BRACK, RBRACK, LPAREN, RPAREN, OPENAC, CLOSEAC;
 
-non terminal Initial Initial;
-non terminal ArrayList<Decl> Program;
-non terminal Decl Decl;
-non terminal VariableDecl VariableDecl,Variable;
-non terminal Type Type;
-non terminal FunctionDecl FunctionDecl;
-non terminal ArrayList<VariableDecl> Formals,TempFormals;
-non terminal ClassDecl ClassDecl;
-non terminal ClassType Extends;
-non terminal Decl Field;
-non terminal ArrayList<Decl> Fields;
-non terminal StmtBlock StmtBlock;
-non terminal ArrayList<VariableDecl> VarDecls;
-non terminal ArrayList<Stmt> Stmts;
-non terminal Stmt Stmt;
-non terminal WhileStmt WhileStmt;
-non terminal ForStmt ForStmt;
-non terminal ReturnStmt ReturnStmt;
-non terminal BreakStmt BreakStmt;
-non terminal PrintStmt PrintStmt;
-non terminal Expr Expr;
-non terminal LValue LValue;
-non terminal Call Call;
-non terminal ArrayList<Expr> Actuals;
-non terminal Constant Constant;
-non terminal ArrayList<Expr> Exprs;
-non terminal Expr ExprOrNot;
+non terminal Initial;
+non terminal Program;
+non terminal Decl;
+non terminal VariableDecl,Variable;
+non terminal Type;
+non terminal FunctionDecl;
+non terminal Formals,TempFormals;
+non terminal ClassDecl;
+non terminal Extends;
+non terminal Field;
+non terminal Fields;
+non terminal StmtBlock;
+non terminal VarDecls;
+non terminal Stmts;
+non terminal Stmt;
+non terminal WhileStmt;
+non terminal ForStmt;
+non terminal ReturnStmt;
+non terminal BreakStmt;
+non terminal PrintStmt;
+non terminal Expr;
+non terminal LValue;
+non terminal Call;
+non terminal Actuals;
+non terminal Constant;
+non terminal Exprs;
+non terminal ExprOrNot;
 // Matin
 nonterminal InterfaceDecl;
 nonterminal Implements, TempImplements;
@@ -67,6 +67,7 @@ nonterminal ProtoTypes, ProtoType;
 nonterminal IfStmt, ContinueStmt;
 
 //precedence of operators
+precedence left ELSE;
 precedence left ASSIGN;
 precedence left OR;
 precedence left AND;
@@ -79,7 +80,6 @@ precedence left DOT, LBRACK;
 precedence left LPAREN;
 
 // grammar
-start with Initial;
 
 Initial      ::= Program;
 
@@ -92,7 +92,7 @@ VariableDecl ::= Variable SEMI;
 
 Variable     ::= Type T_ID;
 
-Type         ::= INT | DOUBLE | BOOL | STRING | T_ID | Type LBRACK RBRACK;
+Type         ::= INT | DOUBLE | BOOL | STRING | T_ID | Type BRACK; //We use Brack insted of LBRACK RBRACK because of Reduce/Reduce conflict
 
 FunctionDecl ::= Type T_ID LPAREN Formals RPAREN StmtBlock
                | VOID T_ID LPAREN Formals RPAREN StmtBlock ;

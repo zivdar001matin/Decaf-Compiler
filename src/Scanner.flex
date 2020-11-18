@@ -11,7 +11,7 @@ import java_cup.runtime.*;
 %{
     StringBuffer string = new StringBuffer();
   public Symbol token(int tokenType){
-      System.out.println(yytext());
+//      System.out.println(yytext());
       return new Symbol(tokenType, yytext());
   }
 %}
@@ -64,8 +64,7 @@ import java_cup.runtime.*;
     "double"             { return token(sym.DOUBLE); }
     "bool"               { return token(sym.BOOL); }
     "string"			 { return token(sym.STRING); }
-    {Boolean}			{ System.out.println("T_BOOLEANLITERAL "+yytext());
-                           return token(sym.T_BOOLEANLITERAL); }
+    {Boolean}			 { return token(sym.T_BOOLEANLITERAL); }
     // {OtherReserved} = "class"| "interface"| "null"| "this"| "extends"| "implements"| "for"| "while"| "if"| "else"| "return"| "break"| "continue"| "new"| "NewArray"| "Print"| "ReadInteger"| "ReadLine"| "dtoi"| "itod"| "btoi"| "itob"| "private"| "protected"| "public"
     "class"              { return token(sym.CLASS);}
     "interface"          { return token(sym.INTERFACE);}
@@ -94,13 +93,10 @@ import java_cup.runtime.*;
     "public"             { return token(sym.PUBLIC);}
 
     /* identifiers */
-    {Identifier}          { System.out.println("T_ID "+yytext());
-                            return token(sym.T_ID);}
+    {Identifier}          { return token(sym.T_ID);}
     /* literals */
-    {IntegerLiteral}      { System.out.println("T_INTLITERAL "+yytext());
-                            return token(sym.T_INTLITERAL);}
-    {DoubleLiteral}       { System.out.println("T_DOUBLELITERAL "+yytext());
-                            return token(sym.T_DOUBLELITERAL);}
+    {IntegerLiteral}      { return token(sym.T_INTLITERAL);}
+    {DoubleLiteral}       { return token(sym.T_DOUBLELITERAL);}
     \"                    { string.setLength(0); yybegin(STRING); }
     /* operators */
 	"="					  { return token(sym.ASSIGN); }
@@ -127,6 +123,7 @@ import java_cup.runtime.*;
 	","					 { return token(sym.COMMA); }
 	"."					 { return token(sym.DOT); }
 	"["					 { return token(sym.LBRACK); }
+	"[]"				 { return token(sym.BRACK); }
 	"]"					 { return token(sym.RBRACK); }
 	"("					 { return token(sym.LPAREN); }
 	")"					 { return token(sym.RPAREN); }
@@ -137,9 +134,8 @@ import java_cup.runtime.*;
 
 <STRING> {
     \"                    { yybegin(YYINITIAL);
-                            System.out.println("T_STRINGLITERAL \""+string.toString()+"\"");
                             string = new StringBuffer();
-                            return token(sym.T_STRINGLITERAL)}
+                            return token(sym.T_STRINGLITERAL);}
     [^\n\r\"\\]+          { string.append( yytext() ); }
     \\t                   { string.append("\t"); }
     \\n                   { string.append("\n"); }
