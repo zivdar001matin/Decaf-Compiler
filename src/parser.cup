@@ -8,6 +8,8 @@ parser code {:
         this.scanner = scanner;
      }
 
+     @Override
+    protected void report_expected_token_ids() { /*ignore*/ }
 :}
 
 scan with {: return scanner.next_token(); :}
