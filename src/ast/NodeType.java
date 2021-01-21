@@ -1,0 +1,93 @@
+package ast;
+
+/**
+ * An enum to declare type of an AST node
+ */
+public enum NodeType {
+
+    /*Mathematics operations*/
+    ADDITION,
+    SUBTRACTION,
+    MULTIPLICATION,
+    DIVISION,
+    MOD,
+    ARITHMETIC_AND,
+    ARITHMETIC_OR,
+    XOR,
+    POST_DECREMENT,
+    POST_INCREMENT,
+    PRE_INCREMENT,
+    PRE_DECREMENT,
+    UNARY_MINUS,
+    UNARY_PLUS,
+    BITWISE_NEGATIVE,
+    SIZEOF,
+
+    /*Condition operations*/
+    LESS_THAN,
+    LESS_THAN_OR_EQUAL,
+    GREATER_THAN,
+    GREATER_THAN_OR_EQUAL,
+    EQUAL,
+    NOT_EQUAL,
+
+    /*Logical operations*/
+    BOOLEAN_AND,
+    BOOLEAN_NOT,
+    BOOLEAN_OR,
+
+    /*Types*/
+    BOOLEAN_TYPE,
+    DOUBLE_TYPE,
+    CHAR_TYPE,
+    INT_TYPE,
+    FLOAT_TYPE,
+    LONG_TYPE,
+    STRING_TYPE,
+    VOID,
+    AUTO_TYPE,
+
+    /*Declarations*/
+    FIELD_DECLARATION,
+    LOCAL_VAR_DECLARATION,
+    VARIABLE_DECLARATION,
+    VARIABLE_CONST_DECLARATION,
+    METHOD_DECLARATION,
+    STRUCT_DECLARATION,
+    DECLARATIONS,
+    ARRAY_DECLARATION,
+
+    /*Assignments*/
+    ASSIGN,
+    ADD_ASSIGN,
+    SUB_ASSIGN,
+    MULT_ASSIGN,
+    DIV_ASSIGN,
+
+    /*Statements*/
+    EXPRESSION_STATEMENT,
+    BREAK_STATEMENT,
+    CONTINUE_STATEMENT,
+    RETURN_STATEMENT,
+    IF_STATEMENT,
+    REPEAT_STATEMENT,
+    SWITCH_STATEMENT,
+    CASE_STATEMENT,
+    FOR_STATEMENT,
+    FOREACH_STATEMENT,
+
+    LITERAL,
+    ARGUMENT,
+    ARGUMENTS,
+    EMPTY_STATEMENT,
+    IDENTIFIER,
+    METHOD_ACCESS,
+    PARAMETER,
+    PARAMETERS,
+    BLOCK,
+    VAR_USE,
+    ARRAY_USE,
+    CLASS,
+    NULL_LITERAL,
+    START
+}
