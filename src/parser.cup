@@ -81,6 +81,7 @@ precedence left DOT, LBRACK;
 precedence left LPAREN;
 
 // grammar
+start with Initial;
 
 Initial      ::= Program;
 
