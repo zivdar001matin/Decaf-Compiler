@@ -15,15 +15,17 @@ parser code {:
 // Types
 terminal VOID, INT, DOUBLE, BOOL, STRING;
 // Boolean
-terminal T_BOOLEANLITERAL;
+terminal Boolean T_BOOLEANLITERAL;
 // Other reserved
 terminal CLASS, INTERFACE, NULL, THIS, EXTENDS, IMPLEMENTS, FOR, WHILE, IF, ELSE, RETURN, BREAK, CONTINUE, NEW, NEWARRAY, PRINT, READINTEGER, READLINE, DTOI, ITOD, BTOI, ITOB, PRIVATE, PROTECTED, PUBLIC;
 
 /* identifiers */
-terminal T_ID;
+terminal String T_ID;
 
 /* literals */
-terminal T_INTLITERAL, T_DOUBLELITERAL, T_STRINGLITERAL;
+terminal Integer T_INTLITERAL;
+terminal Double T_DOUBLELITERAL;
+terminal String T_STRINGLITERAL;
 
 /* operators */
 terminal ASSIGN, EQ, PLUS;
@@ -31,39 +33,39 @@ terminal ASSIGN, EQ, PLUS;
 /* punctuations */
 terminal MINUS, PROD, DIV, MOD, LESS, LESSEQ, GT, GTEQ, NOTEQ, NOT, AND, OR, SEMI, COMMA, DOT, LBRACK, BRACK, RBRACK, LPAREN, RPAREN, OPENAC, CLOSEAC;
 
-non terminal Initial;
-non terminal Program;
-non terminal Decl;
-non terminal VariableDecl,Variable;
-non terminal Type;
-non terminal FunctionDecl;
-non terminal Formals,TempFormals;
-non terminal ClassDecl;
-non terminal Extends;
-non terminal Field;
-non terminal Fields;
-non terminal StmtBlock;
-non terminal VarDecls;
-non terminal Stmts;
-non terminal Stmt;
-non terminal WhileStmt;
-non terminal ForStmt;
-non terminal ReturnStmt;
-non terminal BreakStmt;
-non terminal PrintStmt;
-non terminal Expr;
-non terminal LValue;
-non terminal Call;
-non terminal Actuals;
-non terminal Constant;
-non terminal Exprs;
-non terminal ExprOrNot;
+non terminal Node Initial;
+non terminal Node Program;
+non terminal Node Decl;
+non terminal Node VariableDecl,Variable;
+non terminal Node Type;
+non terminal Node FunctionDecl;
+non terminal Node Formals,TempFormals;
+non terminal Node ClassDecl;
+non terminal Node Extends;
+non terminal Node Field;
+non terminal Node Fields;
+non terminal Node StmtBlock;
+non terminal Node VarDecls;
+non terminal Node Stmts;
+non terminal Node Stmt;
+non terminal Node WhileStmt;
+non terminal Node ForStmt;
+non terminal Node ReturnStmt;
+non terminal Node BreakStmt;
+non terminal Node PrintStmt;
+non terminal Node Expr;
+non terminal Node LValue;
+non terminal Node Call;
+non terminal Node Actuals;
+non terminal Node Constant;
+non terminal Node Exprs;
+non terminal Node ExprOrNot;
 // Matin
-nonterminal InterfaceDecl;
-nonterminal Implements, TempImplements;
-nonterminal AccessMode;
-nonterminal ProtoTypes, ProtoType;
-nonterminal IfStmt, ContinueStmt;
+nonterminal Node InterfaceDecl;
+nonterminal Node Implements, TempImplements;
+nonterminal Node AccessMode;
+nonterminal Node ProtoTypes, ProtoType;
+nonterminal Node IfStmt, ContinueStmt;
 
 //precedence of operators
 precedence left ELSE;
