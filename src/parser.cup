@@ -81,34 +81,124 @@ precedence left DOT, LBRACK;
 precedence left LPAREN;
 
 // grammar
-start with Initial;
+start with Program;
 
-Initial      ::= Program;
+Program      ::=  Decl:d
+                    {:
+                        RESULT = new RootNode();
+                        RESULT.addChild(d);
+                        setRoot((RootNode) RESULT);
+                    :}
+                | Program:p Decl:d
+                    {:
+                        RESULT = p;
+                        RESULT.addChild(d);
+                    :}
+                ;
 
-Program      ::=  Decl
-                | Program Decl;
+Decl         ::= VariableDecl:t
+                    {: RESULT = t; :}
+                | FunctionDecl:t
+                    {: RESULT = t; :}
+                | ClassDecl:t
+                    {: RESULT = t; :}
+                | InterfaceDecl:t
+                    {: RESULT = t; :}
+                ;
 
-Decl         ::= VariableDecl | FunctionDecl | ClassDecl | InterfaceDecl;
+VariableDecl ::= Variable:v SEMI
+                     {: RESULT = v; :}
+                     ;
 
-VariableDecl ::= Variable SEMI;
+Variable     ::= Type:t T_ID:i
+                     {:
+                        RESULT = new SimpleNode(NodeType.VARIABLE_DECLARATION);
+                        RESULT.addChild(t);
+                        RESULT.addChild(i);
+                        t.setParent(RESULT);
+                        i.setParent(RESULT);
+                     :};
 
-Variable     ::= Type T_ID;
+Type         ::= INT
+                    {: RESULT = new PrimitiveNode(NodeType.INT_TYPE, PrimitiveType.INT); :}
+                | DOUBLE
+                    {: RESULT = new PrimitiveNode(NodeType.DOUBLE_TYPE, PrimitiveType.DOUBLE); :}
+                | BOOL
+                    {: RESULT = new PrimitiveNode(NodeType.BOOLEAN_TYPE, PrimitiveType.BOOL); :}
+                | STRING
+                    {: RESULT = new PrimitiveNode(NodeType.STRING_TYPE, PrimitiveType.STRING); :}
+                | T_ID:i
+                    {: RESULT = i; :}
+                | Type BRACK
+                    //TODO
+                ; //We use Brack insted of LBRACK RBRACK because of Reduce/Reduce conflict
 
-Type         ::= INT | DOUBLE | BOOL | STRING | T_ID | Type BRACK; //We use Brack insted of LBRACK RBRACK because of Reduce/Reduce conflict
+FunctionDecl ::= Type:t T_ID:i LPAREN Formals:f RPAREN StmtBlock:s
+                    {:
+                        RESULT = new SimpleNode(NodeType.METHOD_DECLARATION);
+                        RESULT.addChild(t, i, f, s);
+                        t.setParent(RESULT);
+                        i.setParent(RESULT);
+                        f.setParent(RESULT);
+                        s.setParent(RESULT);
+                    :}
+               | VOID T_ID:i LPAREN Formals:f RPAREN StmtBlock:s
+                    {:
+                        RESULT = new SimpleNode(NodeType.METHOD_DECLARATION);
+                        RESULT.addChild(t, i, f, s);
+                        t.setParent(RESULT);
+                        i.setParent(RESULT);
+                        f.setParent(RESULT);
+                        s.setParent(RESULT);
+                    :}
+               ;
 
-FunctionDecl ::= Type T_ID LPAREN Formals RPAREN StmtBlock
-               | VOID T_ID LPAREN Formals RPAREN StmtBlock ;
+Formals      ::= TempFormals:t
+                    {: RESULT = t; :}
+               | /*epsilon*/
+                    {: RESULT = new EmptyNode(); :}
+               ;
+TempFormals  ::=  Variable:v
+                    {:
+                        RESULT = new SimpleNode(NodeType.ARGUMENTS);
+                        ASTNode a = new SimpleNode(NodeType.ARGUMENT);
+                        RESULT.addChild(a);
+                        a.setParent(RESULT);
+                        a.addChild(v);
+                        v.setParent(a);
+                    :}
+               | TempFormals:t COMMA Variable:v
+                    {:
+                        RESULT = t;
+                        ASTNode a = new SimpleNode(NodeType.ARGUMENT);
+                        RESULT.addChild(a);
+                        a.setParent(RESULT);
+                        a.addChild(v);
+                        v.setParent(a);
+                    :}
+               ;
 
-Formals      ::= TempFormals  | /*epsilon*/ ;
-TempFormals  ::=  Variable  |
-                  TempFormals COMMA Variable ;
-
-ClassDecl    ::= CLASS T_ID Extends Implements OPENAC Fields CLOSEAC ;
-Extends      ::= EXTENDS T_ID  | /*epsilon*/ ;
-Implements   ::= IMPLEMENTS TempImplements;
-TempImplements ::= T_ID |
-                   TempImplements COMMA T_ID;
-Fields       ::= Fields Field | /*epsilon*/ ;
+ClassDecl    ::= CLASS T_ID Extends Implements OPENAC Fields CLOSEAC
+                    //TODO
+               ;
+Extends      ::= EXTENDS T_ID
+                    //TODO
+               | /*epsilon*/
+                    {: RESULT = new EmptyNode(); :}
+               ;
+Implements   ::= IMPLEMENTS TempImplements
+                    //TODO
+               ;
+TempImplements ::= T_ID
+                    //TODO
+               | TempImplements COMMA T_ID
+                    //TODO
+               ;
+Fields       ::= Fields Field
+                    //TODO
+               | /*epsilon*/
+                    {: RESULT = new EmptyNode(); :}
+               ;
 
 Field        ::= AccessMode VariableDecl  | AccessMode FunctionDecl ;
 
@@ -191,8 +281,14 @@ Call         ::=    T_ID LPAREN Actuals RPAREN
 
 Actuals      ::=    Exprs | /*epsilon*/ ;
 
-Constant    ::=    T_INTLITERAL
-               |   T_DOUBLELITERAL
-               |   T_BOOLEANLITERAL
-               |   T_STRINGLITERAL
-               |   NULL ;
+Constant    ::=    T_INTLITERAL:t
+                        {: RESULT = new IntegerLiteralNode(t); :}
+               |   T_DOUBLELITERAL:t
+                        {: RESULT = new DoubleLiteralNode(t); :}
+               |   T_BOOLEANLITERAL:t
+                        {: RESULT = new BooleanLiteralNode(t); :}
+               |   T_STRINGLITERAL:t
+                        {: RESULT = new StringLiteralNode(t); :}
+               |   NULL
+                        {: RESULT = new SimpleNode(NodeType.NULL_LITERAL); :}
+               ;
