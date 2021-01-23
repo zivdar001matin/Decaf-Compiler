@@ -1,5 +1,6 @@
 import java_cup.runtime.*;
 import ast.*;
+import ast.literal.*;
 
 parser code {:
 
@@ -67,6 +68,8 @@ nonterminal Node AccessMode;
 nonterminal Node ProtoTypes, ProtoType;
 nonterminal Node IfStmt, ContinueStmt;
 
+nonterminal Node Identifier;
+
 //precedence of operators
 precedence left ELSE;
 precedence left ASSIGN;
@@ -110,7 +113,7 @@ VariableDecl ::= Variable:v SEMI
                      {: RESULT = v; :}
                      ;
 
-Variable     ::= Type:t T_ID:i
+Variable     ::= Type:t Identifier:i
                      {:
                         RESULT = new SimpleNode(NodeType.VARIABLE_DECLARATION);
                         RESULT.addChild(t);
@@ -127,13 +130,13 @@ Type         ::= INT
                     {: RESULT = new PrimitiveNode(NodeType.BOOLEAN_TYPE, PrimitiveType.BOOL); :}
                 | STRING
                     {: RESULT = new PrimitiveNode(NodeType.STRING_TYPE, PrimitiveType.STRING); :}
-                | T_ID:i
+                | Identifier:i
                     {: RESULT = i; :}
                 | Type BRACK
                     //TODO
                 ; //We use Brack insted of LBRACK RBRACK because of Reduce/Reduce conflict
 
-FunctionDecl ::= Type:t T_ID:i LPAREN Formals:f RPAREN StmtBlock:s
+FunctionDecl ::= Type:t Identifier:i LPAREN Formals:f RPAREN StmtBlock:s
                     {:
                         RESULT = new SimpleNode(NodeType.METHOD_DECLARATION);
                         RESULT.addChild(t, i, f, s);
@@ -142,8 +145,9 @@ FunctionDecl ::= Type:t T_ID:i LPAREN Formals:f RPAREN StmtBlock:s
                         f.setParent(RESULT);
                         s.setParent(RESULT);
                     :}
-               | VOID T_ID:i LPAREN Formals:f RPAREN StmtBlock:s
+               | VOID Identifier:i LPAREN Formals:f RPAREN StmtBlock:s
                     {:
+                        Node t = new SimpleNode(NodeType.VOID);
                         RESULT = new SimpleNode(NodeType.METHOD_DECLARATION);
                         RESULT.addChild(t, i, f, s);
                         t.setParent(RESULT);
@@ -161,7 +165,7 @@ Formals      ::= TempFormals:t
 TempFormals  ::=  Variable:v
                     {:
                         RESULT = new SimpleNode(NodeType.ARGUMENTS);
-                        ASTNode a = new SimpleNode(NodeType.ARGUMENT);
+                        Node a = new SimpleNode(NodeType.ARGUMENT);
                         RESULT.addChild(a);
                         a.setParent(RESULT);
                         a.addChild(v);
@@ -170,7 +174,7 @@ TempFormals  ::=  Variable:v
                | TempFormals:t COMMA Variable:v
                     {:
                         RESULT = t;
-                        ASTNode a = new SimpleNode(NodeType.ARGUMENT);
+                        Node a = new SimpleNode(NodeType.ARGUMENT);
                         RESULT.addChild(a);
                         a.setParent(RESULT);
                         a.addChild(v);
@@ -178,10 +182,10 @@ TempFormals  ::=  Variable:v
                     :}
                ;
 
-ClassDecl    ::= CLASS T_ID Extends Implements OPENAC Fields CLOSEAC
+ClassDecl    ::= CLASS Identifier Extends Implements OPENAC Fields CLOSEAC
                     //TODO
                ;
-Extends      ::= EXTENDS T_ID
+Extends      ::= EXTENDS Identifier
                     //TODO
                | /*epsilon*/
                     {: RESULT = new EmptyNode(); :}
@@ -189,9 +193,9 @@ Extends      ::= EXTENDS T_ID
 Implements   ::= IMPLEMENTS TempImplements
                     //TODO
                ;
-TempImplements ::= T_ID
+TempImplements ::= Identifier
                     //TODO
-               | TempImplements COMMA T_ID
+               | TempImplements COMMA Identifier
                     //TODO
                ;
 Fields       ::= Fields Field
@@ -204,11 +208,11 @@ Field        ::= AccessMode VariableDecl  | AccessMode FunctionDecl ;
 
 AccessMode   ::= PRIVATE | PROTECTED | PUBLIC | /*epsilon*/ ;
 
-InterfaceDecl::= INTERFACE T_ID OPENAC ProtoTypes CLOSEAC;
+InterfaceDecl::= INTERFACE Identifier OPENAC ProtoTypes CLOSEAC;
 ProtoTypes   ::= ProtoTypes ProtoType | /*epsilon*/ ;
 
-ProtoType    ::= Type T_ID LPAREN Formals RPAREN SEMI
-               | VOID T_ID LPAREN Formals RPAREN SEMI;
+ProtoType    ::= Type Identifier LPAREN Formals RPAREN SEMI
+               | VOID Identifier LPAREN Formals RPAREN SEMI;
 
 StmtBlock    ::= OPENAC VarDecls Stmts CLOSEAC ;
 VarDecls     ::= VarDecls VariableDecl  | /*epsilon*/ ;
@@ -265,19 +269,19 @@ Expr         ::=    LValue ASSIGN Expr
                |    NOT Expr
                |    READINTEGER LPAREN RPAREN
                |    READLINE LPAREN RPAREN
-               |    NEW T_ID
+               |    NEW Identifier
                |    NEWARRAY LPAREN Expr COMMA Type RPAREN
                |    ITOD LPAREN Expr RPAREN
                |    DTOI LPAREN Expr RPAREN
                |    ITOB LPAREN Expr RPAREN
                |    BTOI LPAREN Expr RPAREN;
 
-LValue       ::=    T_ID
-               |    Expr DOT T_ID
+LValue       ::=    Identifier
+               |    Expr DOT Identifier
                |    Expr LBRACK Expr RBRACK ;
 
-Call         ::=    T_ID LPAREN Actuals RPAREN
-               |    Expr DOT T_ID LPAREN Actuals RPAREN ;
+Call         ::=    Identifier LPAREN Actuals RPAREN
+               |    Expr DOT Identifier LPAREN Actuals RPAREN ;
 
 Actuals      ::=    Exprs | /*epsilon*/ ;
 
@@ -291,4 +295,8 @@ Constant    ::=    T_INTLITERAL:t
                         {: RESULT = new StringLiteralNode(t); :}
                |   NULL
                         {: RESULT = new SimpleNode(NodeType.NULL_LITERAL); :}
+               ;
+
+Identifier  ::=    T_ID:i
+                        {:RESULT = new IdentifierNode(i); :}
                ;

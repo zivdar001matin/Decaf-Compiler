@@ -1,7 +1,7 @@
 package ast;
 
 public class RootNode extends SimpleNode{
-    public RootNode(NodeType nodeType) {
+    public RootNode() {
         super(NodeType.START);
     }
 }
