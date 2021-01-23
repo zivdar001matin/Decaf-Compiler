@@ -1,18 +1,15 @@
 import java_cup.runtime.*;
+import ast.*;
 
 parser code {:
-    private Scanner scanner;
 
-    // Defining constructor to have an access in Syntax class
-     public parser(Scanner scanner){
-        this.scanner = scanner;
-     }
+     protected RootNode root;
 
-     @Override
-    protected void report_expected_token_ids() { /*ignore*/ }
+     void setRoot(RootNode p) { this.root = p; }
+
+     public RootNode getRoot() { return this.root; }
+
 :}
-
-scan with {: return scanner.next_token(); :}
 
 /*reserved*/
 // Types
