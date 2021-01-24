@@ -82,6 +82,7 @@ public enum NodeType {
     ARGUMENTS,
     EMPTY_STATEMENT,
     IDENTIFIER,
+    FIELD,
     METHOD_ACCESS,
     PARAMETER,
     PARAMETERS,

@@ -436,12 +436,23 @@ Expr         ::=    LValue:l ASSIGN Expr:e
                |    BTOI LPAREN Expr RPAREN;
                         //TODO
 
-LValue       ::=    Identifier
-                        //TODO
-               |    Expr DOT Identifier
-                        //TODO
-               |    Expr LBRACK Expr RBRACK ;
-                        //TODO
+LValue       ::=    Identifier:i
+                        {: RESULT = i; :}
+               |    Expr:e DOT Identifier:i
+                        {:
+                            RESULT = new SimpleNode(NodeType.FIELD);
+                            RESULT.addChild(e, i);
+                            e.setParent(RESULT);
+                            i.setParent(RESULT);
+                        :}
+               |    Expr:e1 LBRACK Expr:e2 RBRACK
+                        {:
+                            RESULT = new SimpleNode(NodeType.ARRAY_USE);
+                            RESULT.addChild(e1, e2);
+                            e1.setParent(RESULT);
+                            e2.setParent(RESULT);
+                        :}
+               ;
 
 Call         ::=    Identifier LPAREN Actuals RPAREN
                         //TODO
