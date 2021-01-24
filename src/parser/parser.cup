@@ -134,8 +134,12 @@ Type         ::= INT
                     {: RESULT = new PrimitiveNode(NodeType.STRING_TYPE, PrimitiveType.STRING); :}
                 | Identifier:i
                     {: RESULT = i; :}
-                | Type BRACK
-                    //TODO
+                | Type:t BRACK
+                    {:
+                        RESULT = new SimpleNode(NodeType.ARRAY_TYPE);
+                        RESULT.addChild(t);
+                        t.setParent(RESULT);
+                    :}
                 ; //We use Brack insted of LBRACK RBRACK because of Reduce/Reduce conflict
 
 FunctionDecl ::= Type:t Identifier:i LPAREN Formals:f RPAREN StmtBlock:s

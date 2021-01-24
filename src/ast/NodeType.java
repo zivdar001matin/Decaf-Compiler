@@ -46,6 +46,7 @@ public enum NodeType {
     STRING_TYPE,
     VOID,
     AUTO_TYPE,
+    ARRAY_TYPE,
 
     /*Declarations*/
     FIELD_DECLARATION,
