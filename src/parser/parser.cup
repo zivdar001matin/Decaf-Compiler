@@ -247,7 +247,7 @@ VarDecls     ::= VarDecls:vs VariableDecl:v
                         v.setParent(vs);
                     :}
                | /*epsilon*/
-                    {: RESULT = new EmptyNode(); :}
+                    {: RESULT = new SimpleNode(NodeType.MULTIPLE_VARIABLE_DECLARATION); :}
                ;
 Stmts        ::= Stmt:s Stmts:ss
                     {:

@@ -3,13 +3,14 @@ package symboltable;
 import java.util.ArrayList;
 
 public class SymbolTable {
+
+    public SymbolTable() {
+        currentScope = root;
+    }
+
     //    private static final ArrayList<Scope> scopes = new ArrayList<>();
     private static final Scope root = new Scope("Root Scope", null);
     private static Scope currentScope;
-
-    static {
-        currentScope = root;
-    }
 
     /**
      * scopeCrawler crawls parent untill reach the *Root Scope*.
@@ -49,7 +50,7 @@ public class SymbolTable {
      *
      * @param name name of the current scope. It can be function name, class name, etc.
      */
-    void enterScope(String name) {
+    public void enterScope(String name) {
         Scope newScope = new Scope(name, currentScope);
         currentScope.addChild(newScope);
         currentScope = newScope;
@@ -58,7 +59,7 @@ public class SymbolTable {
     /**
      * Remember to use when you are going to leave your scope.
      */
-    void leaveScope() {
+    public void leaveScope() {
         currentScope = currentScope.getParent();
     }
 }
