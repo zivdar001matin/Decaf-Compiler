@@ -11,7 +11,7 @@ Source for project/
 **/testsANDscripts/
 
 # Files made with Flex and CUP
-src/Scanner.java
+src/scanner/Scanner.java
 src/Scanner.java~
-src/sym.java
-src/parser.java
+src/parser/sym.java
+src/parser/parser.java

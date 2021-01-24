@@ -1,4 +1,6 @@
 import ast.RootNode;
+import parser.parser;
+import scanner.Scanner;
 
 import java.io.File;
 import java.io.FileReader;
@@ -11,7 +13,7 @@ public class Main {
 //        System.err.close();
 //        try {
             parser.parse();
-            RootNode root = parser.root;
+            RootNode root = parser.getRoot();
             System.out.println("OK");
 //        }catch (Exception e){
 //            System.out.println("Syntax Error");

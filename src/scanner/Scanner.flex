@@ -1,4 +1,5 @@
 import java_cup.runtime.*;
+import parser.sym;
 %%
 
 %public
