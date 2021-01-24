@@ -391,54 +391,226 @@ Expr         ::=    LValue:l ASSIGN Expr:e
                         RESULT.addChild(c);
                         c.setParent(RESULT);
                     :}
-               |    LPAREN Expr RPAREN
-                        //TODO
-               |    Expr PLUS Expr
-                        //TODO
-               |    Expr MINUS Expr
-                        //TODO
-               |    Expr PROD Expr
-                        //TODO
-               |    Expr DIV Expr
-                        //TODO
-               |    Expr MOD Expr
-                        //TODO
-               |    MINUS Expr
-                        //TODO
-               |    Expr LESS Expr
-                        //TODO
-               |    Expr LESSEQ Expr
-                        //TODO
-               |    Expr GT Expr
-                        //TODO
-               |    Expr GTEQ Expr
-                        //TODO
-               |    Expr EQ Expr
-                        //TODO
-               |    Expr NOTEQ Expr
-                        //TODO
-               |    Expr AND Expr
-                        //TODO
-               |    Expr OR Expr
-                        //TODO
-               |    NOT Expr
-                        //TODO
+               |    LPAREN Expr:e RPAREN
+                        {: RESULT = e; :}
+               |    Expr:e1 PLUS Expr:e2
+                    {:
+                        RESULT = new ExpressionNode();
+                        Node t = new SimpleNode(NodeType.ADDITION);
+                        t.addChild(e1, e2);
+                        RESULT.addChild(t);
+                        t.setParent(RESULT);
+                        e1.setParent(t);
+                        e2.setParent(t);
+                    :}
+               |    Expr:e1 MINUS Expr:e2
+                    {:
+                        RESULT = new ExpressionNode();
+                        Node t = new SimpleNode(NodeType.SUBTRACTION);
+                        t.addChild(e1, e2);
+                        RESULT.addChild(t);
+                        t.setParent(RESULT);
+                        e1.setParent(t);
+                        e2.setParent(t);
+                    :}
+               |    Expr:e1 PROD Expr:e2
+                     {:
+                         RESULT = new ExpressionNode();
+                         Node t = new SimpleNode(NodeType.MULTIPLICATION);
+                         t.addChild(e1, e2);
+                         RESULT.addChild(t);
+                         t.setParent(RESULT);
+                         e1.setParent(t);
+                         e2.setParent(t);
+                     :}
+               |    Expr:e1 DIV Expr:e2
+                     {:
+                         RESULT = new ExpressionNode();
+                         Node t = new SimpleNode(NodeType.DIVISION);
+                         t.addChild(e1, e2);
+                         RESULT.addChild(t);
+                         t.setParent(RESULT);
+                         e1.setParent(t);
+                         e2.setParent(t);
+                     :}
+               |    Expr:e1 MOD Expr:e2
+                     {:
+                         RESULT = new ExpressionNode();
+                         Node t = new SimpleNode(NodeType.MOD);
+                         t.addChild(e1, e2);
+                         RESULT.addChild(t);
+                         t.setParent(RESULT);
+                         e1.setParent(t);
+                         e2.setParent(t);
+                     :}
+               |    MINUS Expr:e
+                     {:
+                         RESULT = new ExpressionNode();
+                         Node t = new SimpleNode(NodeType.UNARY_MINUS);
+                         t.addChild(e);
+                         RESULT.addChild(t);
+                         t.setParent(RESULT);
+                         e.setParent(t);
+                     :}
+               |    Expr:e1 LESS Expr:e2
+                     {:
+                         RESULT = new ExpressionNode();
+                         Node t = new SimpleNode(NodeType.LESS_THAN);
+                         t.addChild(e1, e2);
+                         RESULT.addChild(t);
+                         t.setParent(RESULT);
+                         e1.setParent(t);
+                         e2.setParent(t);
+                     :}
+               |    Expr:e1 LESSEQ Expr:e2
+                     {:
+                         RESULT = new ExpressionNode();
+                         Node t = new SimpleNode(NodeType.LESS_THAN_OR_EQUAL);
+                         t.addChild(e1, e2);
+                         RESULT.addChild(t);
+                         t.setParent(RESULT);
+                         e1.setParent(t);
+                         e2.setParent(t);
+                     :}
+               |    Expr:e1 GT Expr:e2
+                     {:
+                         RESULT = new ExpressionNode();
+                         Node t = new SimpleNode(NodeType.GREATER_THAN);
+                         t.addChild(e1, e2);
+                         RESULT.addChild(t);
+                         t.setParent(RESULT);
+                         e1.setParent(t);
+                         e2.setParent(t);
+                     :}
+               |    Expr:e1 GTEQ Expr:e2
+                     {:
+                         RESULT = new ExpressionNode();
+                         Node t = new SimpleNode(NodeType.GREATER_THAN_OR_EQUAL);
+                         t.addChild(e1, e2);
+                         RESULT.addChild(t);
+                         t.setParent(RESULT);
+                         e1.setParent(t);
+                         e2.setParent(t);
+                     :}
+               |    Expr:e1 EQ Expr:e2
+                     {:
+                         RESULT = new ExpressionNode();
+                         Node t = new SimpleNode(NodeType.EQUAL);
+                         t.addChild(e1, e2);
+                         RESULT.addChild(t);
+                         t.setParent(RESULT);
+                         e1.setParent(t);
+                         e2.setParent(t);
+                     :}
+               |    Expr:e1 NOTEQ Expr:e2
+                     {:
+                         RESULT = new ExpressionNode();
+                         Node t = new SimpleNode(NodeType.NOT_EQUAL);
+                         t.addChild(e1, e2);
+                         RESULT.addChild(t);
+                         t.setParent(RESULT);
+                         e1.setParent(t);
+                         e2.setParent(t);
+                     :}
+               |    Expr:e1 AND Expr:e2
+                     {:
+                         RESULT = new ExpressionNode();
+                         Node t = new SimpleNode(NodeType.BOOLEAN_AND);
+                         t.addChild(e1, e2);
+                         RESULT.addChild(t);
+                         t.setParent(RESULT);
+                         e1.setParent(t);
+                         e2.setParent(t);
+                     :}
+               |    Expr:e1 OR Expr:e2
+                     {:
+                         RESULT = new ExpressionNode();
+                         Node t = new SimpleNode(NodeType.BOOLEAN_OR);
+                         t.addChild(e1, e2);
+                         RESULT.addChild(t);
+                         t.setParent(RESULT);
+                         e1.setParent(t);
+                         e2.setParent(t);
+                     :}
+               |    NOT Expr:e
+                     {:
+                         RESULT = new ExpressionNode();
+                         Node t = new SimpleNode(NodeType.BOOLEAN_NOT);
+                         t.addChild(e);
+                         RESULT.addChild(t);
+                         t.setParent(RESULT);
+                         e.setParent(t);
+                     :}
                |    READINTEGER LPAREN RPAREN
-                        //TODO
+                     {:
+                         RESULT = new ExpressionNode();
+                         Node t = new SimpleNode(NodeType.READ_INTEGER);
+                         RESULT.addChild(t);
+                         t.setParent(RESULT);
+                     :}
                |    READLINE LPAREN RPAREN
-                        //TODO
-               |    NEW Identifier
-                        //TODO
-               |    NEWARRAY LPAREN Expr COMMA Type RPAREN
-                        //TODO
-               |    ITOD LPAREN Expr RPAREN
-                        //TODO
-               |    DTOI LPAREN Expr RPAREN
-                        //TODO
-               |    ITOB LPAREN Expr RPAREN
-                        //TODO
-               |    BTOI LPAREN Expr RPAREN;
-                        //TODO
+                     {:
+                         RESULT = new ExpressionNode();
+                         Node t = new SimpleNode(NodeType.READ_LINE);
+                         RESULT.addChild(t);
+                         t.setParent(RESULT);
+                     :}
+               |    NEW Identifier:i
+                     {:
+                         RESULT = new ExpressionNode();
+                         Node t = new SimpleNode(NodeType.NEW_IDENTIFIER);
+                         t.addChild(i);
+                         RESULT.addChild(t);
+                         t.setParent(RESULT);
+                         i.setParent(t);
+                     :}
+               |    NEWARRAY LPAREN Expr:e COMMA Type:t RPAREN
+                     {:
+                         RESULT = new ExpressionNode();
+                         Node s = new SimpleNode(NodeType.ARRAY_DECLARATION);
+                         s.addChild(e, t);
+                         RESULT.addChild(t);
+                         s.setParent(RESULT);
+                         e.setParent(s);
+                         t.setParent(s);
+                     :}
+               |    ITOD LPAREN Expr:e RPAREN
+                     {:
+                         RESULT = new ExpressionNode();
+                         Node t = new SimpleNode(NodeType.ITOD);
+                         t.addChild(e);
+                         RESULT.addChild(t);
+                         t.setParent(RESULT);
+                         e.setParent(t);
+                     :}
+               |    DTOI LPAREN Expr:e RPAREN
+                     {:
+                         RESULT = new ExpressionNode();
+                         Node t = new SimpleNode(NodeType.DTOI);
+                         t.addChild(e);
+                         RESULT.addChild(t);
+                         t.setParent(RESULT);
+                         e.setParent(t);
+                     :}
+               |    ITOB LPAREN Expr:e RPAREN
+                     {:
+                         RESULT = new ExpressionNode();
+                         Node t = new SimpleNode(NodeType.ITOD);
+                         t.addChild(e);
+                         RESULT.addChild(t);
+                         t.setParent(RESULT);
+                         e.setParent(t);
+                     :}
+               |    BTOI LPAREN Expr:e RPAREN
+                     {:
+                         RESULT = new ExpressionNode();
+                         Node t = new SimpleNode(NodeType.ITOD);
+                         t.addChild(e);
+                         RESULT.addChild(t);
+                         t.setParent(RESULT);
+                         e.setParent(t);
+                     :}
+               ;
 
 LValue       ::=    Identifier:i
                         {: RESULT = i; :}

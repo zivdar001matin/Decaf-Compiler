@@ -36,6 +36,16 @@ public enum NodeType {
     BOOLEAN_NOT,
     BOOLEAN_OR,
 
+    /*Decaf new expressions*/
+    READ_INTEGER,
+    READ_LINE,
+    NEW_IDENTIFIER,
+    ITOD,
+    DTOI,
+    ITOB,
+    BTOI,
+
+
     /*Types*/
     BOOLEAN_TYPE,
     DOUBLE_TYPE,
