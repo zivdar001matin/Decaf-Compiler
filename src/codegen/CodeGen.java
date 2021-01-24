@@ -1,6 +1,10 @@
 package codegen;
 
+import ast.IdentifierNode;
 import ast.Node;
+import ast.PrimitiveNode;
+import ast.Type;
+import symboltable.DSCP;
 import symboltable.SymbolTable;
 
 import java.io.FileWriter;
@@ -13,10 +17,13 @@ public class CodeGen {
     public static String dataSeg = ".data\n" ;
     public static String textSeg = ".text\n";
 
-    public static void cgen(Node node){
+    public static void cgen(Node node) throws Exception {
         switch (node.getNodeType()){
             case BLOCK:
                 cgenBlock(node);
+                break;
+            case VARIABLE_DECLARATION:
+                cgenVariableDecl(node);
                 break;
             case ADDITION:
                 cgenAdditon(node);
@@ -27,13 +34,21 @@ public class CodeGen {
         }
     }
 
-    private static void cgenBlock(Node node) {
+    private static void cgenVariableDecl(Node node) throws Exception {
+        Type typePrimitive = ((PrimitiveNode)node.getChild(0)).getType();
+        IdentifierNode identifierNode = (IdentifierNode) node.getChild(1);
+        DSCP dscp = new DSCP(typePrimitive, identifierNode);
+//        dscp.setConstant(); //TODO
+        spaghettiStack.addEntry(identifierNode.getValue(), dscp);
+    }
+
+    private static void cgenBlock(Node node) throws Exception {
         spaghettiStack.enterScope(String.valueOf(node.getParent().getChild(1)));
         cgenAllChildren(node);
         spaghettiStack.leaveScope();
     }
 
-    private static void cgenAllChildren(Node node) {
+    private static void cgenAllChildren(Node node) throws Exception {
         for (Node child : node.getChildren()) {
             cgen(child);
         }
