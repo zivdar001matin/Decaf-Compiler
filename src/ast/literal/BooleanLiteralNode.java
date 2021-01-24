@@ -6,10 +6,10 @@ public class BooleanLiteralNode extends Literal {
     private final boolean value;
     private final int intVal;
 
-    public BooleanLiteralNode(boolean value) {
+    public BooleanLiteralNode(String value) {
         super(PrimitiveType.BOOL);
-        this.value = value;
-        intVal = value ? 1 : 0;
+        this.value = Boolean.parseBoolean(value);
+        intVal = this.value ? 1 : 0;
     }
 
     public int getIntVal() { //todo

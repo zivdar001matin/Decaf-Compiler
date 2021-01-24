@@ -18,7 +18,7 @@ parser code {:
 // Types
 terminal VOID, INT, DOUBLE, BOOL, STRING;
 // Boolean
-terminal Boolean T_BOOLEANLITERAL;
+terminal String T_BOOLEANLITERAL;
 // Other reserved
 terminal CLASS, INTERFACE, NULL, THIS, EXTENDS, IMPLEMENTS, FOR, WHILE, IF, ELSE, RETURN, BREAK, CONTINUE, NEW, NEWARRAY, PRINT, READINTEGER, READLINE, DTOI, ITOD, BTOI, ITOB, PRIVATE, PROTECTED, PUBLIC;
 
@@ -26,8 +26,8 @@ terminal CLASS, INTERFACE, NULL, THIS, EXTENDS, IMPLEMENTS, FOR, WHILE, IF, ELSE
 terminal String T_ID;
 
 /* literals */
-terminal Integer T_INTLITERAL;
-terminal Double T_DOUBLELITERAL;
+terminal String T_INTLITERAL;
+terminal String T_DOUBLELITERAL;
 terminal String T_STRINGLITERAL;
 
 /* operators */

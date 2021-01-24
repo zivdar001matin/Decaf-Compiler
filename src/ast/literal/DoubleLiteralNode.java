@@ -5,9 +5,9 @@ import ast.PrimitiveType;
 public class DoubleLiteralNode extends Literal {
     private final Double value;
 
-    public DoubleLiteralNode(Double value) {
+    public DoubleLiteralNode(String value) {
         super(PrimitiveType.DOUBLE);
-        this.value = value;
+        this.value = Double.valueOf(value);
     }
 
     @Override

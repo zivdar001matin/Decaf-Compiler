@@ -1,3 +1,4 @@
+import ast.Node;
 import ast.RootNode;
 import parser.parser;
 import scanner.Scanner;
@@ -12,11 +13,21 @@ public class Main {
         parser parser = new parser(scanner);
 //        System.err.close();
 //        try {
-            parser.parse();
-            RootNode root = parser.getRoot();
-            System.out.println("OK");
+        parser.parse();
+        RootNode root = parser.getRoot();
+        System.out.println("OK");
+        printTree(parser.getRoot());
 //        }catch (Exception e){
 //            System.out.println("Syntax Error");
 //        }
+    }
+
+    private static void printTree(Node node) {
+        for (Node child : node.getChildren()) {
+            System.out.println(child + " ---------> " + node);
+        }
+        for (Node child : node.getChildren()) {
+            printTree(child);
+        }
     }
 }

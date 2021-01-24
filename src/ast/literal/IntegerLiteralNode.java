@@ -5,9 +5,9 @@ import ast.PrimitiveType;
 public class IntegerLiteralNode extends Literal {
     private final int value;
 
-    public IntegerLiteralNode(int value) {
+    public IntegerLiteralNode(String value) {
         super(PrimitiveType.INT);
-        this.value = value;
+        this.value = Integer.parseInt(value);
     }
 
     @Override
