@@ -90,5 +90,6 @@ public enum NodeType {
     ARRAY_USE,
     CLASS,
     NULL_LITERAL,
+    THIS,
     START
 }
