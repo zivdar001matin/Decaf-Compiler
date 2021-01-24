@@ -14,6 +14,7 @@ public class Scope {
         this.scope = new HashMap<>();
         this.name = name;
         this.parent = parent;
+        children = new ArrayList<>();
     }
 
     public HashMap<String, DSCP> getScope() {
