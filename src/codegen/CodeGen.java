@@ -63,6 +63,9 @@ public class CodeGen {
         DSCP identifierDSCP = spaghettiStack.getDSCP(identifierNode.toString());
 
         identifierDSCP.setValue(value);
+
+        //continue code generating
+        cgen(node.getChild(2));
     }
 
     private static void cgenVariableDecl(Node node) throws Exception {
