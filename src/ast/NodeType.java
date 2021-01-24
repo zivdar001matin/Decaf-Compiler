@@ -75,6 +75,7 @@ public enum NodeType {
     CASE_STATEMENT,
     FOR_STATEMENT,
     FOREACH_STATEMENT,
+    PRINT_STATEMENT,
 
     LITERAL,
     ARGUMENT,

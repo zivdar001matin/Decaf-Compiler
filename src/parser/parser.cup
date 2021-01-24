@@ -204,9 +204,21 @@ Fields       ::= Fields Field
                     {: RESULT = new EmptyNode(); :}
                ;
 
-Field        ::= AccessMode VariableDecl  | AccessMode FunctionDecl ;
+Field        ::= AccessMode VariableDecl
+                    //TODO
+               | AccessMode FunctionDecl
+                    //TODO
+               ;
 
-AccessMode   ::= PRIVATE | PROTECTED | PUBLIC | /*epsilon*/ ;
+AccessMode   ::= PRIVATE
+                    //TODO
+               | PROTECTED
+                    //TODO
+               | PUBLIC
+                    //TODO
+               | /*epsilon*/
+                    //TODO
+               ;
 
 InterfaceDecl::= INTERFACE Identifier OPENAC ProtoTypes CLOSEAC;
 ProtoTypes   ::= ProtoTypes ProtoType | /*epsilon*/ ;
@@ -214,76 +226,231 @@ ProtoTypes   ::= ProtoTypes ProtoType | /*epsilon*/ ;
 ProtoType    ::= Type Identifier LPAREN Formals RPAREN SEMI
                | VOID Identifier LPAREN Formals RPAREN SEMI;
 
-StmtBlock    ::= OPENAC VarDecls Stmts CLOSEAC ;
-VarDecls     ::= VarDecls VariableDecl  | /*epsilon*/ ;
-Stmts        ::= Stmt Stmts | /*epsilon*/ ;
+StmtBlock    ::= OPENAC VarDecls:v Stmts:s CLOSEAC
+                    {:
+                        RESULT = new SimpleNode(NodeType.BLOCK);
+                        RESULT.addChild(v, s);
+                        v.setParent(RESULT);
+                        s.setParent(RESULT);
+                    :}
+               ;
+VarDecls     ::= VarDecls:vs VariableDecl:v
+                    {:
+                        RESULT = vs;
+                        vs.addChild(v);
+                        v.setParent(vs);
+                    :}
+               | /*epsilon*/
+                    {: RESULT = new EmptyNode(); :}
+               ;
+Stmts        ::= Stmt:s Stmts:ss
+                    {:
+                        RESULT = s;
+                        s.addChild(ss);
+                        ss.setParent(s);
+                    :}
+               | /*epsilon*/
+                    {: RESULT = new EmptyNode(); :}
+               ;
 
-Stmt         ::= Expr SEMI | /*epsilon*/ SEMI
-               | IfStmt
-               | WhileStmt
-               | ForStmt
-               | BreakStmt
-               | ContinueStmt
-               | ReturnStmt
-               | PrintStmt
-               | StmtBlock;
+Stmt         ::= Expr:e SEMI
+                    {: RESULT = e; :}
+               | /*epsilon*/ SEMI
+                    {: RESULT = new EmptyNode(); :}
+               | IfStmt:s
+                    {: RESULT = s; :}
+               | WhileStmt:s
+                    {: RESULT = s; :}
+               | ForStmt:s
+                    {: RESULT = s; :}
+               | BreakStmt:s
+                    {: RESULT = s; :}
+               | ContinueStmt:s
+                    {: RESULT = s; :}
+               | ReturnStmt:s
+                    {: RESULT = s; :}
+               | PrintStmt:s
+                    {: RESULT = s; :}
+               | StmtBlock:s
+                    {: RESULT = s; :}
+               ;
 
-IfStmt       ::= IF LPAREN Expr RPAREN Stmt
-               | IF LPAREN Expr RPAREN Stmt ELSE Stmt;
+IfStmt       ::= IF LPAREN Expr:e RPAREN Stmt:s
+                    {:
+                        RESULT = new SimpleNode(NodeType.IF_STATEMENT);
+                        RESULT.addChild(e, s);
+                        e.setParent(RESULT);
+                        s.setParent(RESULT);
+                    :}
+               | IF LPAREN Expr:e RPAREN Stmt:s1 ELSE Stmt:s2
+                    {:
+                        RESULT = new SimpleNode(NodeType.IF_STATEMENT);
+                        RESULT.addChild(e, s1, s2);
+                        e.setParent(RESULT);
+                        s1.setParent(RESULT);
+                        s2.setParent(RESULT);
+                    :}
+               ;
 
-WhileStmt    ::= WHILE LPAREN Expr RPAREN Stmt ;
+WhileStmt    ::= WHILE LPAREN Expr:e RPAREN Stmt:s
+                    {:
+                        RESULT = new SimpleNode(NodeType.REPEAT_STATEMENT); //TODO check REPEAT_STATEMENT vs WHILE_STATEMENT
+                        RESULT.addChild(e, s);
+                        e.setParent(RESULT);
+                        s.setParent(RESULT);
+                    :}
+               ;
 
-ForStmt      ::= FOR LPAREN ExprOrNot SEMI Expr SEMI ExprOrNot RPAREN Stmt ;
-ExprOrNot    ::= Expr  | /*epsilon*/ ;
+ForStmt      ::= FOR LPAREN ExprOrNot:eon1 SEMI Expr:e SEMI ExprOrNot:eon2 RPAREN Stmt:s
+                    {:
+                        RESULT = new SimpleNode(NodeType.FOR_STATEMENT);
+                        RESULT.addChild(eon1, e, eon2, s);
+                        eon1.setParent(RESULT);
+                        e.setParent(RESULT);
+                        eon2.setParent(RESULT);
+                        s.setParent(RESULT);
+                    :}
+               ;
+ExprOrNot    ::= Expr:e
+                    {: RESULT = e; :}
+               | /*epsilon*/
+                    {: RESULT = new EmptyNode(); :}
+               ;
 
-ReturnStmt   ::= RETURN ExprOrNot SEMI ;
+ReturnStmt   ::= RETURN ExprOrNot:eon SEMI
+                    {:
+                        RESULT = new SimpleNode(NodeType.RETURN_STATEMENT);
+                        RESULT.addChild(eon);
+                    :}
+               ;
 
-BreakStmt    ::= BREAK SEMI ;
+BreakStmt    ::= BREAK SEMI
+                    {: RESULT = new SimpleNode(NodeType.BREAK_STATEMENT); :}
+               ;
 
-ContinueStmt ::= CONTINUE SEMI;
+ContinueStmt ::= CONTINUE SEMI
+                    {: RESULT = new SimpleNode(NodeType.CONTINUE_STATEMENT); :}
+               ;
 
-PrintStmt    ::=    PRINT LPAREN Exprs RPAREN SEMI ;
-Exprs        ::=    Expr
-               |    Exprs COMMA Expr ;
+PrintStmt    ::=    PRINT LPAREN Exprs:es RPAREN SEMI
+                    {:
+                        RESULT = new SimpleNode(NodeType.PRINT_STATEMENT);
+                        RESULT.addChild(es);
+                        es.setParent(RESULT);
+                    :}
+               ;
+Exprs        ::=    Expr:e
+                    {:
+                        RESULT = new ExpressionNode();
+                        RESULT.addChild(e);
+                        e.setParent(RESULT);
+                    :}
+               |    Exprs:es COMMA Expr:e
+                    {:
+                        RESULT = es;
+                        RESULT.addChild(e);
+                        e.setParent(RESULT);
+                    :}
+               ;
 
-Expr         ::=    LValue ASSIGN Expr
-               |    Constant
-               |    LValue
+Expr         ::=    LValue:l ASSIGN Expr:e
+                    {:
+                        RESULT = new ExpressionNode();
+                        RESULT.addChild(l, e);
+                        l.setParent(RESULT);
+                        e.setParent(RESULT);
+                    :}
+               |    Constant:c
+                    {:
+                        RESULT = new ExpressionNode();
+                        RESULT.addChild(c);
+                        c.setParent(RESULT);
+                    :}
+               |    LValue:l
+                    {:
+                        RESULT = new ExpressionNode();
+                        RESULT.addChild(l);
+                        l.setParent(RESULT);
+                    :}
                |    THIS
-               |    Call
+                    {:
+                        RESULT = new ExpressionNode();
+                        Node t = new SimpleNode(NodeType.THIS);
+                        RESULT.addChild(t);
+                        t.setParent(RESULT);
+                    :}
+               |    Call:c
+                    {:
+                        RESULT = new ExpressionNode();
+                        RESULT.addChild(c);
+                        c.setParent(RESULT);
+                    :}
                |    LPAREN Expr RPAREN
+                        //TODO
                |    Expr PLUS Expr
+                        //TODO
                |    Expr MINUS Expr
+                        //TODO
                |    Expr PROD Expr
+                        //TODO
                |    Expr DIV Expr
+                        //TODO
                |    Expr MOD Expr
+                        //TODO
                |    MINUS Expr
+                        //TODO
                |    Expr LESS Expr
+                        //TODO
                |    Expr LESSEQ Expr
+                        //TODO
                |    Expr GT Expr
+                        //TODO
                |    Expr GTEQ Expr
+                        //TODO
                |    Expr EQ Expr
+                        //TODO
                |    Expr NOTEQ Expr
+                        //TODO
                |    Expr AND Expr
+                        //TODO
                |    Expr OR Expr
+                        //TODO
                |    NOT Expr
+                        //TODO
                |    READINTEGER LPAREN RPAREN
+                        //TODO
                |    READLINE LPAREN RPAREN
+                        //TODO
                |    NEW Identifier
+                        //TODO
                |    NEWARRAY LPAREN Expr COMMA Type RPAREN
+                        //TODO
                |    ITOD LPAREN Expr RPAREN
+                        //TODO
                |    DTOI LPAREN Expr RPAREN
+                        //TODO
                |    ITOB LPAREN Expr RPAREN
+                        //TODO
                |    BTOI LPAREN Expr RPAREN;
+                        //TODO
 
 LValue       ::=    Identifier
+                        //TODO
                |    Expr DOT Identifier
+                        //TODO
                |    Expr LBRACK Expr RBRACK ;
+                        //TODO
 
 Call         ::=    Identifier LPAREN Actuals RPAREN
+                        //TODO
                |    Expr DOT Identifier LPAREN Actuals RPAREN ;
+                        //TODO
 
-Actuals      ::=    Exprs | /*epsilon*/ ;
+Actuals      ::=    Exprs
+                        //TODO
+               | /*epsilon*/
+                        //TODO
+               ;
 
 Constant    ::=    T_INTLITERAL:t
                         {: RESULT = new IntegerLiteralNode(t); :}
