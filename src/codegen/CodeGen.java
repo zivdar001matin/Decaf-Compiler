@@ -1,9 +1,7 @@
 package codegen;
 
-import ast.IdentifierNode;
-import ast.Node;
-import ast.PrimitiveNode;
-import ast.Type;
+import ast.*;
+import ast.literal.Literal;
 import symboltable.DSCP;
 import symboltable.SymbolTable;
 
@@ -12,18 +10,27 @@ import java.io.IOException;
 
 public class CodeGen {
 
-    private static final SymbolTable  spaghettiStack = new SymbolTable();
+    private static final SymbolTable spaghettiStack = new SymbolTable();
 
-    public static String dataSeg = ".data\n" ;
+    public static String dataSeg = ".data\n";
     public static String textSeg = ".text\n";
 
     public static void cgen(Node node) throws Exception {
-        switch (node.getNodeType()){
+        switch (node.getNodeType()) {
             case BLOCK:
                 cgenBlock(node);
                 break;
             case VARIABLE_DECLARATION:
                 cgenVariableDecl(node);
+                break;
+            case ASSIGN:
+                cgenAssign(node);
+                break;
+            case EXPRESSION_STATEMENT:
+                cgenExpressionStatement(node);
+                break;
+            case LITERAL:
+                cgenLiteral((Literal) node);
                 break;
             case ADDITION:
                 cgenAdditon(node);
@@ -34,8 +41,32 @@ public class CodeGen {
         }
     }
 
+    private static void cgenLiteral(Literal node) throws Exception {
+        ((ExpressionNode) node.getParent()).setIsIdentifier();
+        DSCP dscp = new DSCP(node.getType(), null);
+        dscp.setValue(String.valueOf(node));
+        node.setDSCP(dscp);
+    }
+
+    private static void cgenExpressionStatement(Node node) throws Exception {
+        cgen(node.getChild(0));
+        node.setDSCP(node.getChild(0).getDSCP());
+    }
+
+    private static void cgenAssign(Node node) throws Exception {
+        IdentifierNode identifierNode = (IdentifierNode) node.getChild(0);
+        ExpressionNode expressionNode = (ExpressionNode) node.getChild(1);
+
+        cgen(expressionNode);
+        String value = expressionNode.getDSCP().getValue();
+
+        DSCP identifierDSCP = spaghettiStack.getDSCP(identifierNode.toString());
+
+        identifierDSCP.setValue(value);
+    }
+
     private static void cgenVariableDecl(Node node) throws Exception {
-        Type typePrimitive = ((PrimitiveNode)node.getChild(0)).getType();
+        Type typePrimitive = ((PrimitiveNode) node.getChild(0)).getType();
         IdentifierNode identifierNode = (IdentifierNode) node.getChild(1);
         DSCP dscp = new DSCP(typePrimitive, identifierNode);
 //        dscp.setConstant(); //TODO

@@ -23,6 +23,6 @@ public class IdentifierNode extends SimpleNode{
 
     @Override
     public String toString() {
-        return "%"+value;
+        return value;
     }
 }

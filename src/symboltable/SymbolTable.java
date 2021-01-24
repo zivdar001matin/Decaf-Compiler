@@ -19,7 +19,7 @@ public class SymbolTable {
      * @return DCSP for given entry.
      * @throws Exception when given entry wasn't in any scope of parents.
      */
-    public static DSCP getDSCP(String entry) throws Exception {
+    public DSCP getDSCP(String entry) throws Exception {
         Scope scopeCrawler = currentScope;
         while (true) {
             if (scopeCrawler.getScope().get(entry) != null)

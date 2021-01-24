@@ -361,7 +361,7 @@ Exprs        ::=    Expr:e
 
 Expr         ::=    LValue:l ASSIGN Expr:e
                     {:
-                        RESULT = new ExpressionNode();
+                        RESULT = new SimpleNode(NodeType.ASSIGN);
                         RESULT.addChild(l, e);
                         l.setParent(RESULT);
                         e.setParent(RESULT);

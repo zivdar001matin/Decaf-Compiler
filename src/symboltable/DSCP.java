@@ -6,6 +6,16 @@ import ast.Type;
 public class DSCP {
     private Type type;
     private Node node;
+    private String value;
+
+    public String getValue() {
+        return value;
+    }
+
+    public void setValue(String value) {
+        this.value = value;
+    }
+
     private boolean isConstant;
 
     public DSCP(Type type, Node node) {

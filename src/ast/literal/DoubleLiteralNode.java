@@ -12,9 +12,7 @@ public class DoubleLiteralNode extends Literal {
 
     @Override
     public String toString() {
-        return "DoubleLiteralNode{" +
-                "value=" + value +
-                '}';
+        return value.toString();
     }
 
     public Double getValue() {

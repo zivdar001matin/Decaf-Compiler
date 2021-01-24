@@ -6,6 +6,8 @@ import scanner.Scanner;
 import java.io.File;
 import java.io.FileReader;
 
+import static codegen.CodeGen.cgen;
+
 public class Main {
     public static void main(String[] args) throws Exception {
         FileReader fr = new FileReader(new File("src/parser/testsANDscripts/test3.txt"));
@@ -17,6 +19,8 @@ public class Main {
         RootNode root = parser.getRoot();
         System.out.println("OK");
         printTree(parser.getRoot());
+        cgen(parser.getRoot());
+        System.out.println("cgen Completed!");
 //        }catch (Exception e){
 //            System.out.println("Syntax Error");
 //        }
