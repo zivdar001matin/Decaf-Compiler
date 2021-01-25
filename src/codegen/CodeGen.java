@@ -38,6 +38,9 @@ public class CodeGen {
             case SUBTRACTION:
                 cgenSubtraction(node);
                 break;
+            case MULTIPLICATION:
+                cgenMultiplication(node);
+                break;
             default:
                 cgenAllChildren(node);
                 break;
@@ -120,6 +123,22 @@ public class CodeGen {
             value = String.valueOf(Integer.parseInt(leftChild.getResultName()) - Integer.parseInt(rightChild.getResultName()));
         else if (type.equals(PrimitiveType.DOUBLE))
             value = String.valueOf(Double.parseDouble(leftChild.getResultName()) - Double.parseDouble(rightChild.getResultName()));
+        dscp.setValue(value);
+        node.setDSCP(dscp);
+    }
+
+    private static void cgenMultiplication(Node node) throws Exception {
+        ExpressionNode leftChild = (ExpressionNode) node.getChild(0);
+        ExpressionNode rightChild = (ExpressionNode) node.getChild(1);
+        cgen(leftChild);
+        cgen(rightChild);
+        Type type = widen(leftChild, rightChild);
+        DSCP dscp = new DSCP(type, null);
+        String value = null;
+        if (type.equals(PrimitiveType.INT))
+            value = String.valueOf(Integer.parseInt(leftChild.getResultName()) * Integer.parseInt(rightChild.getResultName()));
+        else if (type.equals(PrimitiveType.DOUBLE))
+            value = String.valueOf(Double.parseDouble(leftChild.getResultName()) * Double.parseDouble(rightChild.getResultName()));
         dscp.setValue(value);
         node.setDSCP(dscp);
     }
