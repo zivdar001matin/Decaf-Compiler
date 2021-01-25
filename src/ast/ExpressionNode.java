@@ -2,6 +2,8 @@ package ast;
 
 import ast.literal.Literal;
 
+import java.util.stream.Stream;
+
 public class ExpressionNode extends SimpleNode {
     private boolean isIdentifier;
     private String resultName;
@@ -27,7 +29,7 @@ public class ExpressionNode extends SimpleNode {
             if (id.getDSCP() == null)
                 throw new Exception(id.getValue() + " not declared");
             type = id.getDSCP().getType();
-        } else if (this.getChild(0).getNodeType().equals(NodeType.ADDITION)){
+        } else if (Stream.of(NodeType.ADDITION, NodeType.SUBTRACTION, NodeType.MULTIPLICATION, NodeType.DIVISION).anyMatch(nodeType -> this.getChild(0).getNodeType().equals(nodeType))){
             type = this.getChild(0).getDSCP().getType();
             resultName = this.getChild(0).getDSCP().getValue();
             this.setDSCP(this.getChild(0).getDSCP());

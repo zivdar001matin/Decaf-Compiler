@@ -36,13 +36,13 @@ public class CodeGen {
                 cgenAdditon(node);
                 break;
             case SUBTRACTION:
-                cgenSubtraction(node);  // TODO cascading
+                cgenSubtraction(node);
                 break;
             case MULTIPLICATION:
-                cgenMultiplication(node);  // TODO cascading
+                cgenMultiplication(node);
                 break;
             case DIVISION:
-                cgenDivision(node);  // TODO cascading
+                cgenDivision(node);
                 break;
             default:
                 cgenAllChildren(node);
@@ -122,9 +122,7 @@ public class CodeGen {
         ExpressionNode rightChild = (ExpressionNode) node.getChild(1);
         cgen(leftChild);
         cgen(rightChild);
-        widen(leftChild, rightChild);
-        IdentifierNode identifierNode = (IdentifierNode) node.getParent().getParent().getChild(0);
-        Type type = spaghettiStack.getDSCP(identifierNode.getValue()).getType();
+        Type type = widen(leftChild, rightChild);
 
         DSCP dscp = new DSCP(type, null);
         String value = null;
@@ -134,6 +132,9 @@ public class CodeGen {
             value = String.valueOf(Double.parseDouble(leftChild.getResultName()) - Double.parseDouble(rightChild.getResultName()));
         dscp.setValue(value);
         node.setDSCP(dscp);
+
+        ExpressionNode parent = (ExpressionNode) node.getParent();
+        parent.setIsIdentifier();
     }
 
     private static void cgenMultiplication(Node node) throws Exception {
@@ -141,9 +142,7 @@ public class CodeGen {
         ExpressionNode rightChild = (ExpressionNode) node.getChild(1);
         cgen(leftChild);
         cgen(rightChild);
-        widen(leftChild, rightChild);
-        IdentifierNode identifierNode = (IdentifierNode) node.getParent().getParent().getChild(0);
-        Type type = spaghettiStack.getDSCP(identifierNode.getValue()).getType();
+        Type type = widen(leftChild, rightChild);
 
         DSCP dscp = new DSCP(type, null);
         String value = null;
@@ -153,6 +152,9 @@ public class CodeGen {
             value = String.valueOf(Double.parseDouble(leftChild.getResultName()) * Double.parseDouble(rightChild.getResultName()));
         dscp.setValue(value);
         node.setDSCP(dscp);
+
+        ExpressionNode parent = (ExpressionNode) node.getParent();
+        parent.setIsIdentifier();
     }
 
     private static void cgenDivision(Node node) throws Exception {
@@ -160,9 +162,7 @@ public class CodeGen {
         ExpressionNode rightChild = (ExpressionNode) node.getChild(1);
         cgen(leftChild);
         cgen(rightChild);
-        widen(leftChild, rightChild);
-        IdentifierNode identifierNode = (IdentifierNode) node.getParent().getParent().getChild(0);
-        Type type = spaghettiStack.getDSCP(identifierNode.getValue()).getType();
+        Type type = widen(leftChild, rightChild);
 
         DSCP dscp = new DSCP(type, null);
         String value = null;
@@ -172,6 +172,9 @@ public class CodeGen {
             value = String.valueOf(Double.parseDouble(leftChild.getResultName()) / Double.parseDouble(rightChild.getResultName()));
         dscp.setValue(value);
         node.setDSCP(dscp);
+
+        ExpressionNode parent = (ExpressionNode) node.getParent();
+        parent.setIsIdentifier();
     }
 
     private static Type widen(ExpressionNode leftChild, ExpressionNode rightChild) throws Exception {
