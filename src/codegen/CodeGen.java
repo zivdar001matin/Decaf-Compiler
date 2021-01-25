@@ -50,6 +50,9 @@ public class CodeGen {
             case DIVISION:
                 cgenDivision(node);
                 break;
+            case PRINT_STATEMENT:
+                cgenPrint(node);
+                break;
             default:
                 cgenAllChildren(node);
                 break;
@@ -201,6 +204,12 @@ public class CodeGen {
 
         ExpressionNode parent = (ExpressionNode) node.getParent();
         parent.setIsIdentifier();
+    }
+
+    private static void cgenPrint(Node node) throws Exception {
+        cgen(node.getChild(0));
+        System.out.println(node.getChild(0).getDSCP().getValue());
+        cgen(node.getChild(1));
     }
 
     private static Type widen(ExpressionNode leftChild, ExpressionNode rightChild) throws Exception {
