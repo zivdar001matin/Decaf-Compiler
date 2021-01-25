@@ -21,6 +21,7 @@ public class Main {
 //        System.out.println("OK");
 //        printTree(parser.getRoot());
         cgen(parser.getRoot());
+        CodeGen.compile();
         System.out.println("cgen Completed!");
         System.out.println("####################### asm code ######################");
         System.out.print(CodeGen.getDataSeg());

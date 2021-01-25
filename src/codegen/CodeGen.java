@@ -88,11 +88,16 @@ public class CodeGen {
         String entry = identifierNode.getValue();
         DSCP dscp = spaghettiStack.getDSCP(entry);
         node.setDSCP(dscp);
+
+        // load scopeName_Entry into $v1 and send it up
+        textSeg += "\tlw\t$v1, " + spaghettiStack.getEntryScope(entry)+"_"+entry + "\n";
     }
 
     private static void cgenExpressionStatement(Node node) throws Exception {
         cgen(node.getChild(0));
         node.setDSCP(node.getChild(0).getDSCP());
+
+        //don't change $v1
     }
 
     private static void cgenAssign(Node node) throws Exception {
