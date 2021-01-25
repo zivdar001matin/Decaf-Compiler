@@ -17,6 +17,9 @@ public class CodeGen {
 
     public static void cgen(Node node) throws Exception {
         switch (node.getNodeType()) {
+            case METHOD_DECLARATION:
+                cgenMethodDeclaration(node);
+                break;
             case BLOCK:
                 cgenBlock(node);
                 break;
@@ -48,6 +51,19 @@ public class CodeGen {
                 cgenAllChildren(node);
                 break;
         }
+    }
+
+    private static void cgenMethodDeclaration(Node node) throws Exception {
+        //type
+        PrimitiveNode returnNode = (PrimitiveNode) node.getChild(0);
+        String returnSig = returnNode.getType().getSignature();
+        //identifier
+        IdentifierNode identifierNode = (IdentifierNode) node.getChild(1);
+        String methodName = identifierNode.getValue();  //TODO add to vTable
+        //arguments
+        cgen(node.getChild(2));
+        //body
+        cgen(node.getChild(3));
     }
 
     private static void cgenLiteral(Literal node) throws Exception {
