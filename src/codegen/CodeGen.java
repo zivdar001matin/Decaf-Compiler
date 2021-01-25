@@ -17,6 +17,7 @@ public class CodeGen {
 
     static {
         dataSeg += "\tzeroDouble: \t.double \t0.0\n";
+        textSeg += "\tldc1\t$f0, zeroDouble\n";
     }
 
     public static void cgen(Node node) throws Exception {
@@ -120,7 +121,7 @@ public class CodeGen {
         IdentifierNode identifierNode = (IdentifierNode) node.getChild(1);
 
         String data_id = spaghettiStack + "_" + identifierNode.getValue() + ':';
-        dataSeg += '\t' + data_id + '\t' + typePrimitive.getSignature() + '\n';
+        dataSeg += '\t' + data_id + '\t' + typePrimitive.getSignature() + '\t' + typePrimitive.getInitialValue() + '\n';
 
         DSCP dscp = new DSCP(typePrimitive, identifierNode);
 //        dscp.setConstant(); //TODO
