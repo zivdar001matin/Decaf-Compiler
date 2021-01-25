@@ -178,7 +178,7 @@ public class CodeGen {
     }
 
     private static Type widen(ExpressionNode leftChild, ExpressionNode rightChild) throws Exception {
-        if(leftChild.getType().equals(rightChild.getType())) {
+        if(leftChild.getDSCP().getType().equals(rightChild.getDSCP().getType())) {
             Type type = leftChild.getType();
             if (type.equals(PrimitiveType.INT) || type.equals(PrimitiveType.DOUBLE))
                 return type;
