@@ -33,7 +33,7 @@ public class CodeGen {
                 cgenLiteral((Literal) node);
                 break;
             case ADDITION:
-                cgenAdditon(node);  // TODO cascading
+                cgenAdditon(node);
                 break;
             case SUBTRACTION:
                 cgenSubtraction(node);  // TODO cascading
@@ -114,6 +114,9 @@ public class CodeGen {
             value = String.valueOf(Double.parseDouble(leftChild.getResultName()) + Double.parseDouble(rightChild.getResultName()));
         dscp.setValue(value);
         node.setDSCP(dscp);
+
+        ExpressionNode parent = (ExpressionNode) node.getParent();
+        parent.setIsIdentifier();
     }
 
     private static void cgenSubtraction(Node node) throws Exception {
