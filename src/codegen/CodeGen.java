@@ -82,9 +82,6 @@ public class CodeGen {
         dscp.setValue(String.valueOf(node));
         node.setDSCP(dscp);
         ((ExpressionNode) node.getParent()).setIsIdentifier();
-        DSCP dscp = new DSCP(node.getType(), null);
-        dscp.setValue(String.valueOf(node));
-        node.setDSCP(dscp);
     }
 
     private static void cgenIdentifier(Node node) throws Exception {
@@ -111,9 +108,15 @@ public class CodeGen {
         cgen(expressionNode);
         String value = expressionNode.getDSCP().getValue();
 
-        DSCP identifierDSCP = spaghettiStack.getDSCP(identifierNode.toString());
+        String entry = identifierNode.toString();
+        DSCP identifierDSCP = spaghettiStack.getDSCP(entry);
 
         identifierDSCP.setValue(value);
+
+        textSeg += "\t\t\t\t\t\t\t\t\t\t#Begin assign " + spaghettiStack.getEntryScope(entry).toString()+"_"+entry + '\n';
+        textSeg += "\tla\t$a0, " + spaghettiStack.getEntryScope(entry).toString()+"_"+entry + '\n';
+        textSeg += "\tli\t$a1, " + value + '\n';
+        textSeg += "\tsw\t$a1  0($a0)" + "\t\t\t\t\t\t# End assign\n";
 
         //continue code generating
         cgen(node.getChild(2));
