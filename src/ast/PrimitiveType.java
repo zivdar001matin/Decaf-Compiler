@@ -5,16 +5,14 @@ package ast;
  */
 public enum PrimitiveType implements Type {
 
-    BOOL("i1", 1),
-    CHAR("i8", 1),
-    INT("i32", 4),
-    LONG("i64", 8),
-    DOUBLE("double", 8),
-    FLOAT("float", 4),
-    AUTO("", 0),
+    BOOL(".word", 1),
+    CHAR(".byte", 1),
+    INT(".word", 4),
+    DOUBLE(".double", 8),
+    FLOAT(".float", 4),
     //todo
     VOID("void", 0),
-    STRING("", 0);
+    STRING(".ascii", 0);
 
     private final String signature;
     private final int align;
