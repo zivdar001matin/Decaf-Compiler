@@ -15,6 +15,10 @@ public class CodeGen {
     public static String dataSeg = ".data\n";
     public static String textSeg = ".text\n";
 
+    static {
+        dataSeg += "\tzeroDouble: \t.double \t0.0\n";
+    }
+
     public static void cgen(Node node) throws Exception {
         switch (node.getNodeType()) {
             case METHOD_DECLARATION:
@@ -109,6 +113,10 @@ public class CodeGen {
     private static void cgenVariableDecl(Node node) throws Exception {
         Type typePrimitive = ((PrimitiveNode) node.getChild(0)).getType();
         IdentifierNode identifierNode = (IdentifierNode) node.getChild(1);
+
+        String data_id = spaghettiStack + "_" + identifierNode.getValue() + ':';
+        dataSeg += '\t' + data_id + '\t' + typePrimitive.getSignature() + '\n';
+
         DSCP dscp = new DSCP(typePrimitive, identifierNode);
 //        dscp.setConstant(); //TODO
         spaghettiStack.addEntry(identifierNode.getValue(), dscp);
@@ -228,4 +236,11 @@ public class CodeGen {
         out.close();
     }
 
+    public static String getDataSeg() {
+        return dataSeg;
+    }
+
+    public static String getTextSeg() {
+        return textSeg;
+    }
 }

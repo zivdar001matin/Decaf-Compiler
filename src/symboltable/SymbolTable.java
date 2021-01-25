@@ -62,4 +62,9 @@ public class SymbolTable {
     public void leaveScope() {
         currentScope = currentScope.getParent();
     }
+
+    @Override
+    public String toString() {
+        return currentScope.getName();
+    }
 }
