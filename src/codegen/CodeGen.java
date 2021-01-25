@@ -26,6 +26,9 @@ public class CodeGen {
             case VARIABLE_DECLARATION:
                 cgenVariableDecl(node);
                 break;
+            case IDENTIFIER:
+                cgenIdentifier(node);
+                break;
             case ASSIGN:
                 cgenAssign(node);
                 break;
@@ -70,6 +73,13 @@ public class CodeGen {
         ((ExpressionNode) node.getParent()).setIsIdentifier();
         DSCP dscp = new DSCP(node.getType(), null);
         dscp.setValue(String.valueOf(node));
+        node.setDSCP(dscp);
+    }
+
+    private static void cgenIdentifier(Node node) throws Exception {
+        IdentifierNode identifierNode = (IdentifierNode) node;
+        String entry = identifierNode.getValue();
+        DSCP dscp = spaghettiStack.getDSCP(entry);
         node.setDSCP(dscp);
     }
 
