@@ -101,7 +101,7 @@ public class CodeGen {
         //don't change $v1
     }
 
-    private static void cgenAssign(Node node) throws Exception {    //TODO can't assign Double -> int and  int -> Double
+    private static void cgenAssign(Node node) throws Exception {
         IdentifierNode identifierNode = (IdentifierNode) node.getChild(0);
         ExpressionNode expressionNode = (ExpressionNode) node.getChild(1);
 
@@ -110,6 +110,9 @@ public class CodeGen {
 
         String entry = identifierNode.toString();
         DSCP identifierDSCP = spaghettiStack.getDSCP(entry);
+
+        if (!identifierDSCP.getType().equals(expressionNode.getDSCP().getType()))
+            throw new Error("Type of assign doesn't match " + identifierDSCP.getType() + " -> " + expressionNode.getDSCP().getType());
 
         identifierDSCP.setValue(value);
 
