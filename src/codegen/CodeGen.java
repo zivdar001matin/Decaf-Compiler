@@ -228,6 +228,20 @@ public class CodeGen {
 
     private static void cgenPrint(Node node) throws Exception {
         cgen(node.getChild(0));
+        switch (node.getChild(0).getDSCP().getType().getPrimitive()){
+            case INT:
+                textSeg += "\tli\t$v0, 1\n";
+                textSeg += "\tadd\t$a0, $v1, $zero\n";
+                textSeg += "\tsyscall\n";
+                break;
+            case DOUBLE:
+                textSeg += "\tli\t$v0, 3\n";
+                textSeg += "\tadd.d\t$f12, $f10, $f0\n";
+                textSeg += "\tsyscall\n";
+                break;
+            default:
+                break;
+        }
         System.out.println(node.getChild(0).getDSCP().getValue());
         cgen(node.getChild(1));
     }
