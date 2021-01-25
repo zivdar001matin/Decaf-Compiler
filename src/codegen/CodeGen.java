@@ -78,6 +78,9 @@ public class CodeGen {
     }
 
     private static void cgenLiteral(Literal node) throws Exception {
+        DSCP dscp = new DSCP(node.getType(), null);
+        dscp.setValue(String.valueOf(node));
+        node.setDSCP(dscp);
         ((ExpressionNode) node.getParent()).setIsIdentifier();
         DSCP dscp = new DSCP(node.getType(), null);
         dscp.setValue(String.valueOf(node));
@@ -89,7 +92,7 @@ public class CodeGen {
         String entry = identifierNode.getValue();
         DSCP dscp = spaghettiStack.getDSCP(entry);
         node.setDSCP(dscp);
-
+        ((ExpressionNode)node.getParent()).setIsIdentifier();
         // load scopeName_Entry into $v1 and send it up
         textSeg += "\tlw\t$v1, " + spaghettiStack.getEntryScope(entry)+"_"+entry + "\n";
     }
@@ -228,7 +231,7 @@ public class CodeGen {
 
     private static Type widen(ExpressionNode leftChild, ExpressionNode rightChild) throws Exception {
         if(leftChild.getDSCP().getType().equals(rightChild.getDSCP().getType())) {
-            Type type = leftChild.getType();
+            Type type = leftChild.getDSCP().getType();
             if (type.equals(PrimitiveType.INT) || type.equals(PrimitiveType.DOUBLE))
                 return type;
             throw new Exception("can't do operation on " + type);
