@@ -32,4 +32,9 @@ public class Scope {
     public Scope getParent() {
         return parent;
     }
+
+    @Override
+    public String toString() {
+        return name;
+    }
 }

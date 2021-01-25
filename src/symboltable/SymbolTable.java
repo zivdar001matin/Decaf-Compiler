@@ -12,6 +12,20 @@ public class SymbolTable {
     private static final Scope root = new Scope("RootScope", null);
     private static Scope currentScope;
 
+    public Scope getEntryScope(String entry) throws Exception {
+        Scope scopeCrawler = currentScope;
+        while (true) {
+            if (scopeCrawler.getScope().get(entry) != null)
+                return scopeCrawler;
+            else {
+                if (scopeCrawler.getParent() != null)
+                    scopeCrawler = scopeCrawler.getParent();
+                else break;
+            }
+        }
+        throw new Exception(entry + " not defined!");
+    }
+
     /**
      * scopeCrawler crawls parent untill reach the *Root Scope*.
      *
