@@ -102,9 +102,7 @@ public class CodeGen {
         ExpressionNode rightChild = (ExpressionNode) node.getChild(1);
         cgen(leftChild);
         cgen(rightChild);
-        widen(leftChild, rightChild);
-        IdentifierNode identifierNode = (IdentifierNode) node.getParent().getParent().getChild(0);
-        Type type = spaghettiStack.getDSCP(identifierNode.getValue()).getType();
+        Type type = widen(leftChild, rightChild);
 
         DSCP dscp = new DSCP(type, null);
         String value = null;
