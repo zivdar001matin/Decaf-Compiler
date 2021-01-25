@@ -88,8 +88,31 @@ public class CodeGen {
         }
     }
 
-    private static void cgenAdditon(Node node) {
-        System.out.println("####saw addition " + node);
+    private static void cgenAdditon(Node node) throws Exception {
+        ExpressionNode leftChild = (ExpressionNode) node.getChild(0);
+        ExpressionNode rightChild = (ExpressionNode) node.getChild(1);
+        cgen(leftChild);
+        cgen(rightChild);
+        Type type = widen(leftChild, rightChild);
+
+        DSCP dscp = new DSCP(type, null);
+        String value = null;
+        if (type.equals(PrimitiveType.INT))
+            value = String.valueOf(Integer.parseInt(leftChild.getResultName()) + Integer.parseInt(rightChild.getResultName()));
+        else if (type.equals(PrimitiveType.DOUBLE))
+            value = String.valueOf(Double.parseDouble(leftChild.getResultName()) + Double.parseDouble(rightChild.getResultName()));
+        dscp.setValue(value);
+        node.setDSCP(dscp);
+    }
+
+    private static Type widen(ExpressionNode leftChild, ExpressionNode rightChild) throws Exception {
+        if(leftChild.getType().equals(rightChild.getType())) {
+            Type type = leftChild.getType();
+            if (type.equals(PrimitiveType.INT) || type.equals(PrimitiveType.DOUBLE))
+                return type;
+            throw new Exception("can't do operation on " + type);
+        }
+        throw new Exception("can't do operation on " + leftChild.getType() + " and " + rightChild.getType());
     }
 
     public static void compile() throws IOException {
