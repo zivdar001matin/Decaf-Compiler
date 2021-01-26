@@ -4,6 +4,8 @@ import codegen.ast.*;
 import codegen.ast.literal.Literal;
 import codegen.symboltable.DSCP;
 import codegen.symboltable.SymbolTable;
+import codegen.vtable.CodeForFunct;
+import codegen.vtable.VTable;
 
 import java.io.FileWriter;
 import java.io.IOException;
@@ -11,6 +13,7 @@ import java.io.IOException;
 public class CodeGen {
 
     private static final SymbolTable spaghettiStack = new SymbolTable();
+    private static final VTable vTable = new VTable();
 
     public static String dataSeg = ".data\n";
     public static String textSeg = ".text\n";
@@ -70,7 +73,7 @@ public class CodeGen {
     private static void cgenMethodDeclaration(Node node) throws Exception {
         //type
         PrimitiveNode returnNode = (PrimitiveNode) node.getChild(0);
-        String returnSig = returnNode.getType().getSignature();
+        Type methodType = returnNode.getType();
         //identifier
         IdentifierNode identifierNode = (IdentifierNode) node.getChild(1);
         String methodName = identifierNode.getValue();  //TODO add to vTable
@@ -87,6 +90,9 @@ public class CodeGen {
         } else {
             textSeg += "\tjr\t$ra\n";
         }
+
+        CodeForFunct code = new CodeForFunct(methodName, "", methodType);
+        vTable.addFunction(methodName, code);
     }
 
     private static void cgenLiteral(Literal node) throws Exception {
