@@ -83,7 +83,7 @@ public class CodeGen {
         if (methodName.equals("main")){
             textSeg += "\t# This line is going to signal end of program.\n";
             textSeg += "\tli\t$v0, 10\n";
-            textSeg += "\tsyscal\n";
+            textSeg += "\tsyscall\n";
         } else {
             textSeg += "\tjr\t$ra\n";
         }
