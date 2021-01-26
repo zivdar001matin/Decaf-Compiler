@@ -74,6 +74,7 @@ public class CodeGen {
         //identifier
         IdentifierNode identifierNode = (IdentifierNode) node.getChild(1);
         String methodName = identifierNode.getValue();  //TODO add to vTable
+        textSeg += methodName + ":\n";
         //arguments
         spaghettiStack.enterScope(String.valueOf(node.getChild(1)));
         cgen(node.getChild(2));
@@ -83,6 +84,8 @@ public class CodeGen {
             textSeg += "\t# This line is going to signal end of program.\n";
             textSeg += "\tli\t$v0, 10\n";
             textSeg += "\tsyscal\n";
+        } else {
+            textSeg += "\tjr\t$ra\n";
         }
     }
 
