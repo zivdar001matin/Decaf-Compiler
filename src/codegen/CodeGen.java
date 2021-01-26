@@ -75,6 +75,11 @@ public class CodeGen {
         cgen(node.getChild(2));
         //body
         cgen(node.getChild(3));
+        if (methodName.equals("main")){
+            textSeg += "\t# This line is going to signal end of program.\n";
+            textSeg += "\tli\t$v0, 10\n";
+            textSeg += "\tsyscal\n";
+        }
     }
 
     private static void cgenLiteral(Literal node) throws Exception {
