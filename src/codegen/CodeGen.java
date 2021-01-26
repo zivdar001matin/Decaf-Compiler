@@ -103,7 +103,11 @@ public class CodeGen {
         node.setDSCP(dscp);
         ((ExpressionNode)node.getParent()).setIsIdentifier();
         // load scopeName_Entry into $v1 and send it up
-        textSeg += "\tlw\t$v1, " + spaghettiStack.getEntryScope(entry)+"."+entry + "\n";
+        if (spaghettiStack.getDSCP(entry).isArgument()){
+            textSeg += "\tmove\t$v1, $a" + spaghettiStack.getDSCP(entry).getArgumentPlace() + "\n";
+        } else {
+            textSeg += "\tlw\t$v1, " + spaghettiStack.getEntryScope(entry)+"."+entry + "\n";
+        }
     }
 
     private static void cgenExpressionStatement(Node node) throws Exception {
