@@ -64,6 +64,12 @@ public class CodeGen {
             case ARGUMENT:
                 cgenArgument(node);
                 break;
+            case FUNCTION_CALL:
+                cgenFunctionCall(node);
+                break;
+            case PARAMETERS:
+                cgenParameters(node);
+                break;
             default:
                 cgenAllChildren(node);
                 break;
@@ -114,7 +120,8 @@ public class CodeGen {
             ((ExpressionNode)node.getParent()).setIsIdentifier();
             // load scopeName_Entry into $v1 and send it up
             if (spaghettiStack.getDSCP(entry).isArgument()){
-                textSeg += "\tmove\t$v1, $a" + spaghettiStack.getDSCP(entry).getArgumentPlace() + "\n";
+                int argumentPlace = spaghettiStack.getDSCP(entry).getArgumentPlace()-1;
+                textSeg += "\tmove\t$v1, $a" + argumentPlace + "\n";
             } else {
                 textSeg += "\tlw\t$v1, " + spaghettiStack.getEntryScope(entry)+"."+entry + "\n";
             }
@@ -361,6 +368,22 @@ public class CodeGen {
     private static void cgenArgument(Node node) throws Exception {
         SymbolTable.getCurrentScope().addArgumentCounter();
         cgenVariableDecl(node.getChild(0));
+    }
+
+    private static void cgenFunctionCall(Node node) throws Exception {
+        cgen(node.getChild(1)); // First cgen parameters
+        cgen(node.getChild(0)); // Then cgen identifier
+
+        IdentifierNode identifierNode = (IdentifierNode) node.getChild(0);
+        DSCP dscp = new DSCP(vTable.getFunction(identifierNode.getValue()).getReturnType(), null);
+        node.setDSCP(dscp);
+    }
+
+    private static void cgenParameters(Node node) throws Exception {
+        for (int i = 0; i < node.getChild(0).getChildren().size(); i++) {
+            cgenAllChildren(node.getChild(0).getChild(i));
+            textSeg += "\tmove\t$a"+i+", $v1\n";
+        }
     }
 
     private static Type widen(ExpressionNode leftChild, ExpressionNode rightChild) throws Exception {
