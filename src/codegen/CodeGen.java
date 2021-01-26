@@ -72,6 +72,7 @@ public class CodeGen {
         IdentifierNode identifierNode = (IdentifierNode) node.getChild(1);
         String methodName = identifierNode.getValue();  //TODO add to vTable
         //arguments
+        spaghettiStack.enterScope(String.valueOf(node.getChild(1)));
         cgen(node.getChild(2));
         //body
         cgen(node.getChild(3));
@@ -154,7 +155,6 @@ public class CodeGen {
     }
 
     private static void cgenBlock(Node node) throws Exception {
-        spaghettiStack.enterScope(String.valueOf(node.getParent().getChild(1)));
         cgenAllChildren(node);
         spaghettiStack.leaveScope();
     }
