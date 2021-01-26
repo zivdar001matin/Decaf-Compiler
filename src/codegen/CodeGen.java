@@ -133,7 +133,14 @@ public class CodeGen {
         ExpressionNode expressionNode = (ExpressionNode) node.getChild(1);
 
         cgen(expressionNode);
-        String value = expressionNode.getDSCP().getValue();
+
+        String value = null;
+
+        if (expressionNode.getChild(0).getNodeType().equals(NodeType.FUNCTION_CALL)){
+//            textSeg += ""
+        } else {
+            value = expressionNode.getDSCP().getValue();
+        }
 
         String entry = identifierNode.toString();
         DSCP identifierDSCP = spaghettiStack.getDSCP(entry);
@@ -141,22 +148,25 @@ public class CodeGen {
         if (!identifierDSCP.getType().equals(expressionNode.getDSCP().getType()))
             throw new Error("Type of assign doesn't match " + identifierDSCP.getType() + " -> " + expressionNode.getDSCP().getType());
 
-        identifierDSCP.setValue(value);
-
-        switch (node.getChild(1).getDSCP().getType().getPrimitive()){
-            case INT:
-                textSeg += "\t\t\t\t\t\t\t\t\t\t#Begin assign int" + spaghettiStack.getEntryScope(entry).toString()+"."+entry + '\n';
-                textSeg += "\tla\t$a0, " + spaghettiStack.getEntryScope(entry).toString()+"."+entry + '\n';
-                textSeg += "\tli\t$a1, " + value + '\n';
-                textSeg += "\tsw\t$a1  0($a0)" + "\t\t\t\t\t\t# End assign\n";
-                break;
-            case DOUBLE:
-                textSeg += "\t\t\t\t\t\t\t\t\t\t#Begin assign double" + spaghettiStack.getEntryScope(entry).toString()+"."+entry + '\n';
-                textSeg += "\tla\t$a0, " + spaghettiStack.getEntryScope(entry).toString()+"."+entry + '\n';
-                textSeg += "\tli.d\t$f10, " + value + '\n'; //TODO check that this line is correct or not
-                textSeg += "\tsdc1\t$f10  0($a0)" + "\t\t\t\t\t\t# End assign\n";
-                break;
-
+        if (value != null) {    // Simple Assign
+            identifierDSCP.setValue(value);
+            switch (node.getChild(1).getDSCP().getType().getPrimitive()){
+                case INT:
+                    textSeg += "\t\t\t\t\t\t\t#Begin assign int" + spaghettiStack.getEntryScope(entry).toString()+"."+entry + '\n';
+                    textSeg += "\tla\t$a0, " + spaghettiStack.getEntryScope(entry).toString()+"."+entry + '\n';
+                    textSeg += "\tli\t$a1, " + value + '\n';
+                    textSeg += "\tsw\t$a1  0($a0)" + "\t\t\t\t\t\t# End assign\n";
+                    break;
+                case DOUBLE:
+                    textSeg += "\t\t\t\t\t\t\t#Begin assign double" + spaghettiStack.getEntryScope(entry).toString()+"."+entry + '\n';
+                    textSeg += "\tla\t$a0, " + spaghettiStack.getEntryScope(entry).toString()+"."+entry + '\n';
+                    textSeg += "\tli.d\t$f10, " + value + '\n'; //TODO check that this line is correct or not
+                    textSeg += "\tsdc1\t$f10  0($a0)" + "\t\t\t\t\t\t# End assign\n";
+                    break;
+            }
+        } else {    // with function assign
+            textSeg += "\tla\t$a0, " + spaghettiStack.getEntryScope(entry).toString()+"."+entry + '\n';
+            textSeg += "\tsw\t$v1  0($a0)" + "\t\t\t\t\t\t# End assign\n";
         }
 
         //continue code generating
