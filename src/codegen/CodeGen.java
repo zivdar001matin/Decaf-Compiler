@@ -116,10 +116,21 @@ public class CodeGen {
 
         identifierDSCP.setValue(value);
 
-        textSeg += "\t\t\t\t\t\t\t\t\t\t#Begin assign " + spaghettiStack.getEntryScope(entry).toString()+"."+entry + '\n';
-        textSeg += "\tla\t$a0, " + spaghettiStack.getEntryScope(entry).toString()+"."+entry + '\n';
-        textSeg += "\tli\t$a1, " + value + '\n';
-        textSeg += "\tsw\t$a1  0($a0)" + "\t\t\t\t\t\t# End assign\n";
+        switch (node.getChild(1).getDSCP().getType().getPrimitive()){
+            case INT:
+                textSeg += "\t\t\t\t\t\t\t\t\t\t#Begin assign int" + spaghettiStack.getEntryScope(entry).toString()+"."+entry + '\n';
+                textSeg += "\tla\t$a0, " + spaghettiStack.getEntryScope(entry).toString()+"."+entry + '\n';
+                textSeg += "\tli\t$a1, " + value + '\n';
+                textSeg += "\tsw\t$a1  0($a0)" + "\t\t\t\t\t\t# End assign\n";
+                break;
+            case DOUBLE:
+                textSeg += "\t\t\t\t\t\t\t\t\t\t#Begin assign double" + spaghettiStack.getEntryScope(entry).toString()+"."+entry + '\n';
+                textSeg += "\tla\t$a0, " + spaghettiStack.getEntryScope(entry).toString()+"."+entry + '\n';
+                textSeg += "\tli.d\t$f10, " + value + '\n'; //TODO check that this line is correct or not
+                textSeg += "\tsdc1\t$f10  0($a0)" + "\t\t\t\t\t\t# End assign\n";
+                break;
+
+        }
 
         //continue code generating
         cgen(node.getChild(2));
@@ -229,7 +240,7 @@ public class CodeGen {
         parent.setIsIdentifier();
     }
 
-    private static void cgenPrint(Node node) throws Exception {
+    private static void cgenPrint(Node node) throws Exception { //TODO newline after print
         cgen(node.getChild(0));
         switch (node.getChild(0).getDSCP().getType().getPrimitive()){
             case INT:
