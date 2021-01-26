@@ -91,7 +91,7 @@ public class CodeGen {
         node.setDSCP(dscp);
         ((ExpressionNode)node.getParent()).setIsIdentifier();
         // load scopeName_Entry into $v1 and send it up
-        textSeg += "\tlw\t$v1, " + spaghettiStack.getEntryScope(entry)+"_"+entry + "\n";
+        textSeg += "\tlw\t$v1, " + spaghettiStack.getEntryScope(entry)+"."+entry + "\n";
     }
 
     private static void cgenExpressionStatement(Node node) throws Exception {
@@ -116,8 +116,8 @@ public class CodeGen {
 
         identifierDSCP.setValue(value);
 
-        textSeg += "\t\t\t\t\t\t\t\t\t\t#Begin assign " + spaghettiStack.getEntryScope(entry).toString()+"_"+entry + '\n';
-        textSeg += "\tla\t$a0, " + spaghettiStack.getEntryScope(entry).toString()+"_"+entry + '\n';
+        textSeg += "\t\t\t\t\t\t\t\t\t\t#Begin assign " + spaghettiStack.getEntryScope(entry).toString()+"."+entry + '\n';
+        textSeg += "\tla\t$a0, " + spaghettiStack.getEntryScope(entry).toString()+"."+entry + '\n';
         textSeg += "\tli\t$a1, " + value + '\n';
         textSeg += "\tsw\t$a1  0($a0)" + "\t\t\t\t\t\t# End assign\n";
 
@@ -129,7 +129,7 @@ public class CodeGen {
         Type typePrimitive = ((PrimitiveNode) node.getChild(0)).getType();
         IdentifierNode identifierNode = (IdentifierNode) node.getChild(1);
 
-        String data_id = spaghettiStack + "_" + identifierNode.getValue() + ':';
+        String data_id = spaghettiStack + "." + identifierNode.getValue() + ':';
         dataSeg += '\t' + data_id + '\t' + typePrimitive.getSignature() + '\t' + typePrimitive.getInitialValue() + '\n';
 
         DSCP dscp = new DSCP(typePrimitive, identifierNode);
