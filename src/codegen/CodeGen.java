@@ -105,14 +105,19 @@ public class CodeGen {
     private static void cgenIdentifier(Node node) throws Exception {
         IdentifierNode identifierNode = (IdentifierNode) node;
         String entry = identifierNode.getValue();
-        DSCP dscp = spaghettiStack.getDSCP(entry);
-        node.setDSCP(dscp);
-        ((ExpressionNode)node.getParent()).setIsIdentifier();
-        // load scopeName_Entry into $v1 and send it up
-        if (spaghettiStack.getDSCP(entry).isArgument()){
-            textSeg += "\tmove\t$v1, $a" + spaghettiStack.getDSCP(entry).getArgumentPlace() + "\n";
-        } else {
-            textSeg += "\tlw\t$v1, " + spaghettiStack.getEntryScope(entry)+"."+entry + "\n";
+        if (node.getParent().getNodeType().equals(NodeType.FUNCTION_CALL)){ //TODO for double identifiers
+            cgenAllChildren(node);
+            textSeg += "\tjal\t" + node + '\n';
+        } else if (node.getParent().getNodeType().equals(NodeType.EXPRESSION_STATEMENT)) {
+            DSCP dscp = spaghettiStack.getDSCP(entry);
+            node.setDSCP(dscp);
+            ((ExpressionNode)node.getParent()).setIsIdentifier();
+            // load scopeName_Entry into $v1 and send it up
+            if (spaghettiStack.getDSCP(entry).isArgument()){
+                textSeg += "\tmove\t$v1, $a" + spaghettiStack.getDSCP(entry).getArgumentPlace() + "\n";
+            } else {
+                textSeg += "\tlw\t$v1, " + spaghettiStack.getEntryScope(entry)+"."+entry + "\n";
+            }
         }
     }
 
