@@ -1,4 +1,4 @@
-package symboltable;
+package codegen.symboltable;
 
 import java.util.ArrayList;
 import java.util.HashMap;

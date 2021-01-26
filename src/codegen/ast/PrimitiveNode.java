@@ -1,4 +1,4 @@
-package ast;
+package codegen.ast;
 
 public class PrimitiveNode extends SimpleNode{
     private Type type;

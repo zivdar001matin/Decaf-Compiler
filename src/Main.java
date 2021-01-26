@@ -1,5 +1,5 @@
-import ast.Node;
-import ast.RootNode;
+import codegen.ast.Node;
+import codegen.ast.RootNode;
 import codegen.CodeGen;
 import parser.parser;
 import scanner.Scanner;

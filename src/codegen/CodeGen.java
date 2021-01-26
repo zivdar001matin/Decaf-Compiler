@@ -1,9 +1,9 @@
 package codegen;
 
-import ast.*;
-import ast.literal.Literal;
-import symboltable.DSCP;
-import symboltable.SymbolTable;
+import codegen.ast.*;
+import codegen.ast.literal.Literal;
+import codegen.symboltable.DSCP;
+import codegen.symboltable.SymbolTable;
 
 import java.io.FileWriter;
 import java.io.IOException;

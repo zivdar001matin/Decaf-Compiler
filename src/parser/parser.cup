@@ -1,8 +1,8 @@
 package parser;
 
 import java_cup.runtime.*;
-import ast.*;
-import ast.literal.*;
+import codegen.ast.*;
+import codegen.ast.literal.*;
 
 parser code {:
 
@@ -630,15 +630,31 @@ LValue       ::=    Identifier:i
                         :}
                ;
 
-Call         ::=    Identifier LPAREN Actuals RPAREN
-                        //TODO
-               |    Expr DOT Identifier LPAREN Actuals RPAREN ;
-                        //TODO
+Call         ::=    Identifier:i LPAREN Actuals:a RPAREN
+                        {:
+                            RESULT = new SimpleNode(NodeType.FUNCTION_CALL);
+                            RESULT.addChild(i, a);
+                            i.setParent(RESULT);
+                            a.setParent(RESULT);
+                        :}
+               |    Expr:e DOT Identifier:i LPAREN Actuals:a RPAREN
+                        {:
+                            RESULT = new SimpleNode(NodeType.FUNCTION_CALL);
+                            RESULT.addChild(e, i, a);
+                            e.setParent(RESULT);
+                            i.setParent(RESULT);
+                            a.setParent(RESULT);
+                        :}
+               ;
 
-Actuals      ::=    Exprs
-                        //TODO
+Actuals      ::=    Exprs:es
+                        {:
+                            RESULT = new SimpleNode(NodeType.PARAMETERS);
+                            RESULT.addChild(es);
+                            es.setParent(RESULT);
+                        :}
                | /*epsilon*/
-                        //TODO
+                        {: RESULT = new SimpleNode(NodeType.EMPTY_STATEMENT); :}
                ;
 
 Constant    ::=    T_INTLITERAL:t

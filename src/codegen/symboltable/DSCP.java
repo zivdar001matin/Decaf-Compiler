@@ -1,7 +1,7 @@
-package symboltable;
+package codegen.symboltable;
 
-import ast.Node;
-import ast.Type;
+import codegen.ast.Node;
+import codegen.ast.Type;
 
 public class DSCP {
     private Type type;

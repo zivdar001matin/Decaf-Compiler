@@ -1,4 +1,4 @@
-package ast;
+package codegen.ast;
 
 public class RootNode extends SimpleNode{
     public RootNode() {

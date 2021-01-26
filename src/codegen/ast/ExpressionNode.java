@@ -1,6 +1,6 @@
-package ast;
+package codegen.ast;
 
-import ast.literal.Literal;
+import codegen.ast.literal.Literal;
 
 import java.util.stream.Stream;
 

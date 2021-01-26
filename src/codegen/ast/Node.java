@@ -1,6 +1,6 @@
-package ast;
+package codegen.ast;
 
-import symboltable.DSCP;
+import codegen.symboltable.DSCP;
 
 import java.util.List;
 

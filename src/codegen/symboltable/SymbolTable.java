@@ -1,6 +1,4 @@
-package symboltable;
-
-import java.util.ArrayList;
+package codegen.symboltable;
 
 public class SymbolTable {
 

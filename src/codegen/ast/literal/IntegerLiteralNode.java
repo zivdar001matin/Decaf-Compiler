@@ -1,6 +1,6 @@
-package ast.literal;
+package codegen.ast.literal;
 
-import ast.PrimitiveType;
+import codegen.ast.PrimitiveType;
 
 public class IntegerLiteralNode extends Literal {
     private final int value;

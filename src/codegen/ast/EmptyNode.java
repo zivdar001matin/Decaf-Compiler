@@ -1,4 +1,4 @@
-package ast;
+package codegen.ast;
 
 public class EmptyNode extends SimpleNode {
     public EmptyNode() {

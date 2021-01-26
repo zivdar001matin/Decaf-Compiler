@@ -1,4 +1,4 @@
-package ast;
+package codegen.ast;
 
 /**
  * An enum to declare type of an AST node
@@ -95,7 +95,7 @@ public enum NodeType {
     EMPTY_STATEMENT,
     IDENTIFIER,
     FIELD,
-    METHOD_ACCESS,
+    FUNCTION_CALL,
     PARAMETER,
     PARAMETERS,
     BLOCK,

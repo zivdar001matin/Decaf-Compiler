@@ -1,8 +1,8 @@
-package ast.literal;
+package codegen.ast.literal;
 
-import ast.NodeType;
-import ast.SimpleNode;
-import ast.Type;
+import codegen.ast.NodeType;
+import codegen.ast.SimpleNode;
+import codegen.ast.Type;
 
 public abstract class Literal extends SimpleNode {
 

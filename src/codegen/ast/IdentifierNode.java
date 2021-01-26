@@ -1,4 +1,4 @@
-package ast;
+package codegen.ast;
 
 public class IdentifierNode extends SimpleNode{
     private final String value;

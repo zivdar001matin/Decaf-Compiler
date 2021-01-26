@@ -1,4 +1,4 @@
-package ast;
+package codegen.ast;
 
 /**
  * An enum that shows type of a var

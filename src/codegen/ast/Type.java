@@ -1,4 +1,4 @@
-package ast;
+package codegen.ast;
 
 public interface Type {
 
