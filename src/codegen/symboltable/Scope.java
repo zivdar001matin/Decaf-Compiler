@@ -8,6 +8,7 @@ public class Scope {
     private final HashMap<String, DSCP> scope;
     private final Scope parent;
     private final String name;
+    private int argumentCounter;
     private ArrayList<Scope> children;
 
     public Scope(String name, Scope parent) {
@@ -15,6 +16,7 @@ public class Scope {
         this.name = name;
         this.parent = parent;
         children = new ArrayList<>();
+        this.argumentCounter = 0;
     }
 
     public HashMap<String, DSCP> getScope() {
@@ -31,6 +33,14 @@ public class Scope {
 
     public Scope getParent() {
         return parent;
+    }
+
+    public int getArgumentCounter() {
+        return argumentCounter;
+    }
+
+    public void addArgumentCounter(){
+        this.argumentCounter++;
     }
 
     @Override

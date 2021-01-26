@@ -10,6 +10,10 @@ public class SymbolTable {
     private static final Scope root = new Scope("RootScope", null);
     private static Scope currentScope;
 
+    public static Scope getCurrentScope() {
+        return currentScope;
+    }
+
     public Scope getEntryScope(String entry) throws Exception {
         Scope scopeCrawler = currentScope;
         while (true) {

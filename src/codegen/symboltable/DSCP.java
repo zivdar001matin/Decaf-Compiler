@@ -7,6 +7,8 @@ public class DSCP {
     private Type type;
     private Node node;
     private String value;
+    private boolean isArgument;
+    private int argumentPlace; // 1st, 2nd, 3rd, 4th
 
     public String getValue() {
         return value;
@@ -21,6 +23,20 @@ public class DSCP {
     public DSCP(Type type, Node node) {
         this.type = type;
         this.node = node;
+        this.isArgument = false;
+    }
+
+    public void setArgumentTrue(int argumentPlace) {
+        isArgument = true;
+        this.argumentPlace = argumentPlace;
+    }
+
+    public int getArgumentPlace() {
+        return argumentPlace;
+    }
+
+    public boolean isArgument() {
+        return isArgument;
     }
 
     public Type getType() {

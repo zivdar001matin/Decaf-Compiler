@@ -58,6 +58,9 @@ public class CodeGen {
             case PRINT_STATEMENT:
                 cgenPrint(node);
                 break;
+            case ARGUMENT:
+                cgenArgument(node);
+                break;
             default:
                 cgenAllChildren(node);
                 break;
@@ -149,9 +152,15 @@ public class CodeGen {
         String data_id = spaghettiStack + "." + identifierNode.getValue() + ':';
         dataSeg += '\t' + data_id + '\t' + typePrimitive.getSignature() + '\t' + typePrimitive.getInitialValue() + '\n';
 
-        DSCP dscp = new DSCP(typePrimitive, identifierNode);
+        if(node.getParent().getNodeType().equals(NodeType.ARGUMENT)){ // inside arguments declarations
+            DSCP dscp = new DSCP(typePrimitive, identifierNode);
+            dscp.setArgumentTrue(SymbolTable.getCurrentScope().getArgumentCounter());
+            spaghettiStack.addEntry(identifierNode.getValue(), dscp);
+        }else{ // inside body declaration
 //        dscp.setConstant(); //TODO
-        spaghettiStack.addEntry(identifierNode.getValue(), dscp);
+            DSCP dscp = new DSCP(typePrimitive, identifierNode);
+            spaghettiStack.addEntry(identifierNode.getValue(), dscp);
+        }
     }
 
     private static void cgenBlock(Node node) throws Exception {
@@ -263,6 +272,11 @@ public class CodeGen {
         }
         System.out.println(node.getChild(0).getDSCP().getValue());
         cgen(node.getChild(1));
+    }
+
+    private static void cgenArgument(Node node) throws Exception {
+        SymbolTable.getCurrentScope().addArgumentCounter();
+        cgenVariableDecl(node.getChild(0));
     }
 
     private static Type widen(ExpressionNode leftChild, ExpressionNode rightChild) throws Exception {
