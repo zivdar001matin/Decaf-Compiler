@@ -9,7 +9,7 @@ import java.io.FileReader;
 
 import static codegen.CodeGen.cgen;
 
-public class Main {
+public class Compiler {
     public static void main(String[] args) throws Exception {
         FileReader fr = new FileReader(new File("tests/test.d"));
         Scanner scanner = new Scanner(fr);
