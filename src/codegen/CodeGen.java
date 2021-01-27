@@ -540,8 +540,10 @@ public class CodeGen {
         String entry = "IfStmt_" + SymbolTable.getCurrentScope().getArgumentCounter();
         String labelName = spaghettiStack + "_" + entry;
 
-        spaghettiStack.enterScope(entry, BlockType.CONDITION);
+        String entryElse = "ElseStmt_" + SymbolTable.getCurrentScope().getArgumentCounter();    // Scope name for Else
+        String labelNameElse = spaghettiStack + "_" + entryElse;    // Else Label for branch
 
+        spaghettiStack.enterScope(entry, BlockType.CONDITION);
 
         cgen(node.getChild(0)); //  calculate condition -> return $v1
         DSCP conditionDscp = node.getChild(0).getDSCP();
@@ -553,10 +555,22 @@ public class CodeGen {
         textSeg += "\tbeq\t$v1, 0, " + labelName + '\n';
         cgen(node.getChild(1));
 
+        if (node.getChildren().size() == 4) {   // branch -> skip Else block
+            textSeg += "\tb\t" + labelNameElse + '\n';
+        }
+
         textSeg += labelName + ":\n";
 
-        //  continue code generating
-        cgen(node.getChild(2));
+        if (node.getChildren().size() == 3) {     // if
+            cgen(node.getChild(2)); // continue code generating
+        } else {                                 // if-else
+            spaghettiStack.enterScope(entryElse, BlockType.CONDITION);
+            cgen(node.getChild(2)); // else block
+            textSeg += labelNameElse + ":\n";
+            cgen(node.getChild(3)); // continue code generating
+        }
+        System.out.println(textSeg);
+
     }
 
     /**
