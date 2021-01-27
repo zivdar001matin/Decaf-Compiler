@@ -223,7 +223,9 @@ public class CodeGen {
         // Calculate left child
         ExpressionNode leftChild = (ExpressionNode) node.getChild(0);
         cgen(leftChild);
-        if (leftChild.getDSCP().isArgument()) {
+        boolean isLeftCalcutable = leftChild.getDSCP().isArgument() || leftChild.getDSCP().isFunction();
+
+        if (isLeftCalcutable) {
             isArgument = true;
             if (leftChild.getDSCP().getType().equals(PrimitiveType.INT)) {
                 textSeg += "\tmove\t$s0, $v1\n";
@@ -233,7 +235,9 @@ public class CodeGen {
         }
         ExpressionNode rightChild = (ExpressionNode) node.getChild(1);
         cgen(rightChild);
-        if(rightChild.getDSCP().isArgument()){
+        boolean isRightCalcutable = rightChild.getDSCP().isArgument() || rightChild.getDSCP().isFunction();
+
+        if(isRightCalcutable){
             isArgument = true;
             if(rightChild.getDSCP().getType().equals(PrimitiveType.INT)){
                 textSeg += "\tmove\t$s2, $v1\n";
@@ -248,14 +252,15 @@ public class CodeGen {
         if (type.equals(PrimitiveType.INT)) {
             int leftValue;
             int rightValue;
-            if(!leftChild.getDSCP().isArgument() && !rightChild.getDSCP().isArgument()){    //Constant Folding
+//            if(leftChild.getChild(0).getNodeType().equals(NodeType.FUNCTION_CALL))
+            if(!isLeftCalcutable && !isRightCalcutable){    //Constant Folding
                 leftValue = Integer.parseInt(leftChild.getResultName());
                 rightValue = Integer.parseInt(rightChild.getResultName());
                 value = String.valueOf(leftValue * rightValue);
-            } else if (leftChild.getDSCP().isArgument() && !rightChild.getDSCP().isArgument()) {
+            } else if (isLeftCalcutable && !isRightCalcutable) {
                 rightValue = Integer.parseInt(rightChild.getResultName());
                 textSeg += "\tadd\t$v1, $s0, " + rightValue + '\n';
-            } else if (!leftChild.getDSCP().isArgument() && rightChild.getDSCP().isArgument()){
+            } else if (!isLeftCalcutable && isRightCalcutable){
                 leftValue = Integer.parseInt(leftChild.getResultName());
                 textSeg += "\tadd\t$v1, $s0, " + leftValue + '\n';
             } else {
