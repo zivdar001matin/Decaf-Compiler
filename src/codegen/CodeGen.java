@@ -119,6 +119,7 @@ public class CodeGen {
             textSeg += "\tjal\t" + node + '\n';
             textSeg += "\tlw\t$ra, 0($sp)\n";
             textSeg += "\taddi\t$sp, $sp, 4\n";
+            node.getParent().setDSCP(new DSCP(null, null, true));
         } else if (node.getParent().getNodeType().equals(NodeType.EXPRESSION_STATEMENT)) {
             DSCP dscp = spaghettiStack.getDSCP(entry);
             node.setDSCP(dscp);
@@ -492,7 +493,7 @@ public class CodeGen {
         cgen(node.getChild(0)); // Then cgen identifier
 
         IdentifierNode identifierNode = (IdentifierNode) node.getChild(0);
-        DSCP dscp = new DSCP(vTable.getFunction(identifierNode.getValue()).getReturnType(), null);
+        DSCP dscp = new DSCP(vTable.getFunction(identifierNode.getValue()).getReturnType(), null, node.getDSCP().isFunction());
         node.setDSCP(dscp);
     }
 
