@@ -47,7 +47,7 @@ public class CodeGen {
                 cgenLiteral((Literal) node);
                 break;
             case ADDITION:
-                cgenAdditon(node);
+                cgenAddition(node);
                 break;
             case SUBTRACTION:
                 cgenSubtraction(node);
@@ -213,7 +213,7 @@ public class CodeGen {
         }
     }
 
-    private static void cgenAdditon(Node node) throws Exception {
+    private static void cgenAddition(Node node) throws Exception {
         boolean isArgument = false;
 
         pushRegistersS();
