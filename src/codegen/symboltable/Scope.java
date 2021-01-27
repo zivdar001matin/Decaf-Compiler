@@ -10,6 +10,7 @@ public class Scope {
     private final String name;
     private int argumentCounter;
     private int conditionStmtCounter;
+    private int loopStmtCounter;
     private ArrayList<Scope> children;
     private final BlockType blockType;
 
@@ -57,6 +58,14 @@ public class Scope {
 
     public void addConditionStmtCounter() {
         this.conditionStmtCounter++;
+    }
+
+    public int getLoopStmtCounter() {
+        return loopStmtCounter;
+    }
+
+    public void addLoopStmtCounter() {
+        this.loopStmtCounter++;
     }
 
     @Override
