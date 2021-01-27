@@ -11,7 +11,7 @@ import static codegen.CodeGen.cgen;
 
 public class Main {
     public static void main(String[] args) throws Exception {
-        FileReader fr = new FileReader(new File("tests/test0.d"));
+        FileReader fr = new FileReader(new File("tests/test.d"));
         Scanner scanner = new Scanner(fr);
         parser parser = new parser(scanner);
 //        System.err.close();
