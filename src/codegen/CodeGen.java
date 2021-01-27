@@ -386,6 +386,49 @@ public class CodeGen {
         }
     }
 
+    /**
+     * Save callee saved registers s0, s1, s2, s3, s4, s5,
+     */
+    private static void pushRegistersS(){
+        textSeg += "\taddi\t$sp, $sp, -20\n";
+        textSeg += "\tsw\t$s0, 0($sp)\n";
+        textSeg += "\tsw\t$s1, 4($sp)\n";
+        textSeg += "\tsw\t$s2, 8($sp)\n";
+        textSeg += "\tsw\t$s3, 12($sp)\n";
+        textSeg += "\tsw\t$s4, 16($sp)\n";
+        textSeg += "\tsw\t$s5, 20($sp)\n";
+    }
+
+    private static void popRegistersS(){
+        textSeg += "\tlw\t$s0, 0($sp)\n";
+        textSeg += "\tlw\t$s1, 4($sp)\n";
+        textSeg += "\tlw\t$s2, 8($sp)\n";
+        textSeg += "\tlw\t$s3, 12($sp)\n";
+        textSeg += "\tlw\t$s4, 16($sp)\n";
+        textSeg += "\tlw\t$s5, 20($sp)\n";
+        textSeg += "\taddi\t$sp, $sp, 20\n";
+    }
+
+    /**
+     * Save argument registers a0, a1, a2, a3
+     */
+    private static void pushRegistersA(){
+        textSeg += "\taddi\t$sp, $sp, -16\n";
+        textSeg += "\tsw\t$a0, 0($sp)\n";
+        textSeg += "\tsw\t$a1, 4($sp)\n";
+        textSeg += "\tsw\t$a2, 8($sp)\n";
+        textSeg += "\tsw\t$a3, 12($sp)\n";
+    }
+
+    private static void popRegistersA(){
+        textSeg += "\tlw\t$a0, 0($sp)\n";
+        textSeg += "\tlw\t$a1, 4($sp)\n";
+        textSeg += "\tlw\t$a2, 8($sp)\n";
+        textSeg += "\tlw\t$a3, 12($sp)\n";
+        textSeg += "\taddi\t$sp, $sp, 16\n";
+    }
+
+
     private static Type widen(ExpressionNode leftChild, ExpressionNode rightChild) throws Exception {
         if(leftChild.getDSCP().getType().equals(rightChild.getDSCP().getType())) {
             Type type = leftChild.getDSCP().getType();
