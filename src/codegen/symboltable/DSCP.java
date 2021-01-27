@@ -8,6 +8,16 @@ public class DSCP {
     private Node node;
     private String value;
     private boolean isArgument;
+    private boolean isFunction; // Shows that node is Function and can't be constant folded.
+
+    public boolean isFunction() {
+        return isFunction;
+    }
+
+    public void setFunction() {
+        isFunction = true;
+    }
+
     private int argumentPlace; // 1st, 2nd, 3rd, 4th
 
     public String getValue() {
@@ -24,6 +34,13 @@ public class DSCP {
         this.type = type;
         this.node = node;
         this.isArgument = false;
+    }
+
+    public DSCP(Type type, Node node, boolean isFunction) {
+        this.type = type;
+        this.node = node;
+        this.isArgument = false;
+        this.isFunction = isFunction;
     }
 
     public void setArgumentTrue(int argumentPlace) {
