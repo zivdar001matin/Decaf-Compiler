@@ -11,18 +11,24 @@ public class Scope {
     private int argumentCounter;
     private int conditionStmtCounter;
     private ArrayList<Scope> children;
+    private final BlockType blockType;
 
-    public Scope(String name, Scope parent) {
+    public Scope(String name, Scope parent, BlockType blockType) {
         this.scope = new HashMap<>();
         this.name = name;
         this.parent = parent;
         children = new ArrayList<>();
         this.argumentCounter = 0;
         this.conditionStmtCounter = 0;
+        this.blockType = blockType;
     }
 
     public HashMap<String, DSCP> getScope() {
         return this.scope;
+    }
+
+    public BlockType getBlockType() {
+        return blockType;
     }
 
     public void addChild(Scope child) {

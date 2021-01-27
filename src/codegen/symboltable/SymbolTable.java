@@ -7,7 +7,7 @@ public class SymbolTable {
     }
 
     //    private static final ArrayList<Scope> scopes = new ArrayList<>();
-    private static final Scope root = new Scope("RootScope", null);
+    private static final Scope root = new Scope("RootScope", null, BlockType.ROOT);
     private static Scope currentScope;
 
     public static Scope getCurrentScope() {
@@ -66,8 +66,8 @@ public class SymbolTable {
      *
      * @param name name of the current scope. It can be function name, class name, etc.
      */
-    public void enterScope(String name) {
-        Scope newScope = new Scope(name + "Scope", currentScope);
+    public void enterScope(String name, BlockType blockType) {
+        Scope newScope = new Scope(name + "Scope", currentScope, blockType);
         currentScope.addChild(newScope);
         currentScope = newScope;
     }

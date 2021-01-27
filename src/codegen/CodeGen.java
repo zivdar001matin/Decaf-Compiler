@@ -2,6 +2,7 @@ package codegen;
 
 import codegen.ast.*;
 import codegen.ast.literal.Literal;
+import codegen.symboltable.BlockType;
 import codegen.symboltable.DSCP;
 import codegen.symboltable.SymbolTable;
 import codegen.vtable.CodeForFunct;
@@ -86,7 +87,7 @@ public class CodeGen {
         String methodName = identifierNode.getValue();  //TODO add to vTable
         textSeg += methodName + ":\n";
         //arguments
-        spaghettiStack.enterScope(String.valueOf(node.getChild(1)));
+        spaghettiStack.enterScope(String.valueOf(node.getChild(1)), BlockType.METHOD);
         cgen(node.getChild(2));
         //body
         cgen(node.getChild(3));
