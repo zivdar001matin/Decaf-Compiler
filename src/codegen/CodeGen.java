@@ -19,6 +19,7 @@ public class CodeGen {
     public static String textSeg = ".text\n";
 
     static {
+        dataSeg += "\tnewLine: \t.asciiz \t\"\\n\"\n";
         dataSeg += "\tzeroDouble: \t.double \t0.0\n";
         textSeg += "\tldc1\t$f0, zeroDouble\n";
     }
@@ -471,6 +472,12 @@ public class CodeGen {
             default:
                 break;
         }
+
+        // insert newline
+        textSeg += "\tli\t$v0, 4\n";
+        textSeg += "\tla\t$a0, newLine\n";
+        textSeg += "\tsyscall\n";
+
         System.out.println(node.getChild(0).getDSCP().getValue());
         cgen(node.getChild(1));
     }
