@@ -381,7 +381,9 @@ public class CodeGen {
 
     private static void cgenParameters(Node node) throws Exception {
         for (int i = 0; i < node.getChild(0).getChildren().size(); i++) {
+            pushRegistersA();
             cgenAllChildren(node.getChild(0).getChild(i));
+            popRegistersA();
             textSeg += "\tmove\t$a"+i+", $v1\n";
         }
     }
