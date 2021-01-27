@@ -72,6 +72,9 @@ public class CodeGen {
             case PARAMETERS:
                 cgenParameters(node);
                 break;
+            case IF_STATEMENT:
+                cgenIfStatement(node);
+                break;
             default:
                 cgenAllChildren(node);
                 break;
@@ -108,6 +111,8 @@ public class CodeGen {
         dscp.setValue(String.valueOf(node));
         node.setDSCP(dscp);
         ((ExpressionNode) node.getParent()).setIsIdentifier();
+        if (dscp.getType().equals(PrimitiveType.BOOL))
+            textSeg += "\tli\t$v1, " + dscp.getValue() + '\n';
     }
 
     private static void cgenIdentifier(Node node) throws Exception {
@@ -527,6 +532,31 @@ public class CodeGen {
             popRegistersA();
             textSeg += "\tmove\t$a" + i + ", $v1\n";
         }
+    }
+
+    private static void cgenIfStatement(Node node) throws Exception {
+        SymbolTable.getCurrentScope().addArgumentCounter();
+
+        String entry = "IfStmt_" + SymbolTable.getCurrentScope().getArgumentCounter();
+        String labelName = spaghettiStack + "_" + entry;
+
+        spaghettiStack.enterScope(entry, BlockType.CONDITION);
+
+
+        cgen(node.getChild(0)); //  calculate condition -> return $v1
+        DSCP conditionDscp = node.getChild(0).getDSCP();
+        if (!conditionDscp.getType().equals(PrimitiveType.BOOL)) {
+            throw new Exception("Condition isn't boolean ");
+        }
+
+        // branch taken if condition is false
+        textSeg += "\tbeq\t$v1, 0, " + labelName + '\n';
+        cgen(node.getChild(1));
+
+        textSeg += labelName + ":\n";
+
+        //  continue code generating
+        cgen(node.getChild(2));
     }
 
     /**
