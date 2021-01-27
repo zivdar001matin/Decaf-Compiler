@@ -113,7 +113,11 @@ public class CodeGen {
         String entry = identifierNode.getValue();
         if (node.getParent().getNodeType().equals(NodeType.FUNCTION_CALL)){ //TODO for double identifiers
             cgenAllChildren(node);
+            textSeg += "\taddi\t$sp, $sp, -4\n";
+            textSeg += "\tsw\t$ra, 0($sp)\n";
             textSeg += "\tjal\t" + node + '\n';
+            textSeg += "\tlw\t$ra, 0($sp)\n";
+            textSeg += "\taddi\t$sp, $sp, 4\n";
         } else if (node.getParent().getNodeType().equals(NodeType.EXPRESSION_STATEMENT)) {
             DSCP dscp = spaghettiStack.getDSCP(entry);
             node.setDSCP(dscp);
