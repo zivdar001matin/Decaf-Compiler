@@ -9,6 +9,7 @@ public class Scope {
     private final Scope parent;
     private final String name;
     private int argumentCounter;
+    private int conditionStmtCounter;
     private ArrayList<Scope> children;
 
     public Scope(String name, Scope parent) {
@@ -17,6 +18,7 @@ public class Scope {
         this.parent = parent;
         children = new ArrayList<>();
         this.argumentCounter = 0;
+        this.conditionStmtCounter = 0;
     }
 
     public HashMap<String, DSCP> getScope() {
@@ -41,6 +43,14 @@ public class Scope {
 
     public void addArgumentCounter() {
         this.argumentCounter++;
+    }
+
+    public int getConditionStmtCounter() {
+        return conditionStmtCounter;
+    }
+
+    public void addConditionStmtCounter() {
+        this.conditionStmtCounter++;
     }
 
     @Override
