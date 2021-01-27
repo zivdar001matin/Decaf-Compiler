@@ -256,15 +256,13 @@ public class CodeGen {
     private static void cgenMultiplication(Node node) throws Exception {
         boolean isArgument = false;
 
+        pushRegistersS();
+
         // Calculate left child
         ExpressionNode leftChild = (ExpressionNode) node.getChild(0);
         cgen(leftChild);
         if (leftChild.getDSCP().isArgument()) {
             isArgument = true;
-            // save callee registers $s0, $s1
-            textSeg += "\taddi\t$sp, $sp, -8\n";
-            textSeg += "\tsw\t$s0, 0($sp)\n";
-            textSeg += "\tsw\t$s1, 0($sp)\n";
             if (leftChild.getDSCP().getType().equals(PrimitiveType.INT)) {
                 textSeg += "\tmove\t$s0, $v1\n";
             } else if (leftChild.getDSCP().getType().equals(PrimitiveType.DOUBLE)) {
@@ -275,10 +273,6 @@ public class CodeGen {
         cgen(rightChild);
         if(rightChild.getDSCP().isArgument()){
             isArgument = true;
-            // save callee registers $s2, $s3
-            textSeg += "\taddi\t$sp, $sp, -8\n";
-            textSeg += "\tsw\t$s2, 0($sp)\n";
-            textSeg += "\tsw\t$s3, 0($sp)\n";
             if(rightChild.getDSCP().getType().equals(PrimitiveType.INT)){
                 textSeg += "\tmove\t$s2, $v1\n";
             }else if(rightChild.getDSCP().getType().equals(PrimitiveType.DOUBLE)){
@@ -299,26 +293,17 @@ public class CodeGen {
             } else if (leftChild.getDSCP().isArgument() && !rightChild.getDSCP().isArgument()) {
                 rightValue = Integer.parseInt(rightChild.getResultName());
                 textSeg += "\tmul\t$v1, $s0, " + rightValue + '\n';
-                textSeg += "\tlw\t$s1, 0($sp)\n";
-                textSeg += "\tlw\t$s0, 0($sp)\n";
-                textSeg += "\taddi\t$sp, $sp, 8\n";
             } else if (!leftChild.getDSCP().isArgument() && rightChild.getDSCP().isArgument()){
                 leftValue = Integer.parseInt(leftChild.getResultName());
                 textSeg += "\tmul\t$v1, $s0, " + leftValue + '\n';
-                textSeg += "\tlw\t$s3, 0($sp)\n";
-                textSeg += "\tlw\t$s2, 0($sp)\n";
-                textSeg += "\taddi\t$sp, $sp, 8\n";
             } else {
                 textSeg += "\tmul\t$v1, $s0, $s2\n";
-                textSeg += "\tlw\t$s3, 0($sp)\n";
-                textSeg += "\tlw\t$s2, 0($sp)\n";
-                textSeg += "\tlw\t$s1, 0($sp)\n";
-                textSeg += "\tlw\t$s0, 0($sp)\n";
-                textSeg += "\taddi\t$sp, $sp, 16\n";
             }
         }else if (type.equals(PrimitiveType.DOUBLE)) {  //TODO
             value = String.valueOf(Double.parseDouble(leftChild.getResultName()) * Double.parseDouble(rightChild.getResultName()));
         }
+
+        popRegistersS();
 
         dscp.setValue(value);
         if(isArgument)
