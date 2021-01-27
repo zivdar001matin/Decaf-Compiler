@@ -75,7 +75,9 @@ public class CodeGen {
             case IF_STATEMENT:
                 cgenIfStatement(node);
                 break;
-            case LOOP_STATEMENT:
+            case WHILE_STATEMENT:
+                cgenWhileStatement(node);
+                break;
             default:
                 cgenAllChildren(node);
                 break;
@@ -570,6 +572,35 @@ public class CodeGen {
             textSeg += labelNameElse + ":\n";
             cgen(node.getChild(3)); // continue code generating
         }
+
+    }
+
+    private static void cgenWhileStatement(Node node) throws Exception {
+        SymbolTable.getCurrentScope().addLoopStmtCounter();
+
+        String entry = "LoopStmt_" + SymbolTable.getCurrentScope().getLoopStmtCounter();
+        String labelNameFirst = spaghettiStack + "_" + entry + "_start";
+        String labelNameEnd = spaghettiStack + "_" + entry + "_end";
+
+        spaghettiStack.enterScope(entry, BlockType.LOOP);
+
+        textSeg += labelNameFirst + ":\n";
+
+        cgen(node.getChild(0)); //  calculate condition -> return $v1
+        DSCP conditionDscp = node.getChild(0).getDSCP();
+        if (!conditionDscp.getType().equals(PrimitiveType.BOOL)) {
+            throw new Exception("Condition isn't boolean ");
+        }
+
+        // branch taken if condition is false
+        textSeg += "\tbeq\t$v1, 0, " + labelNameEnd + '\n';
+        cgen(node.getChild(1));
+
+        textSeg += "\tb\t" + labelNameFirst + '\n';
+        textSeg += labelNameEnd + ":\n";
+
+        // continue code generating
+        cgen(node.getChild(2));
 
     }
 
