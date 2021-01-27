@@ -75,6 +75,7 @@ public class CodeGen {
             case IF_STATEMENT:
                 cgenIfStatement(node);
                 break;
+            case LOOP_STATEMENT:
             default:
                 cgenAllChildren(node);
                 break;
@@ -535,12 +536,12 @@ public class CodeGen {
     }
 
     private static void cgenIfStatement(Node node) throws Exception {
-        SymbolTable.getCurrentScope().addArgumentCounter();
+        SymbolTable.getCurrentScope().addConditionStmtCounter();
 
-        String entry = "IfStmt_" + SymbolTable.getCurrentScope().getArgumentCounter();
+        String entry = "IfStmt_" + SymbolTable.getCurrentScope().getConditionStmtCounter();
         String labelName = spaghettiStack + "_" + entry;
 
-        String entryElse = "ElseStmt_" + SymbolTable.getCurrentScope().getArgumentCounter();    // Scope name for Else
+        String entryElse = "ElseStmt_" + SymbolTable.getCurrentScope().getConditionStmtCounter();    // Scope name for Else
         String labelNameElse = spaghettiStack + "_" + entryElse;    // Else Label for branch
 
         spaghettiStack.enterScope(entry, BlockType.CONDITION);
@@ -569,7 +570,6 @@ public class CodeGen {
             textSeg += labelNameElse + ":\n";
             cgen(node.getChild(3)); // continue code generating
         }
-        System.out.println(textSeg);
 
     }
 

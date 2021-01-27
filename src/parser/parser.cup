@@ -300,7 +300,7 @@ IfStmt       ::= IF LPAREN Expr:e RPAREN Stmt:s
 
 WhileStmt    ::= WHILE LPAREN Expr:e RPAREN Stmt:s
                     {:
-                        RESULT = new SimpleNode(NodeType.REPEAT_STATEMENT); //TODO check REPEAT_STATEMENT vs WHILE_STATEMENT
+                        RESULT = new SimpleNode(NodeType.WHILE_STATEMENT);
                         RESULT.addChild(e, s);
                         e.setParent(RESULT);
                         s.setParent(RESULT);
