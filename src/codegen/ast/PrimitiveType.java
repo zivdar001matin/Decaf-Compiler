@@ -5,14 +5,14 @@ package codegen.ast;
  */
 public enum PrimitiveType implements Type {
 
-    BOOL("?",".word", 1),
-    CHAR("",".byte", 1),
-    INT("0",".word", 4),
-    DOUBLE("0.0",".double", 8),
-    FLOAT("",".float", 4),
+    BOOL("?", ".word", 1),
+    CHAR("", ".byte", 1),
+    INT("0", ".word", 4),
+    DOUBLE("0.0", ".double", 8),
+    FLOAT("", ".float", 4),
     //todo
-    VOID("","void", 0),
-    STRING("\"\"",".ascii", 0);
+    VOID("", "void", 0),
+    STRING("\"\"", ".ascii", 0);
 
     private final String initialValue;
     private final String signature;

@@ -7,7 +7,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-public class SimpleNode implements Node{
+public class SimpleNode implements Node {
 
     private List<Node> children = new ArrayList<>();
     private Node parent;

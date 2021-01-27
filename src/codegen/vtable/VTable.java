@@ -9,7 +9,7 @@ public class VTable {
         this.table = new HashMap<>();
     }
 
-    public void addFunction(String name, CodeForFunct codeForFunct){
+    public void addFunction(String name, CodeForFunct codeForFunct) {
         table.put(name, codeForFunct);
     }
 

@@ -39,7 +39,7 @@ public class Scope {
         return argumentCounter;
     }
 
-    public void addArgumentCounter(){
+    public void addArgumentCounter() {
         this.argumentCounter++;
     }
 

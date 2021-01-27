@@ -90,7 +90,7 @@ public class CodeGen {
         cgen(node.getChild(2));
         //body
         cgen(node.getChild(3));
-        if (methodName.equals("main")){
+        if (methodName.equals("main")) {
             textSeg += "\t# This line is going to signal end of program.\n";
             textSeg += "\tli\t$v0, 10\n";
             textSeg += "\tsyscall\n";
@@ -112,7 +112,7 @@ public class CodeGen {
     private static void cgenIdentifier(Node node) throws Exception {
         IdentifierNode identifierNode = (IdentifierNode) node;
         String entry = identifierNode.getValue();
-        if (node.getParent().getNodeType().equals(NodeType.FUNCTION_CALL)){ //TODO for double identifiers
+        if (node.getParent().getNodeType().equals(NodeType.FUNCTION_CALL)) { //TODO for double identifiers
             cgenAllChildren(node);
             textSeg += "\taddi\t$sp, $sp, -4\n";
             textSeg += "\tsw\t$ra, 0($sp)\n";
@@ -123,13 +123,13 @@ public class CodeGen {
         } else if (node.getParent().getNodeType().equals(NodeType.EXPRESSION_STATEMENT)) {
             DSCP dscp = spaghettiStack.getDSCP(entry);
             node.setDSCP(dscp);
-            ((ExpressionNode)node.getParent()).setIsIdentifier();
+            ((ExpressionNode) node.getParent()).setIsIdentifier();
             // load scopeName_Entry into $v1 and send it up
-            if (spaghettiStack.getDSCP(entry).isArgument()){
-                int argumentPlace = spaghettiStack.getDSCP(entry).getArgumentPlace()-1;
+            if (spaghettiStack.getDSCP(entry).isArgument()) {
+                int argumentPlace = spaghettiStack.getDSCP(entry).getArgumentPlace() - 1;
                 textSeg += "\tmove\t$v1, $a" + argumentPlace + "\n";
             } else {
-                textSeg += "\tlw\t$v1, " + spaghettiStack.getEntryScope(entry)+"."+entry + "\n";
+                textSeg += "\tlw\t$v1, " + spaghettiStack.getEntryScope(entry) + "." + entry + "\n";
             }
         }
     }
@@ -149,7 +149,7 @@ public class CodeGen {
 
         String value = null;
 
-        if (expressionNode.getChild(0).getNodeType().equals(NodeType.FUNCTION_CALL)){
+        if (expressionNode.getChild(0).getNodeType().equals(NodeType.FUNCTION_CALL)) {
 //            textSeg += ""
         } else {
             value = expressionNode.getDSCP().getValue();
@@ -163,22 +163,22 @@ public class CodeGen {
 
         if (value != null) {    // Simple Assign
             identifierDSCP.setValue(value);
-            switch (node.getChild(1).getDSCP().getType().getPrimitive()){
+            switch (node.getChild(1).getDSCP().getType().getPrimitive()) {
                 case INT:
-                    textSeg += "\t\t\t\t\t\t\t#Begin assign int" + spaghettiStack.getEntryScope(entry).toString()+"."+entry + '\n';
-                    textSeg += "\tla\t$a0, " + spaghettiStack.getEntryScope(entry).toString()+"."+entry + '\n';
+                    textSeg += "\t\t\t\t\t\t\t#Begin assign int" + spaghettiStack.getEntryScope(entry).toString() + "." + entry + '\n';
+                    textSeg += "\tla\t$a0, " + spaghettiStack.getEntryScope(entry).toString() + "." + entry + '\n';
                     textSeg += "\tli\t$a1, " + value + '\n';
                     textSeg += "\tsw\t$a1  0($a0)" + "\t\t\t\t\t\t# End assign\n";
                     break;
                 case DOUBLE:
-                    textSeg += "\t\t\t\t\t\t\t#Begin assign double" + spaghettiStack.getEntryScope(entry).toString()+"."+entry + '\n';
-                    textSeg += "\tla\t$a0, " + spaghettiStack.getEntryScope(entry).toString()+"."+entry + '\n';
+                    textSeg += "\t\t\t\t\t\t\t#Begin assign double" + spaghettiStack.getEntryScope(entry).toString() + "." + entry + '\n';
+                    textSeg += "\tla\t$a0, " + spaghettiStack.getEntryScope(entry).toString() + "." + entry + '\n';
                     textSeg += "\tli.d\t$f10, " + value + '\n'; //TODO check that this line is correct or not
                     textSeg += "\tsdc1\t$f10  0($a0)" + "\t\t\t\t\t\t# End assign\n";
                     break;
             }
         } else {    // with function assign
-            textSeg += "\tla\t$a0, " + spaghettiStack.getEntryScope(entry).toString()+"."+entry + '\n';
+            textSeg += "\tla\t$a0, " + spaghettiStack.getEntryScope(entry).toString() + "." + entry + '\n';
             textSeg += "\tsw\t$v1  0($a0)" + "\t\t\t\t\t\t# End assign\n";
         }
 
@@ -193,11 +193,11 @@ public class CodeGen {
         String data_id = spaghettiStack + "." + identifierNode.getValue() + ':';
         dataSeg += '\t' + data_id + '\t' + typePrimitive.getSignature() + '\t' + typePrimitive.getInitialValue() + '\n';
 
-        if(node.getParent().getNodeType().equals(NodeType.ARGUMENT)){ // inside arguments declarations
+        if (node.getParent().getNodeType().equals(NodeType.ARGUMENT)) { // inside arguments declarations
             DSCP dscp = new DSCP(typePrimitive, identifierNode);
             dscp.setArgumentTrue(SymbolTable.getCurrentScope().getArgumentCounter());
             spaghettiStack.addEntry(identifierNode.getValue(), dscp);
-        }else{ // inside body declaration
+        } else { // inside body declaration
 //        dscp.setConstant(); //TODO
             DSCP dscp = new DSCP(typePrimitive, identifierNode);
             spaghettiStack.addEntry(identifierNode.getValue(), dscp);
@@ -237,11 +237,11 @@ public class CodeGen {
         cgen(rightChild);
         boolean isRightCalcutable = rightChild.getDSCP().isArgument() || rightChild.getDSCP().isFunction();
 
-        if(isRightCalcutable){
+        if (isRightCalcutable) {
             isArgument = true;
-            if(rightChild.getDSCP().getType().equals(PrimitiveType.INT)){
+            if (rightChild.getDSCP().getType().equals(PrimitiveType.INT)) {
                 textSeg += "\tmove\t$s2, $v1\n";
-            }else if(rightChild.getDSCP().getType().equals(PrimitiveType.DOUBLE)){
+            } else if (rightChild.getDSCP().getType().equals(PrimitiveType.DOUBLE)) {
                 textSeg += "\tmfc1.d\t$s2, $f10\n"; // store in $s2, $s3
             }
         }
@@ -253,27 +253,27 @@ public class CodeGen {
             int leftValue;
             int rightValue;
 //            if(leftChild.getChild(0).getNodeType().equals(NodeType.FUNCTION_CALL))
-            if(!isLeftCalcutable && !isRightCalcutable){    //Constant Folding
+            if (!isLeftCalcutable && !isRightCalcutable) {    //Constant Folding
                 leftValue = Integer.parseInt(leftChild.getResultName());
                 rightValue = Integer.parseInt(rightChild.getResultName());
                 value = String.valueOf(leftValue * rightValue);
             } else if (isLeftCalcutable && !isRightCalcutable) {
                 rightValue = Integer.parseInt(rightChild.getResultName());
                 textSeg += "\tadd\t$v1, $s0, " + rightValue + '\n';
-            } else if (!isLeftCalcutable && isRightCalcutable){
+            } else if (!isLeftCalcutable && isRightCalcutable) {
                 leftValue = Integer.parseInt(leftChild.getResultName());
                 textSeg += "\tadd\t$v1, $s0, " + leftValue + '\n';
             } else {
                 textSeg += "\tadd\t$v1, $s0, $s2\n";
             }
-        }else if (type.equals(PrimitiveType.DOUBLE)) {  //TODO
+        } else if (type.equals(PrimitiveType.DOUBLE)) {  //TODO
             value = String.valueOf(Double.parseDouble(leftChild.getResultName()) * Double.parseDouble(rightChild.getResultName()));
         }
 
         popRegistersS();
 
         dscp.setValue(value);
-        if(isArgument)
+        if (isArgument)
             dscp.setArgumentTrue(-1);
         node.setDSCP(dscp);
 
@@ -303,11 +303,11 @@ public class CodeGen {
         cgen(rightChild);
         boolean isRightCalcutable = rightChild.getDSCP().isArgument() || rightChild.getDSCP().isFunction();
 
-        if(isRightCalcutable){
+        if (isRightCalcutable) {
             isArgument = true;
-            if(rightChild.getDSCP().getType().equals(PrimitiveType.INT)){
+            if (rightChild.getDSCP().getType().equals(PrimitiveType.INT)) {
                 textSeg += "\tmove\t$s2, $v1\n";
-            }else if(rightChild.getDSCP().getType().equals(PrimitiveType.DOUBLE)){
+            } else if (rightChild.getDSCP().getType().equals(PrimitiveType.DOUBLE)) {
                 textSeg += "\tmfc1.d\t$s2, $f10\n"; // store in $s2, $s3
             }
         }
@@ -319,27 +319,27 @@ public class CodeGen {
             int leftValue;
             int rightValue;
 //            if(leftChild.getChild(0).getNodeType().equals(NodeType.FUNCTION_CALL))
-                if(!isLeftCalcutable && !isRightCalcutable){    //Constant Folding
-                    leftValue = Integer.parseInt(leftChild.getResultName());
-                    rightValue = Integer.parseInt(rightChild.getResultName());
-                    value = String.valueOf(leftValue * rightValue);
-                } else if (isLeftCalcutable && !isRightCalcutable) {
-                    rightValue = Integer.parseInt(rightChild.getResultName());
-                    textSeg += "\tsub\t$v1, $s0, " + rightValue + '\n';
-                } else if (!isLeftCalcutable && isRightCalcutable){
-                    leftValue = Integer.parseInt(leftChild.getResultName());
-                    textSeg += "\tsub\t$v1, $s0, " + leftValue + '\n';
-                } else {
-                    textSeg += "\tsub\t$v1, $s0, $s2\n";
-                }
-        }else if (type.equals(PrimitiveType.DOUBLE)) {  //TODO
+            if (!isLeftCalcutable && !isRightCalcutable) {    //Constant Folding
+                leftValue = Integer.parseInt(leftChild.getResultName());
+                rightValue = Integer.parseInt(rightChild.getResultName());
+                value = String.valueOf(leftValue * rightValue);
+            } else if (isLeftCalcutable && !isRightCalcutable) {
+                rightValue = Integer.parseInt(rightChild.getResultName());
+                textSeg += "\tsub\t$v1, $s0, " + rightValue + '\n';
+            } else if (!isLeftCalcutable && isRightCalcutable) {
+                leftValue = Integer.parseInt(leftChild.getResultName());
+                textSeg += "\tsub\t$v1, $s0, " + leftValue + '\n';
+            } else {
+                textSeg += "\tsub\t$v1, $s0, $s2\n";
+            }
+        } else if (type.equals(PrimitiveType.DOUBLE)) {  //TODO
             value = String.valueOf(Double.parseDouble(leftChild.getResultName()) * Double.parseDouble(rightChild.getResultName()));
         }
 
         popRegistersS();
 
         dscp.setValue(value);
-        if(isArgument)
+        if (isArgument)
             dscp.setArgumentTrue(-1);
         node.setDSCP(dscp);
 
@@ -369,11 +369,11 @@ public class CodeGen {
         cgen(rightChild);
         boolean isRightCalcutable = rightChild.getDSCP().isArgument() || rightChild.getDSCP().isFunction();
 
-        if(isRightCalcutable){
+        if (isRightCalcutable) {
             isArgument = true;
-            if(rightChild.getDSCP().getType().equals(PrimitiveType.INT)){
+            if (rightChild.getDSCP().getType().equals(PrimitiveType.INT)) {
                 textSeg += "\tmove\t$s2, $v1\n";
-            }else if(rightChild.getDSCP().getType().equals(PrimitiveType.DOUBLE)){
+            } else if (rightChild.getDSCP().getType().equals(PrimitiveType.DOUBLE)) {
                 textSeg += "\tmfc1.d\t$s2, $f10\n"; // store in $s2, $s3
             }
         }
@@ -385,27 +385,27 @@ public class CodeGen {
             int leftValue;
             int rightValue;
 //            if(leftChild.getChild(0).getNodeType().equals(NodeType.FUNCTION_CALL))
-                if(!isLeftCalcutable && !isRightCalcutable){    //Constant Folding
-                    leftValue = Integer.parseInt(leftChild.getResultName());
-                    rightValue = Integer.parseInt(rightChild.getResultName());
-                    value = String.valueOf(leftValue * rightValue);
-                } else if (isLeftCalcutable && !isRightCalcutable) {
-                    rightValue = Integer.parseInt(rightChild.getResultName());
-                    textSeg += "\tmul\t$v1, $s0, " + rightValue + '\n';
-                } else if (!isLeftCalcutable && isRightCalcutable){
-                    leftValue = Integer.parseInt(leftChild.getResultName());
-                    textSeg += "\tmul\t$v1, $s0, " + leftValue + '\n';
-                } else {
-                    textSeg += "\tmul\t$v1, $s0, $s2\n";
-                }
-        }else if (type.equals(PrimitiveType.DOUBLE)) {  //TODO
+            if (!isLeftCalcutable && !isRightCalcutable) {    //Constant Folding
+                leftValue = Integer.parseInt(leftChild.getResultName());
+                rightValue = Integer.parseInt(rightChild.getResultName());
+                value = String.valueOf(leftValue * rightValue);
+            } else if (isLeftCalcutable && !isRightCalcutable) {
+                rightValue = Integer.parseInt(rightChild.getResultName());
+                textSeg += "\tmul\t$v1, $s0, " + rightValue + '\n';
+            } else if (!isLeftCalcutable && isRightCalcutable) {
+                leftValue = Integer.parseInt(leftChild.getResultName());
+                textSeg += "\tmul\t$v1, $s0, " + leftValue + '\n';
+            } else {
+                textSeg += "\tmul\t$v1, $s0, $s2\n";
+            }
+        } else if (type.equals(PrimitiveType.DOUBLE)) {  //TODO
             value = String.valueOf(Double.parseDouble(leftChild.getResultName()) * Double.parseDouble(rightChild.getResultName()));
         }
 
         popRegistersS();
 
         dscp.setValue(value);
-        if(isArgument)
+        if (isArgument)
             dscp.setArgumentTrue(-1);
         node.setDSCP(dscp);
 
@@ -435,11 +435,11 @@ public class CodeGen {
         cgen(rightChild);
         boolean isRightCalcutable = rightChild.getDSCP().isArgument() || rightChild.getDSCP().isFunction();
 
-        if(isRightCalcutable){
+        if (isRightCalcutable) {
             isArgument = true;
-            if(rightChild.getDSCP().getType().equals(PrimitiveType.INT)){
+            if (rightChild.getDSCP().getType().equals(PrimitiveType.INT)) {
                 textSeg += "\tmove\t$s2, $v1\n";
-            }else if(rightChild.getDSCP().getType().equals(PrimitiveType.DOUBLE)){
+            } else if (rightChild.getDSCP().getType().equals(PrimitiveType.DOUBLE)) {
                 textSeg += "\tmfc1.d\t$s2, $f10\n"; // store in $s2, $s3
             }
         }
@@ -451,27 +451,27 @@ public class CodeGen {
             int leftValue;
             int rightValue;
 //            if(leftChild.getChild(0).getNodeType().equals(NodeType.FUNCTION_CALL))
-                if(!isLeftCalcutable && !isRightCalcutable){    //Const ant Folding
-                    leftValue = Integer.parseInt(leftChild.getResultName());
-                    rightValue = Integer.parseInt(rightChild.getResultName());
-                    value = String.valueOf(leftValue * rightValue);
-                } else if (isLeftCalcutable && !isRightCalcutable) {
-                    rightValue = Integer.parseInt(rightChild.getResultName());
-                    textSeg += "\tdiv\t$v1, $s0, " + rightValue + '\n';
-                } else if (!isLeftCalcutable && isRightCalcutable){
-                    leftValue = Integer.parseInt(leftChild.getResultName());
-                    textSeg += "\tdiv\t$v1, $s0, " + leftValue + '\n';
-                } else {
-                    textSeg += "\tdiv\t$v1, $s0, $s2\n";
-                }
-        }else if (type.equals(PrimitiveType.DOUBLE)) {  //TODO
+            if (!isLeftCalcutable && !isRightCalcutable) {    //Const ant Folding
+                leftValue = Integer.parseInt(leftChild.getResultName());
+                rightValue = Integer.parseInt(rightChild.getResultName());
+                value = String.valueOf(leftValue * rightValue);
+            } else if (isLeftCalcutable && !isRightCalcutable) {
+                rightValue = Integer.parseInt(rightChild.getResultName());
+                textSeg += "\tdiv\t$v1, $s0, " + rightValue + '\n';
+            } else if (!isLeftCalcutable && isRightCalcutable) {
+                leftValue = Integer.parseInt(leftChild.getResultName());
+                textSeg += "\tdiv\t$v1, $s0, " + leftValue + '\n';
+            } else {
+                textSeg += "\tdiv\t$v1, $s0, $s2\n";
+            }
+        } else if (type.equals(PrimitiveType.DOUBLE)) {  //TODO
             value = String.valueOf(Double.parseDouble(leftChild.getResultName()) * Double.parseDouble(rightChild.getResultName()));
         }
 
         popRegistersS();
 
         dscp.setValue(value);
-        if(isArgument)
+        if (isArgument)
             dscp.setArgumentTrue(-1);
         node.setDSCP(dscp);
 
@@ -481,7 +481,7 @@ public class CodeGen {
 
     private static void cgenPrint(Node node) throws Exception { //TODO newline after print
         cgen(node.getChild(0));
-        switch (node.getChild(0).getDSCP().getType().getPrimitive()){
+        switch (node.getChild(0).getDSCP().getType().getPrimitive()) {
             case INT:
                 textSeg += "\tli\t$v0, 1\n";
                 textSeg += "\tadd\t$a0, $v1, $zero\n";
@@ -524,14 +524,14 @@ public class CodeGen {
             pushRegistersA();
             cgenAllChildren(node.getChild(0).getChild(i));
             popRegistersA();
-            textSeg += "\tmove\t$a"+i+", $v1\n";
+            textSeg += "\tmove\t$a" + i + ", $v1\n";
         }
     }
 
     /**
      * Save callee saved registers s0, s1, s2, s3, s4, s5,
      */
-    private static void pushRegistersS(){
+    private static void pushRegistersS() {
         textSeg += "\taddi\t$sp, $sp, -20\n";
         textSeg += "\tsw\t$s0, 0($sp)\n";
         textSeg += "\tsw\t$s1, 4($sp)\n";
@@ -541,7 +541,7 @@ public class CodeGen {
         textSeg += "\tsw\t$s5, 20($sp)\n";
     }
 
-    private static void popRegistersS(){
+    private static void popRegistersS() {
         textSeg += "\tlw\t$s0, 0($sp)\n";
         textSeg += "\tlw\t$s1, 4($sp)\n";
         textSeg += "\tlw\t$s2, 8($sp)\n";
@@ -554,7 +554,7 @@ public class CodeGen {
     /**
      * Save argument registers a0, a1, a2, a3
      */
-    private static void pushRegistersA(){
+    private static void pushRegistersA() {
         textSeg += "\taddi\t$sp, $sp, -16\n";
         textSeg += "\tsw\t$a0, 0($sp)\n";
         textSeg += "\tsw\t$a1, 4($sp)\n";
@@ -562,7 +562,7 @@ public class CodeGen {
         textSeg += "\tsw\t$a3, 12($sp)\n";
     }
 
-    private static void popRegistersA(){
+    private static void popRegistersA() {
         textSeg += "\tlw\t$a0, 0($sp)\n";
         textSeg += "\tlw\t$a1, 4($sp)\n";
         textSeg += "\tlw\t$a2, 8($sp)\n";
@@ -572,7 +572,7 @@ public class CodeGen {
 
 
     private static Type widen(ExpressionNode leftChild, ExpressionNode rightChild) throws Exception {
-        if(leftChild.getDSCP().getType().equals(rightChild.getDSCP().getType())) {
+        if (leftChild.getDSCP().getType().equals(rightChild.getDSCP().getType())) {
             Type type = leftChild.getDSCP().getType();
             if (type.equals(PrimitiveType.INT) || type.equals(PrimitiveType.DOUBLE))
                 return type;

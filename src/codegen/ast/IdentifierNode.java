@@ -1,6 +1,6 @@
 package codegen.ast;
 
-public class IdentifierNode extends SimpleNode{
+public class IdentifierNode extends SimpleNode {
     private final String value;
     private boolean inConst;
 

@@ -1,6 +1,6 @@
+import codegen.CodeGen;
 import codegen.ast.Node;
 import codegen.ast.RootNode;
-import codegen.CodeGen;
 import parser.parser;
 import scanner.Scanner;
 
