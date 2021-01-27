@@ -262,7 +262,7 @@ public class CodeGen {
             if (!isLeftCalcutable && !isRightCalcutable) {    //Constant Folding
                 leftValue = Integer.parseInt(leftChild.getResultName());
                 rightValue = Integer.parseInt(rightChild.getResultName());
-                value = String.valueOf(leftValue * rightValue);
+                value = String.valueOf(leftValue + rightValue);
             } else if (isLeftCalcutable && !isRightCalcutable) {
                 rightValue = Integer.parseInt(rightChild.getResultName());
                 textSeg += "\tadd\t$v1, $s0, " + rightValue + '\n';
@@ -328,7 +328,7 @@ public class CodeGen {
             if (!isLeftCalcutable && !isRightCalcutable) {    //Constant Folding
                 leftValue = Integer.parseInt(leftChild.getResultName());
                 rightValue = Integer.parseInt(rightChild.getResultName());
-                value = String.valueOf(leftValue * rightValue);
+                value = String.valueOf(leftValue - rightValue);
             } else if (isLeftCalcutable && !isRightCalcutable) {
                 rightValue = Integer.parseInt(rightChild.getResultName());
                 textSeg += "\tsub\t$v1, $s0, " + rightValue + '\n';
@@ -339,7 +339,7 @@ public class CodeGen {
                 textSeg += "\tsub\t$v1, $s0, $s2\n";
             }
         } else if (type.equals(PrimitiveType.DOUBLE)) {  //TODO
-            value = String.valueOf(Double.parseDouble(leftChild.getResultName()) * Double.parseDouble(rightChild.getResultName()));
+            value = String.valueOf(Double.parseDouble(leftChild.getResultName()) - Double.parseDouble(rightChild.getResultName()));
         }
 
         popRegistersS();
@@ -460,7 +460,7 @@ public class CodeGen {
             if (!isLeftCalcutable && !isRightCalcutable) {    //Const ant Folding
                 leftValue = Integer.parseInt(leftChild.getResultName());
                 rightValue = Integer.parseInt(rightChild.getResultName());
-                value = String.valueOf(leftValue * rightValue);
+                value = String.valueOf(leftValue / rightValue);
             } else if (isLeftCalcutable && !isRightCalcutable) {
                 rightValue = Integer.parseInt(rightChild.getResultName());
                 textSeg += "\tdiv\t$v1, $s0, " + rightValue + '\n';
@@ -471,7 +471,7 @@ public class CodeGen {
                 textSeg += "\tdiv\t$v1, $s0, $s2\n";
             }
         } else if (type.equals(PrimitiveType.DOUBLE)) {  //TODO
-            value = String.valueOf(Double.parseDouble(leftChild.getResultName()) * Double.parseDouble(rightChild.getResultName()));
+            value = String.valueOf(Double.parseDouble(leftChild.getResultName()) / Double.parseDouble(rightChild.getResultName()));
         }
 
         popRegistersS();
