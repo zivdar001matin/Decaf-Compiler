@@ -1,13 +1,9 @@
-int sum(int a, int b){
-    return a + b;
-}
-
 int main() {
 
     int i;
+    bool a;
 
-    for(i = 0; true; i = sum(i, 1)){
-        Print(i);
-    }
+    i = 56;
+    a = i == 56;
 
 }

@@ -5,7 +5,7 @@ package codegen.ast;
  */
 public enum PrimitiveType implements Type {
 
-    BOOL("?", ".word", 1),
+    BOOL("0", ".word", 1),
     CHAR("", ".byte", 1),
     INT("0", ".word", 4),
     DOUBLE("0.0", ".double", 8),

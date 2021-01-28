@@ -81,6 +81,9 @@ public class CodeGen {
             case FOR_STATEMENT:
                 cgenForStatement(node);
                 break;
+            case EQUAL:
+                cgenEqual(node);
+                break;
             default:
                 cgenAllChildren(node);
                 break;
@@ -480,6 +483,29 @@ public class CodeGen {
 
         // continue code generating
         cgen(node.getChild(4));
+    }
+
+    private static void cgenEqual(Node node) throws Exception {
+        pushRegistersS();
+        ExpressionNode leftChild = (ExpressionNode) node.getChild(0);
+        cgen(leftChild);
+        textSeg += "\tmove\t$s0, $v1\n";
+
+        ExpressionNode rightChild = (ExpressionNode) node.getChild(1);
+        cgen(rightChild);
+        textSeg += "\tmove\t$s2, $v1\n";
+
+        Type type = widen(leftChild, rightChild, true);
+
+        textSeg += "\tseq\t$v1, $s0, $s2\n";
+
+        popRegistersS();
+
+        DSCP dscp = new DSCP(PrimitiveType.BOOL, null);
+        node.setDSCP(dscp);
+        ExpressionNode parent = (ExpressionNode) node.getParent();
+        parent.setDSCP(dscp);
+//        parent.setIsIdentifier();
     }
 
     /**
