@@ -113,9 +113,10 @@ public class CodeGen {
         DSCP dscp = new DSCP(node.getType(), null);
         dscp.setValue(String.valueOf(node));
         node.setDSCP(dscp);
+        textSeg += "\tli\t$v1, " + dscp.getValue() + '\n';
         ((ExpressionNode) node.getParent()).setIsIdentifier();
-        if (dscp.getType().equals(PrimitiveType.BOOL))
-            textSeg += "\tli\t$v1, " + dscp.getValue() + '\n';
+//        if (dscp.getType().equals(PrimitiveType.BOOL))
+//            textSeg += "\tli\t$v1, " + dscp.getValue() + '\n';
     }
 
     private static void cgenIdentifier(Node node) throws Exception {
@@ -156,13 +157,13 @@ public class CodeGen {
 
         cgen(expressionNode);
 
-        String value = null;
+//        String value = null;
 
-        if (expressionNode.getChild(0).getNodeType().equals(NodeType.FUNCTION_CALL)) {
-//            textSeg += ""
-        } else {
-            value = expressionNode.getDSCP().getValue();
-        }
+//        if (expressionNode.getChild(0).getNodeType().equals(NodeType.FUNCTION_CALL)) {
+////            textSeg += ""
+//        } else {
+//            value = expressionNode.getDSCP().getValue();
+//        }
 
         String entry = identifierNode.toString();
         DSCP identifierDSCP = spaghettiStack.getDSCP(entry);
@@ -170,26 +171,26 @@ public class CodeGen {
         if (!identifierDSCP.getType().equals(expressionNode.getDSCP().getType()))
             throw new Error("Type of assign doesn't match " + identifierDSCP.getType() + " -> " + expressionNode.getDSCP().getType());
 
-        if (value != null) {    // Simple Assign
-            identifierDSCP.setValue(value);
-            switch (node.getChild(1).getDSCP().getType().getPrimitive()) {
-                case INT:
-                    textSeg += "\t\t\t\t\t\t\t#Begin assign int" + spaghettiStack.getEntryScope(entry).toString() + "." + entry + '\n';
-                    textSeg += "\tla\t$a0, " + spaghettiStack.getEntryScope(entry).toString() + "." + entry + '\n';
-                    textSeg += "\tli\t$a1, " + value + '\n';
-                    textSeg += "\tsw\t$a1  0($a0)" + "\t\t\t\t\t\t# End assign\n";
-                    break;
-                case DOUBLE:
-                    textSeg += "\t\t\t\t\t\t\t#Begin assign double" + spaghettiStack.getEntryScope(entry).toString() + "." + entry + '\n';
-                    textSeg += "\tla\t$a0, " + spaghettiStack.getEntryScope(entry).toString() + "." + entry + '\n';
-                    textSeg += "\tli.d\t$f10, " + value + '\n'; //TODO check that this line is correct or not
-                    textSeg += "\tsdc1\t$f10  0($a0)" + "\t\t\t\t\t\t# End assign\n";
-                    break;
-            }
-        } else {    // with function assign
-            textSeg += "\tla\t$a0, " + spaghettiStack.getEntryScope(entry).toString() + "." + entry + '\n';
-            textSeg += "\tsw\t$v1  0($a0)" + "\t\t\t\t\t\t# End assign\n";
-        }
+//        if (value != null) {    // Simple Assign
+//            identifierDSCP.setValue(value);
+//            switch (node.getChild(1).getDSCP().getType().getPrimitive()) {
+//                case INT:
+//                    textSeg += "\t\t\t\t\t\t\t#Begin assign int" + spaghettiStack.getEntryScope(entry).toString() + "." + entry + '\n';
+//                    textSeg += "\tla\t$a0, " + spaghettiStack.getEntryScope(entry).toString() + "." + entry + '\n';
+//                    textSeg += "\tli\t$a1, " + value + '\n';
+//                    textSeg += "\tsw\t$a1  0($a0)" + "\t\t\t\t\t\t# End assign\n";
+//                    break;
+//                case DOUBLE:
+//                    textSeg += "\t\t\t\t\t\t\t#Begin assign double" + spaghettiStack.getEntryScope(entry).toString() + "." + entry + '\n';
+//                    textSeg += "\tla\t$a0, " + spaghettiStack.getEntryScope(entry).toString() + "." + entry + '\n';
+//                    textSeg += "\tli.d\t$f10, " + value + '\n'; //TODO check that this line is correct or not
+//                    textSeg += "\tsdc1\t$f10  0($a0)" + "\t\t\t\t\t\t# End assign\n";
+//                    break;
+//            }
+//        } else {    // with function assign
+        textSeg += "\tla\t$a0, " + spaghettiStack.getEntryScope(entry).toString() + "." + entry + '\n';
+        textSeg += "\tsw\t$v1  0($a0)" + "\t\t\t\t\t\t# End assign\n";
+//        }
 
         //continue code generating
         cgen(node.getChild(2));
@@ -225,265 +226,133 @@ public class CodeGen {
     }
 
     private static void cgenAddition(Node node) throws Exception {
-        boolean isArgument = false;
-
         pushRegistersS();
-
-        // Calculate left child
         ExpressionNode leftChild = (ExpressionNode) node.getChild(0);
         cgen(leftChild);
-        boolean isLeftCalcutable = leftChild.getDSCP().isArgument() || leftChild.getDSCP().isFunction();
-
-        if (isLeftCalcutable) {
-            isArgument = true;
-            if (leftChild.getDSCP().getType().equals(PrimitiveType.INT)) {
-                textSeg += "\tmove\t$s0, $v1\n";
-            } else if (leftChild.getDSCP().getType().equals(PrimitiveType.DOUBLE)) {
-                textSeg += "\tmfc1.d\t$s0, $f10\n"; // store in $s0, $s1
-            }
+        if (leftChild.getDSCP().getType().equals(PrimitiveType.INT)) {
+            textSeg += "\tmove\t$s0, $v1\n";
+        } else if (leftChild.getDSCP().getType().equals(PrimitiveType.DOUBLE)) {
+            textSeg += "\tmfc1.d\t$s0, $f10\n"; // store in $s0, $s1
         }
+
         ExpressionNode rightChild = (ExpressionNode) node.getChild(1);
         cgen(rightChild);
-        boolean isRightCalcutable = rightChild.getDSCP().isArgument() || rightChild.getDSCP().isFunction();
-
-        if (isRightCalcutable) {
-            isArgument = true;
-            if (rightChild.getDSCP().getType().equals(PrimitiveType.INT)) {
-                textSeg += "\tmove\t$s2, $v1\n";
-            } else if (rightChild.getDSCP().getType().equals(PrimitiveType.DOUBLE)) {
-                textSeg += "\tmfc1.d\t$s2, $f10\n"; // store in $s2, $s3
-            }
+        if (rightChild.getDSCP().getType().equals(PrimitiveType.INT)) {
+            textSeg += "\tmove\t$s2, $v1\n";
+        } else if (rightChild.getDSCP().getType().equals(PrimitiveType.DOUBLE)) {
+            textSeg += "\tmfc1.d\t$s2, $f10\n"; // store in $s2, $s3
         }
+
         Type type = widen(leftChild, rightChild);
 
-        DSCP dscp = new DSCP(type, null);
-        String value = null;
         if (type.equals(PrimitiveType.INT)) {
-            int leftValue;
-            int rightValue;
-//            if(leftChild.getChild(0).getNodeType().equals(NodeType.FUNCTION_CALL))
-            if (!isLeftCalcutable && !isRightCalcutable) {    //Constant Folding
-                leftValue = Integer.parseInt(leftChild.getResultName());
-                rightValue = Integer.parseInt(rightChild.getResultName());
-                value = String.valueOf(leftValue + rightValue);
-            } else if (isLeftCalcutable && !isRightCalcutable) {
-                rightValue = Integer.parseInt(rightChild.getResultName());
-                textSeg += "\tadd\t$v1, $s0, " + rightValue + '\n';
-            } else if (!isLeftCalcutable && isRightCalcutable) {
-                leftValue = Integer.parseInt(leftChild.getResultName());
-                textSeg += "\tadd\t$v1, $s0, " + leftValue + '\n';
-            } else {
-                textSeg += "\tadd\t$v1, $s0, $s2\n";
-            }
-        } else if (type.equals(PrimitiveType.DOUBLE)) {  //TODO
-            value = String.valueOf(Double.parseDouble(leftChild.getResultName()) * Double.parseDouble(rightChild.getResultName()));
+            textSeg += "\tadd\t$v1, $s0, $s2\n";
+        } else if (type.equals(PrimitiveType.DOUBLE)) {
+            //TODO
         }
-
         popRegistersS();
 
-        dscp.setValue(value);
-        if (isArgument)
-            dscp.setArgumentTrue(-1);
+        DSCP dscp = new DSCP(type, null);
         node.setDSCP(dscp);
-
         ExpressionNode parent = (ExpressionNode) node.getParent();
         parent.setIsIdentifier();
     }
 
     private static void cgenSubtraction(Node node) throws Exception {
-        boolean isArgument = false;
-
         pushRegistersS();
-
-        // Calculate left child
         ExpressionNode leftChild = (ExpressionNode) node.getChild(0);
         cgen(leftChild);
-        boolean isLeftCalcutable = leftChild.getDSCP().isArgument() || leftChild.getDSCP().isFunction();
-
-        if (isLeftCalcutable) {
-            isArgument = true;
-            if (leftChild.getDSCP().getType().equals(PrimitiveType.INT)) {
-                textSeg += "\tmove\t$s0, $v1\n";
-            } else if (leftChild.getDSCP().getType().equals(PrimitiveType.DOUBLE)) {
-                textSeg += "\tmfc1.d\t$s0, $f10\n"; // store in $s0, $s1
-            }
+        if (leftChild.getDSCP().getType().equals(PrimitiveType.INT)) {
+            textSeg += "\tmove\t$s0, $v1\n";
+        } else if (leftChild.getDSCP().getType().equals(PrimitiveType.DOUBLE)) {
+            textSeg += "\tmfc1.d\t$s0, $f10\n"; // store in $s0, $s1
         }
+
         ExpressionNode rightChild = (ExpressionNode) node.getChild(1);
         cgen(rightChild);
-        boolean isRightCalcutable = rightChild.getDSCP().isArgument() || rightChild.getDSCP().isFunction();
-
-        if (isRightCalcutable) {
-            isArgument = true;
-            if (rightChild.getDSCP().getType().equals(PrimitiveType.INT)) {
-                textSeg += "\tmove\t$s2, $v1\n";
-            } else if (rightChild.getDSCP().getType().equals(PrimitiveType.DOUBLE)) {
-                textSeg += "\tmfc1.d\t$s2, $f10\n"; // store in $s2, $s3
-            }
+        if (rightChild.getDSCP().getType().equals(PrimitiveType.INT)) {
+            textSeg += "\tmove\t$s2, $v1\n";
+        } else if (rightChild.getDSCP().getType().equals(PrimitiveType.DOUBLE)) {
+            textSeg += "\tmfc1.d\t$s2, $f10\n"; // store in $s2, $s3
         }
+
         Type type = widen(leftChild, rightChild);
 
-        DSCP dscp = new DSCP(type, null);
-        String value = null;
         if (type.equals(PrimitiveType.INT)) {
-            int leftValue;
-            int rightValue;
-//            if(leftChild.getChild(0).getNodeType().equals(NodeType.FUNCTION_CALL))
-            if (!isLeftCalcutable && !isRightCalcutable) {    //Constant Folding
-                leftValue = Integer.parseInt(leftChild.getResultName());
-                rightValue = Integer.parseInt(rightChild.getResultName());
-                value = String.valueOf(leftValue - rightValue);
-            } else if (isLeftCalcutable && !isRightCalcutable) {
-                rightValue = Integer.parseInt(rightChild.getResultName());
-                textSeg += "\tsub\t$v1, $s0, " + rightValue + '\n';
-            } else if (!isLeftCalcutable && isRightCalcutable) {
-                leftValue = Integer.parseInt(leftChild.getResultName());
-                textSeg += "\tsub\t$v1, $s0, " + leftValue + '\n';
-            } else {
-                textSeg += "\tsub\t$v1, $s0, $s2\n";
-            }
-        } else if (type.equals(PrimitiveType.DOUBLE)) {  //TODO
-            value = String.valueOf(Double.parseDouble(leftChild.getResultName()) - Double.parseDouble(rightChild.getResultName()));
+            textSeg += "\tsub\t$v1, $s0, $s2\n";
+        } else if (type.equals(PrimitiveType.DOUBLE)) {
+            //TODO
         }
-
         popRegistersS();
 
-        dscp.setValue(value);
-        if (isArgument)
-            dscp.setArgumentTrue(-1);
+        DSCP dscp = new DSCP(type, null);
         node.setDSCP(dscp);
-
         ExpressionNode parent = (ExpressionNode) node.getParent();
         parent.setIsIdentifier();
     }
 
     private static void cgenMultiplication(Node node) throws Exception {
-        boolean isArgument = false;
-
         pushRegistersS();
-
-        // Calculate left child
         ExpressionNode leftChild = (ExpressionNode) node.getChild(0);
         cgen(leftChild);
-        boolean isLeftCalcutable = leftChild.getDSCP().isArgument() || leftChild.getDSCP().isFunction();
-
-        if (isLeftCalcutable) {
-            isArgument = true;
-            if (leftChild.getDSCP().getType().equals(PrimitiveType.INT)) {
-                textSeg += "\tmove\t$s0, $v1\n";
-            } else if (leftChild.getDSCP().getType().equals(PrimitiveType.DOUBLE)) {
-                textSeg += "\tmfc1.d\t$s0, $f10\n"; // store in $s0, $s1
-            }
+        if (leftChild.getDSCP().getType().equals(PrimitiveType.INT)) {
+            textSeg += "\tmove\t$s0, $v1\n";
+        } else if (leftChild.getDSCP().getType().equals(PrimitiveType.DOUBLE)) {
+            textSeg += "\tmfc1.d\t$s0, $f10\n"; // store in $s0, $s1
         }
+
         ExpressionNode rightChild = (ExpressionNode) node.getChild(1);
         cgen(rightChild);
-        boolean isRightCalcutable = rightChild.getDSCP().isArgument() || rightChild.getDSCP().isFunction();
-
-        if (isRightCalcutable) {
-            isArgument = true;
-            if (rightChild.getDSCP().getType().equals(PrimitiveType.INT)) {
-                textSeg += "\tmove\t$s2, $v1\n";
-            } else if (rightChild.getDSCP().getType().equals(PrimitiveType.DOUBLE)) {
-                textSeg += "\tmfc1.d\t$s2, $f10\n"; // store in $s2, $s3
-            }
+        if (rightChild.getDSCP().getType().equals(PrimitiveType.INT)) {
+            textSeg += "\tmove\t$s2, $v1\n";
+        } else if (rightChild.getDSCP().getType().equals(PrimitiveType.DOUBLE)) {
+            textSeg += "\tmfc1.d\t$s2, $f10\n"; // store in $s2, $s3
         }
+
         Type type = widen(leftChild, rightChild);
 
-        DSCP dscp = new DSCP(type, null);
-        String value = null;
         if (type.equals(PrimitiveType.INT)) {
-            int leftValue;
-            int rightValue;
-//            if(leftChild.getChild(0).getNodeType().equals(NodeType.FUNCTION_CALL))
-            if (!isLeftCalcutable && !isRightCalcutable) {    //Constant Folding
-                leftValue = Integer.parseInt(leftChild.getResultName());
-                rightValue = Integer.parseInt(rightChild.getResultName());
-                value = String.valueOf(leftValue * rightValue);
-            } else if (isLeftCalcutable && !isRightCalcutable) {
-                rightValue = Integer.parseInt(rightChild.getResultName());
-                textSeg += "\tmul\t$v1, $s0, " + rightValue + '\n';
-            } else if (!isLeftCalcutable && isRightCalcutable) {
-                leftValue = Integer.parseInt(leftChild.getResultName());
-                textSeg += "\tmul\t$v1, $s0, " + leftValue + '\n';
-            } else {
-                textSeg += "\tmul\t$v1, $s0, $s2\n";
-            }
-        } else if (type.equals(PrimitiveType.DOUBLE)) {  //TODO
-            value = String.valueOf(Double.parseDouble(leftChild.getResultName()) * Double.parseDouble(rightChild.getResultName()));
+            textSeg += "\tmul\t$v1, $s0, $s2\n";
+        } else if (type.equals(PrimitiveType.DOUBLE)) {
+            //TODO
         }
-
         popRegistersS();
 
-        dscp.setValue(value);
-        if (isArgument)
-            dscp.setArgumentTrue(-1);
+        DSCP dscp = new DSCP(type, null);
         node.setDSCP(dscp);
-
         ExpressionNode parent = (ExpressionNode) node.getParent();
         parent.setIsIdentifier();
     }
 
     private static void cgenDivision(Node node) throws Exception {
-        boolean isArgument = false;
-
         pushRegistersS();
-
-        // Calculate left child
         ExpressionNode leftChild = (ExpressionNode) node.getChild(0);
         cgen(leftChild);
-        boolean isLeftCalcutable = leftChild.getDSCP().isArgument() || leftChild.getDSCP().isFunction();
-
-        if (isLeftCalcutable) {
-            isArgument = true;
-            if (leftChild.getDSCP().getType().equals(PrimitiveType.INT)) {
-                textSeg += "\tmove\t$s0, $v1\n";
-            } else if (leftChild.getDSCP().getType().equals(PrimitiveType.DOUBLE)) {
-                textSeg += "\tmfc1.d\t$s0, $f10\n"; // store in $s0, $s1
-            }
+        if (leftChild.getDSCP().getType().equals(PrimitiveType.INT)) {
+            textSeg += "\tmove\t$s0, $v1\n";
+        } else if (leftChild.getDSCP().getType().equals(PrimitiveType.DOUBLE)) {
+            textSeg += "\tmfc1.d\t$s0, $f10\n"; // store in $s0, $s1
         }
+
         ExpressionNode rightChild = (ExpressionNode) node.getChild(1);
         cgen(rightChild);
-        boolean isRightCalcutable = rightChild.getDSCP().isArgument() || rightChild.getDSCP().isFunction();
-
-        if (isRightCalcutable) {
-            isArgument = true;
-            if (rightChild.getDSCP().getType().equals(PrimitiveType.INT)) {
-                textSeg += "\tmove\t$s2, $v1\n";
-            } else if (rightChild.getDSCP().getType().equals(PrimitiveType.DOUBLE)) {
-                textSeg += "\tmfc1.d\t$s2, $f10\n"; // store in $s2, $s3
-            }
+        if (rightChild.getDSCP().getType().equals(PrimitiveType.INT)) {
+            textSeg += "\tmove\t$s2, $v1\n";
+        } else if (rightChild.getDSCP().getType().equals(PrimitiveType.DOUBLE)) {
+            textSeg += "\tmfc1.d\t$s2, $f10\n"; // store in $s2, $s3
         }
+
         Type type = widen(leftChild, rightChild);
 
-        DSCP dscp = new DSCP(type, null);
-        String value = null;
         if (type.equals(PrimitiveType.INT)) {
-            int leftValue;
-            int rightValue;
-//            if(leftChild.getChild(0).getNodeType().equals(NodeType.FUNCTION_CALL))
-            if (!isLeftCalcutable && !isRightCalcutable) {    //Const ant Folding
-                leftValue = Integer.parseInt(leftChild.getResultName());
-                rightValue = Integer.parseInt(rightChild.getResultName());
-                value = String.valueOf(leftValue / rightValue);
-            } else if (isLeftCalcutable && !isRightCalcutable) {
-                rightValue = Integer.parseInt(rightChild.getResultName());
-                textSeg += "\tdiv\t$v1, $s0, " + rightValue + '\n';
-            } else if (!isLeftCalcutable && isRightCalcutable) {
-                leftValue = Integer.parseInt(leftChild.getResultName());
-                textSeg += "\tdiv\t$v1, $s0, " + leftValue + '\n';
-            } else {
-                textSeg += "\tdiv\t$v1, $s0, $s2\n";
-            }
-        } else if (type.equals(PrimitiveType.DOUBLE)) {  //TODO
-            value = String.valueOf(Double.parseDouble(leftChild.getResultName()) / Double.parseDouble(rightChild.getResultName()));
+            textSeg += "\tdiv\t$v1, $s0, $s2\n";
+        } else if (type.equals(PrimitiveType.DOUBLE)) {
+            //TODO
         }
-
         popRegistersS();
 
-        dscp.setValue(value);
-        if (isArgument)
-            dscp.setArgumentTrue(-1);
+        DSCP dscp = new DSCP(type, null);
         node.setDSCP(dscp);
-
         ExpressionNode parent = (ExpressionNode) node.getParent();
         parent.setIsIdentifier();
     }
