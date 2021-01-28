@@ -79,6 +79,9 @@ public class CodeGen {
             case PARAMETERS:
                 cgenParameters(node);
                 break;
+            case RETURN_STATEMENT:
+                cgenReturn(node);
+                break;
             case IF_STATEMENT:
                 cgenIfStatement(node);
                 break;
@@ -342,6 +345,23 @@ public class CodeGen {
             popRegistersA();
             textSeg += "\tmove\t$a" + i + ", $v1\n";
         }
+    }
+
+    private static void cgenReturn(Node node) throws Exception {
+        cgen(node.getChild(0));
+
+        //  find method declaration
+        Node nodeCrawler = node;
+        while (!nodeCrawler.getNodeType().equals(NodeType.METHOD_DECLARATION)){
+            nodeCrawler = nodeCrawler.getParent();
+        }
+
+        PrimitiveType returnType = (PrimitiveType) ((PrimitiveNode)nodeCrawler.getChild(0)).getType();
+        if(!node.getChild(0).getDSCP().getType().equals(returnType))
+            throw new Exception("Return value doesn't match!");
+
+        // continue parsing
+        cgen(node.getChild(1));
     }
 
     private static void cgenIfStatement(Node node) throws Exception {
