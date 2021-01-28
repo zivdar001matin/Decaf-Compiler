@@ -221,7 +221,7 @@ public class CodeGen {
             textSeg += "\tmfc1.d\t$s2, $f10\n"; // store in $s2, $s3
         }
 
-        Type type = widen(leftChild, rightChild);
+        Type type = widen(leftChild, rightChild, false);
 
         if (type.equals(PrimitiveType.INT)) {
             textSeg += "\tadd\t$v1, $s0, $s2\n";
@@ -254,7 +254,7 @@ public class CodeGen {
             textSeg += "\tmfc1.d\t$s2, $f10\n"; // store in $s2, $s3
         }
 
-        Type type = widen(leftChild, rightChild);
+        Type type = widen(leftChild, rightChild, false);
 
         if (type.equals(PrimitiveType.INT)) {
             textSeg += "\tsub\t$v1, $s0, $s2\n";
@@ -287,7 +287,7 @@ public class CodeGen {
             textSeg += "\tmfc1.d\t$s2, $f10\n"; // store in $s2, $s3
         }
 
-        Type type = widen(leftChild, rightChild);
+        Type type = widen(leftChild, rightChild, false);
 
         if (type.equals(PrimitiveType.INT)) {
             textSeg += "\tmul\t$v1, $s0, $s2\n";
@@ -320,7 +320,7 @@ public class CodeGen {
             textSeg += "\tmfc1.d\t$s2, $f10\n"; // store in $s2, $s3
         }
 
-        Type type = widen(leftChild, rightChild);
+        Type type = widen(leftChild, rightChild, false);
 
         if (type.equals(PrimitiveType.INT)) {
             textSeg += "\tdiv\t$v1, $s0, $s2\n";
@@ -525,10 +525,12 @@ public class CodeGen {
     }
 
 
-    private static Type widen(ExpressionNode leftChild, ExpressionNode rightChild) throws Exception {
+    private static Type widen(ExpressionNode leftChild, ExpressionNode rightChild, boolean isLogical) throws Exception {
         if (leftChild.getDSCP().getType().equals(rightChild.getDSCP().getType())) {
             Type type = leftChild.getDSCP().getType();
-            if (type.equals(PrimitiveType.INT) || type.equals(PrimitiveType.DOUBLE))
+            if ((type.equals(PrimitiveType.INT) || type.equals(PrimitiveType.DOUBLE)) && !isLogical)
+                return type;
+            else if (isLogical)
                 return type;
             throw new Exception("can't do operation on " + type);
         }
