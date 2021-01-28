@@ -78,6 +78,9 @@ public class CodeGen {
             case WHILE_STATEMENT:
                 cgenWhileStatement(node);
                 break;
+            case FOR_STATEMENT:
+                cgenForStatement(node);
+                break;
             default:
                 cgenAllChildren(node);
                 break;
@@ -193,7 +196,8 @@ public class CodeGen {
 //        }
 
         //continue code generating
-        cgen(node.getChild(2));
+        if(node.getChildren().size() == 3)  // for-loops doesn't have 3rd child
+            cgen(node.getChild(2));
     }
 
     private static void cgenVariableDecl(Node node) throws Exception {
@@ -471,6 +475,37 @@ public class CodeGen {
         // continue code generating
         cgen(node.getChild(2));
 
+    }
+
+    private static void cgenForStatement(Node node) throws Exception {
+        SymbolTable.getCurrentScope().addLoopStmtCounter();
+
+        String entry = "LoopStmt_" + SymbolTable.getCurrentScope().getLoopStmtCounter();
+        String labelNameFirst = spaghettiStack + "_" + entry + "_start";
+        String labelNameEnd = spaghettiStack + "_" + entry + "_end";
+
+        spaghettiStack.enterScope(entry, BlockType.LOOP);
+
+        cgen(node.getChild(0));
+
+        textSeg += labelNameFirst + ":\n";
+
+        cgen(node.getChild(1)); //  calculate condition -> return $v1
+        DSCP conditionDscp = node.getChild(1).getDSCP();
+        if (!conditionDscp.getType().equals(PrimitiveType.BOOL)) {
+            throw new Exception("Condition isn't boolean ");
+        }
+
+        // branch taken if condition is false
+        textSeg += "\tbeq\t$v1, 0, " + labelNameEnd + '\n';
+        cgen(node.getChild(2));
+        cgen(node.getChild(3));
+
+        textSeg += "\tb\t" + labelNameFirst + '\n';
+        textSeg += labelNameEnd + ":\n";
+
+        // continue code generating
+        cgen(node.getChild(4));
     }
 
     /**
