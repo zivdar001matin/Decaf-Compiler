@@ -540,7 +540,7 @@ public class CodeGen {
      * Save callee saved registers s0, s1, s2, s3, s4, s5,
      */
     private static void pushRegistersS() {
-        textSeg += "\taddi\t$sp, $sp, -20\n";
+        textSeg += "\taddi\t$sp, $sp, -24\n";
         textSeg += "\tsw\t$s0, 0($sp)\n";
         textSeg += "\tsw\t$s1, 4($sp)\n";
         textSeg += "\tsw\t$s2, 8($sp)\n";
@@ -556,7 +556,7 @@ public class CodeGen {
         textSeg += "\tlw\t$s3, 12($sp)\n";
         textSeg += "\tlw\t$s4, 16($sp)\n";
         textSeg += "\tlw\t$s5, 20($sp)\n";
-        textSeg += "\taddi\t$sp, $sp, 20\n";
+        textSeg += "\taddi\t$sp, $sp, 24\n";
     }
 
     /**
