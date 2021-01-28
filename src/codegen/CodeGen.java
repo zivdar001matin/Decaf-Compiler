@@ -88,6 +88,9 @@ public class CodeGen {
             case FOR_STATEMENT:
                 cgenForStatement(node);
                 break;
+            case BREAK_STATEMENT:
+                cgenBreak(node);
+                break;
             case EQUAL:
             case NOT_EQUAL:
                 cgenEqNeq(node);
@@ -434,6 +437,15 @@ public class CodeGen {
 
         // continue code generating
         cgen(node.getChild(4));
+    }
+
+    private static void cgenBreak(Node node) throws Exception {
+        String entry = "LoopStmt_" + SymbolTable.getCurrentScope().getParent().getLoopStmtCounter();
+        String labelNameEnd = SymbolTable.getCurrentScope().getParent() + "_" + entry + "_end";
+        textSeg += "\tb\t" + labelNameEnd + "\n";
+
+        // continue parsing
+        cgen(node.getChild(0));
     }
 
     private static void cgenEqNeq(Node node) throws Exception {
