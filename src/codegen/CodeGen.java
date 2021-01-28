@@ -533,12 +533,25 @@ public class CodeGen {
     }
 
     private static void cgenContinue(Node node) throws Exception {
-        String entry = "LoopStmt_" + SymbolTable.getCurrentScope().getParent().getLoopStmtCounter();
-        String labelNameEnd = SymbolTable.getCurrentScope().getParent() + "_" + entry + "_update";
+
+        // Find Loop Block to get correct labels
+        Scope scopeCrawler = SymbolTable.getCurrentScope();
+        Node nodeCrawler = node;
+        while (!scopeCrawler.getBlockType().equals(BlockType.LOOP)){
+            while (!nodeCrawler.getNodeType().equals(NodeType.BLOCK)){
+                nodeCrawler = nodeCrawler.getParent();
+            }
+            nodeCrawler = nodeCrawler.getParent();
+            scopeCrawler = scopeCrawler.getParent();
+        }
+
+        String entry = "LoopStmt_" + scopeCrawler.getParent().getLoopStmtCounter();
+        String labelNameEnd = scopeCrawler.getParent() + "_" + entry + "_update";
         textSeg += "\tb\t" + labelNameEnd + "\n";
 
         // continue parsing
-        cgen(node.getChild(0));
+        if (node.getChildren().size() != 0)
+            cgen(node.getChild(0));
     }
 
     private static void cgenEqNeq(Node node) throws Exception {
