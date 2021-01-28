@@ -82,7 +82,8 @@ public class CodeGen {
                 cgenForStatement(node);
                 break;
             case EQUAL:
-                cgenEqual(node);
+            case NOT_EQUAL:
+                cgenEqNeq(node);
                 break;
             default:
                 cgenAllChildren(node);
@@ -485,7 +486,7 @@ public class CodeGen {
         cgen(node.getChild(4));
     }
 
-    private static void cgenEqual(Node node) throws Exception {
+    private static void cgenEqNeq(Node node) throws Exception {
         pushRegistersS();
         ExpressionNode leftChild = (ExpressionNode) node.getChild(0);
         cgen(leftChild);
@@ -497,7 +498,10 @@ public class CodeGen {
 
         Type type = widen(leftChild, rightChild, true);
 
-        textSeg += "\tseq\t$v1, $s0, $s2\n";
+        if (node.getNodeType().equals(NodeType.EQUAL))
+            textSeg += "\tseq\t$v1, $s0, $s2\n";
+        else if (node.getNodeType().equals(NodeType.NOT_EQUAL))
+            textSeg += "\tsne\t$v1, $s0, $s2\n";
 
         popRegistersS();
 
