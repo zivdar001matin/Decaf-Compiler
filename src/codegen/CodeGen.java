@@ -58,6 +58,9 @@ public class CodeGen {
             case LITERAL:
                 cgenLiteral((Literal) node);
                 break;
+            case UNARY_MINUS:
+                cgenUnaryMinus(node);
+                break;
             case ADDITION:
             case SUBTRACTION:
             case MULTIPLICATION:
@@ -139,6 +142,14 @@ public class CodeGen {
         ((ExpressionNode) node.getParent()).setIsIdentifier();
 //        if (dscp.getType().equals(PrimitiveType.BOOL))
 //            textSeg += "\tli\t$v1, " + dscp.getValue() + '\n';
+    }
+
+    private static void cgenUnaryMinus(Node node) throws Exception {
+        cgen(node.getChild(0));
+        node.setDSCP(node.getChild(0).getDSCP());
+        node.getParent().setDSCP(node.getChild(0).getDSCP());
+        textSeg += "\tnot\t$v1, $v1\n";
+        textSeg += "\taddi\t$v1, $v1, 1\n";
     }
 
     private static void cgenIdentifier(Node node) throws Exception {
