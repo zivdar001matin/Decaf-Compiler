@@ -21,8 +21,18 @@ public class CodeGen {
 
     static {
         dataSeg += "\tnewLine: \t.asciiz \t\"\\n\"\n";
+        dataSeg += "\tbool_0: \t.asciiz \t\"false\"\n";
+        dataSeg += "\tbool_1: \t.asciiz \t\"true\"\n";
         dataSeg += "\tzeroDouble: \t.double \t0.0\n";
         textSeg += "\tldc1\t$f0, zeroDouble\n";
+        textSeg +=  "PrintBool:\n" +
+                    "\tbeq\t$a0, 0, Print_Bool0\n" +
+                    "\tla\t$v1, bool_1\n" +
+                    "\tb\tPrint_Bool1\n" +
+                    "Print_Bool0:\n" +
+                    "\tla\t$v1, bool_0\n" +
+                    "Print_Bool1:\n" +
+                    "\tjr\t$ra\n";
     }
 
     public static void cgen(Node node) throws Exception {
@@ -352,6 +362,14 @@ public class CodeGen {
                 textSeg += "\tadd.d\t$f12, $f10, $f0\n";
                 textSeg += "\tsyscall\n";
                 break;
+            case BOOL:
+                textSeg += "\tmove\t$a0, $v1\n";
+                textSeg += "\tsw\t$ra, 0($sp)\n";
+                textSeg += "\tjal\tPrintBool\n";
+                textSeg += "\tlw\t$ra, 0($sp)\n";
+                textSeg += "\tli\t$v0, 4\n";
+                textSeg += "\tmove\t$a0, $v1\n";
+                textSeg += "\tsyscall\n";
             default:
                 break;
         }

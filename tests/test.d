@@ -6,4 +6,6 @@ int main() {
     i = 56;
     a = i == 56;
 
+    Print(a);
+
 }
