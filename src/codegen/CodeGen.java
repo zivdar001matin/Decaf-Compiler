@@ -89,6 +89,12 @@ public class CodeGen {
             case NOT_EQUAL:
                 cgenEqNeq(node);
                 break;
+            case GREATER_THAN:
+            case GREATER_THAN_OR_EQUAL:
+            case LESS_THAN:
+            case LESS_THAN_OR_EQUAL:
+                cgenCompare(node);
+                break;
             default:
                 cgenAllChildren(node);
                 break;
@@ -429,6 +435,53 @@ public class CodeGen {
         else if (node.getNodeType().equals(NodeType.NOT_EQUAL))
             textSeg += "\tsne\t$v1, $s0, $s2\n";
 
+        popRegistersS();
+
+        DSCP dscp = new DSCP(PrimitiveType.BOOL, null);
+        node.setDSCP(dscp);
+        ExpressionNode parent = (ExpressionNode) node.getParent();
+        parent.setDSCP(dscp);
+//        parent.setIsIdentifier();
+    }
+
+    private static void cgenCompare(Node node) throws Exception {
+        pushRegistersS();
+        ExpressionNode leftChild = (ExpressionNode) node.getChild(0);
+        cgen(leftChild);
+        if (leftChild.getDSCP().getType().equals(PrimitiveType.INT)) {
+            textSeg += "\tmove\t$s0, $v1\n";
+        } else if (leftChild.getDSCP().getType().equals(PrimitiveType.DOUBLE)) {
+            textSeg += "\tmfc1.d\t$s0, $f10\n"; // store in $s0, $s1
+        }
+
+        ExpressionNode rightChild = (ExpressionNode) node.getChild(1);
+        cgen(rightChild);
+        if (rightChild.getDSCP().getType().equals(PrimitiveType.INT)) {
+            textSeg += "\tmove\t$s2, $v1\n";
+        } else if (rightChild.getDSCP().getType().equals(PrimitiveType.DOUBLE)) {
+            textSeg += "\tmfc1.d\t$s2, $f10\n"; // store in $s2, $s3
+        }
+
+        Type type = widen(leftChild, rightChild, false);
+
+        if (type.equals(PrimitiveType.INT)) {
+            switch (node.getNodeType()){
+                case GREATER_THAN:
+                    textSeg += "\tsgt\t$v1, $s0, $s2\n";
+                    break;
+                case GREATER_THAN_OR_EQUAL:
+                    textSeg += "\tsge\t$v1, $s0, $s2\n";
+                    break;
+                case LESS_THAN:
+                    textSeg += "\tslt\t$v1, $s0, $s2\n";
+                    break;
+                case LESS_THAN_OR_EQUAL:
+                    textSeg += "\tsle\t$v1, $s0, $s2\n";
+                    break;
+            }
+        } else if (type.equals(PrimitiveType.DOUBLE)) {
+            //TODO
+        }
         popRegistersS();
 
         DSCP dscp = new DSCP(PrimitiveType.BOOL, null);
