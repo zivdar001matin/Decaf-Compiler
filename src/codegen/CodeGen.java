@@ -59,16 +59,10 @@ public class CodeGen {
                 cgenLiteral((Literal) node);
                 break;
             case ADDITION:
-                cgenAddition(node);
-                break;
             case SUBTRACTION:
-                cgenSubtraction(node);
-                break;
             case MULTIPLICATION:
-                cgenMultiplication(node);
-                break;
             case DIVISION:
-                cgenDivision(node);
+                cgenArithmeticCalculation(node);
                 break;
             case PRINT_STATEMENT:
                 cgenPrint(node);
@@ -217,7 +211,7 @@ public class CodeGen {
         }
     }
 
-    private static void cgenAddition(Node node) throws Exception {
+    private static void cgenArithmeticCalculation(Node node) throws Exception {
         pushRegistersS();
         ExpressionNode leftChild = (ExpressionNode) node.getChild(0);
         cgen(leftChild);
@@ -238,106 +232,20 @@ public class CodeGen {
         Type type = widen(leftChild, rightChild, false);
 
         if (type.equals(PrimitiveType.INT)) {
-            textSeg += "\tadd\t$v1, $s0, $s2\n";
-        } else if (type.equals(PrimitiveType.DOUBLE)) {
-            //TODO
-        }
-        popRegistersS();
-
-        DSCP dscp = new DSCP(type, null);
-        node.setDSCP(dscp);
-        ExpressionNode parent = (ExpressionNode) node.getParent();
-        parent.setIsIdentifier();
-    }
-
-    private static void cgenSubtraction(Node node) throws Exception {
-        pushRegistersS();
-        ExpressionNode leftChild = (ExpressionNode) node.getChild(0);
-        cgen(leftChild);
-        if (leftChild.getDSCP().getType().equals(PrimitiveType.INT)) {
-            textSeg += "\tmove\t$s0, $v1\n";
-        } else if (leftChild.getDSCP().getType().equals(PrimitiveType.DOUBLE)) {
-            textSeg += "\tmfc1.d\t$s0, $f10\n"; // store in $s0, $s1
-        }
-
-        ExpressionNode rightChild = (ExpressionNode) node.getChild(1);
-        cgen(rightChild);
-        if (rightChild.getDSCP().getType().equals(PrimitiveType.INT)) {
-            textSeg += "\tmove\t$s2, $v1\n";
-        } else if (rightChild.getDSCP().getType().equals(PrimitiveType.DOUBLE)) {
-            textSeg += "\tmfc1.d\t$s2, $f10\n"; // store in $s2, $s3
-        }
-
-        Type type = widen(leftChild, rightChild, false);
-
-        if (type.equals(PrimitiveType.INT)) {
-            textSeg += "\tsub\t$v1, $s0, $s2\n";
-        } else if (type.equals(PrimitiveType.DOUBLE)) {
-            //TODO
-        }
-        popRegistersS();
-
-        DSCP dscp = new DSCP(type, null);
-        node.setDSCP(dscp);
-        ExpressionNode parent = (ExpressionNode) node.getParent();
-        parent.setIsIdentifier();
-    }
-
-    private static void cgenMultiplication(Node node) throws Exception {
-        pushRegistersS();
-        ExpressionNode leftChild = (ExpressionNode) node.getChild(0);
-        cgen(leftChild);
-        if (leftChild.getDSCP().getType().equals(PrimitiveType.INT)) {
-            textSeg += "\tmove\t$s0, $v1\n";
-        } else if (leftChild.getDSCP().getType().equals(PrimitiveType.DOUBLE)) {
-            textSeg += "\tmfc1.d\t$s0, $f10\n"; // store in $s0, $s1
-        }
-
-        ExpressionNode rightChild = (ExpressionNode) node.getChild(1);
-        cgen(rightChild);
-        if (rightChild.getDSCP().getType().equals(PrimitiveType.INT)) {
-            textSeg += "\tmove\t$s2, $v1\n";
-        } else if (rightChild.getDSCP().getType().equals(PrimitiveType.DOUBLE)) {
-            textSeg += "\tmfc1.d\t$s2, $f10\n"; // store in $s2, $s3
-        }
-
-        Type type = widen(leftChild, rightChild, false);
-
-        if (type.equals(PrimitiveType.INT)) {
-            textSeg += "\tmul\t$v1, $s0, $s2\n";
-        } else if (type.equals(PrimitiveType.DOUBLE)) {
-            //TODO
-        }
-        popRegistersS();
-
-        DSCP dscp = new DSCP(type, null);
-        node.setDSCP(dscp);
-        ExpressionNode parent = (ExpressionNode) node.getParent();
-        parent.setIsIdentifier();
-    }
-
-    private static void cgenDivision(Node node) throws Exception {
-        pushRegistersS();
-        ExpressionNode leftChild = (ExpressionNode) node.getChild(0);
-        cgen(leftChild);
-        if (leftChild.getDSCP().getType().equals(PrimitiveType.INT)) {
-            textSeg += "\tmove\t$s0, $v1\n";
-        } else if (leftChild.getDSCP().getType().equals(PrimitiveType.DOUBLE)) {
-            textSeg += "\tmfc1.d\t$s0, $f10\n"; // store in $s0, $s1
-        }
-
-        ExpressionNode rightChild = (ExpressionNode) node.getChild(1);
-        cgen(rightChild);
-        if (rightChild.getDSCP().getType().equals(PrimitiveType.INT)) {
-            textSeg += "\tmove\t$s2, $v1\n";
-        } else if (rightChild.getDSCP().getType().equals(PrimitiveType.DOUBLE)) {
-            textSeg += "\tmfc1.d\t$s2, $f10\n"; // store in $s2, $s3
-        }
-
-        Type type = widen(leftChild, rightChild, false);
-
-        if (type.equals(PrimitiveType.INT)) {
-            textSeg += "\tdiv\t$v1, $s0, $s2\n";
+            switch (node.getNodeType()){
+                case ADDITION:
+                    textSeg += "\tadd\t$v1, $s0, $s2\n";
+                    break;
+                case SUBTRACTION:
+                    textSeg += "\tsub\t$v1, $s0, $s2\n";
+                    break;
+                case MULTIPLICATION:
+                    textSeg += "\tmul\t$v1, $s0, $s2\n";
+                    break;
+                case DIVISION:
+                    textSeg += "\tdiv\t$v1, $s0, $s2\n";
+                    break;
+            }
         } else if (type.equals(PrimitiveType.DOUBLE)) {
             //TODO
         }
