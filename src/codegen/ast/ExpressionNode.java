@@ -29,7 +29,7 @@ public class ExpressionNode extends SimpleNode {
             if (id.getDSCP() == null)
                 throw new Exception(id.getValue() + " not declared");
             type = id.getDSCP().getType();
-        } else if (Stream.of(NodeType.ADDITION, NodeType.SUBTRACTION, NodeType.MULTIPLICATION, NodeType.DIVISION).anyMatch(nodeType -> this.getChild(0).getNodeType().equals(nodeType))) {
+        } else if (Stream.of(NodeType.ADDITION, NodeType.SUBTRACTION, NodeType.MULTIPLICATION, NodeType.DIVISION, NodeType.MOD).anyMatch(nodeType -> this.getChild(0).getNodeType().equals(nodeType))) {
             type = this.getChild(0).getDSCP().getType();
             resultName = this.getChild(0).getDSCP().getValue();
             this.setDSCP(this.getChild(0).getDSCP());

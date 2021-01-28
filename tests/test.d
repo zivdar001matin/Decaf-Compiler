@@ -1,17 +1,8 @@
+int main(){
+    int a;
 
-int main() {
-    bool a;
-    int b;
+    a = 5;
 
-    b = 1;
-    a = funct(b);
-
-    Print(a);
+    Print(a%2);
 }
-bool funct(int a) {
-    if ( a > 0 ){
-        return true;
-    } else {
-        return false;
-    }
-}
+

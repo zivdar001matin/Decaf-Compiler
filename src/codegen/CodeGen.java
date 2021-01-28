@@ -68,6 +68,7 @@ public class CodeGen {
             case SUBTRACTION:
             case MULTIPLICATION:
             case DIVISION:
+            case MOD:
                 cgenArithmeticCalculation(node);
                 break;
             case PRINT_STATEMENT:
@@ -294,6 +295,9 @@ public class CodeGen {
                     break;
                 case DIVISION:
                     textSeg += "\tdiv\t$v1, $s0, $s2\n";
+                    break;
+                case MOD:
+                    textSeg += "\trem\t$v1, $s0, $s2\n";
                     break;
             }
         } else if (type.equals(PrimitiveType.DOUBLE)) {
