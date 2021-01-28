@@ -196,8 +196,7 @@ public class CodeGen {
         if (!identifierDSCP.getType().equals(expressionNode.getDSCP().getType()))
             throw new Error("Type of assign doesn't match " + identifierDSCP.getType() + " -> " + expressionNode.getDSCP().getType());
 
-        textSeg += "\tla\t$a0, " + spaghettiStack.getEntryScope(entry).toString() + "." + entry + '\n';
-        textSeg += "\tsw\t$v1  0($a0)" + "\t\t\t\t\t\t# End assign\n";
+        textSeg += "\tsw\t$v1  " + spaghettiStack.getEntryScope(entry).toString() + "." + entry + "\t\t\t\t\t\t# End assign\n";
 
         //continue code generating
         if (node.getChildren().size() == 3)  // for-loops doesn't have 3rd child

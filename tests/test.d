@@ -1,11 +1,20 @@
+
+int abs_mult(int a, int b) {
+    int c;
+    if (a > b)
+        c = a - b;
+    else
+        c = b - a;
+    return c * a * b;
+}
+
 int main() {
+    int a;
+    int b;
 
-    bool a;
-    int i;
+    a = 3;
+    b = 6;
 
-    i = 5;
-    a = (true && !(i == 5));
-
-    Print(a);
-
+    Print(abs_mult(a, b));
+    Print(-2*3);
 }
