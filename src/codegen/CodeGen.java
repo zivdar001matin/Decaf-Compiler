@@ -484,6 +484,7 @@ public class CodeGen {
 
         String entry = "LoopStmt_" + SymbolTable.getCurrentScope().getLoopStmtCounter();
         String labelNameFirst = spaghettiStack + "_" + entry + "_start";
+        String labelNameUpdate = spaghettiStack + "_" + entry + "_update";
         String labelNameEnd = spaghettiStack + "_" + entry + "_end";
 
         spaghettiStack.enterScope(entry, BlockType.LOOP);
@@ -500,6 +501,10 @@ public class CodeGen {
 
         // branch taken if condition is false
         textSeg += "\tbeq\t$v1, 0, " + labelNameEnd + '\n';
+
+        // label for continue statement
+        textSeg += labelNameUpdate + ":\n";
+
         cgen(node.getChild(3));
         cgen(node.getChild(2));
 

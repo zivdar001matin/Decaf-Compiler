@@ -5,10 +5,13 @@ int main() {
 
     b = 0;
     for(i = 1; true; i = i + 1) {
-        //Print("Please enter the #", i, " number:");
         a = ReadInteger();
-        if (a < 0)
-            break;
+        if (a < 0){
+            continue;
+        } else {
+            if ( a > 100)
+                break;
+        }
         b = b + a;
     }
 
