@@ -268,29 +268,32 @@ public class CodeGen {
         parent.setIsIdentifier();
     }
 
-    private static void cgenPrint(Node node) throws Exception { //TODO newline after print
-        cgen(node.getChild(0));
-        switch (node.getChild(0).getDSCP().getType().getPrimitive()) {
-            case INT:
-                textSeg += "\tli\t$v0, 1\n";
-                textSeg += "\tadd\t$a0, $v1, $zero\n";
-                textSeg += "\tsyscall\n";
-                break;
-            case DOUBLE:
-                textSeg += "\tli\t$v0, 3\n";
-                textSeg += "\tadd.d\t$f12, $f10, $f0\n";
-                textSeg += "\tsyscall\n";
-                break;
-            case BOOL:
-                textSeg += "\tmove\t$a0, $v1\n";
-                textSeg += "\tsw\t$ra, 0($sp)\n";
-                textSeg += "\tjal\tPrintBool\n";
-                textSeg += "\tlw\t$ra, 0($sp)\n";
-                textSeg += "\tli\t$v0, 4\n";
-                textSeg += "\tmove\t$a0, $v1\n";
-                textSeg += "\tsyscall\n";
-            default:
-                break;
+    private static void cgenPrint(Node node) throws Exception {
+        Node inputNodes = node.getChild(0);
+        for (Node child : inputNodes.getChildren()) {
+            cgen(child.getChild(0));
+            switch (child.getChild(0).getDSCP().getType().getPrimitive()) {
+                case INT:
+                    textSeg += "\tli\t$v0, 1\n";
+                    textSeg += "\tadd\t$a0, $v1, $zero\n";
+                    textSeg += "\tsyscall\n";
+                    break;
+                case DOUBLE:
+                    textSeg += "\tli\t$v0, 3\n";
+                    textSeg += "\tadd.d\t$f12, $f10, $f0\n";
+                    textSeg += "\tsyscall\n";
+                    break;
+                case BOOL:
+                    textSeg += "\tmove\t$a0, $v1\n";
+                    textSeg += "\tsw\t$ra, 0($sp)\n";
+                    textSeg += "\tjal\tPrintBool\n";
+                    textSeg += "\tlw\t$ra, 0($sp)\n";
+                    textSeg += "\tli\t$v0, 4\n";
+                    textSeg += "\tmove\t$a0, $v1\n";
+                    textSeg += "\tsyscall\n";
+                default:
+                    break;
+            }
         }
 
         // insert newline
@@ -298,7 +301,7 @@ public class CodeGen {
         textSeg += "\tla\t$a0, newLine\n";
         textSeg += "\tsyscall\n";
 
-        System.out.println(node.getChild(0).getDSCP().getValue());
+        // continue parsing
         cgen(node.getChild(1));
     }
 
