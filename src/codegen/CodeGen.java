@@ -95,6 +95,11 @@ public class CodeGen {
             case LESS_THAN_OR_EQUAL:
                 cgenCompare(node);
                 break;
+            case BOOLEAN_AND:
+            case BOOLEAN_OR:
+            case BOOLEAN_NOT:
+                cgenBooleanCalculation(node);
+                break;
             default:
                 cgenAllChildren(node);
                 break;
@@ -482,6 +487,46 @@ public class CodeGen {
         } else if (type.equals(PrimitiveType.DOUBLE)) {
             //TODO
         }
+        popRegistersS();
+
+        DSCP dscp = new DSCP(PrimitiveType.BOOL, null);
+        node.setDSCP(dscp);
+        ExpressionNode parent = (ExpressionNode) node.getParent();
+        parent.setDSCP(dscp);
+//        parent.setIsIdentifier();
+    }
+
+    private static void cgenBooleanCalculation(Node node) throws Exception {
+        pushRegistersS();
+        ExpressionNode leftChild = (ExpressionNode) node.getChild(0);
+        cgen(leftChild);
+        textSeg += "\tmove\t$s0, $v1\n";
+
+        ExpressionNode rightChild = null;
+        if(!node.getNodeType().equals(NodeType.BOOLEAN_NOT)){
+            rightChild = (ExpressionNode) node.getChild(1);
+            cgen(rightChild);
+            textSeg += "\tmove\t$s2, $v1\n";
+            widen(leftChild, rightChild, true);
+        }else {
+            if(!leftChild.getChild(0).getDSCP().getType().equals(PrimitiveType.BOOL))
+                throw new Exception("can't do BOOLEAN_NOT on " + leftChild.getDSCP().getType());
+        }
+
+
+        switch (node.getNodeType()){
+            case BOOLEAN_AND:
+                textSeg += "\tand\t$v1, $s0, $s2\n";
+                break;
+            case BOOLEAN_OR:
+                textSeg += "\tor\t$v1, $s0, $s2\n";
+                break;
+            case BOOLEAN_NOT:
+                textSeg += "\tneg\t$v1, $s0\n";
+                textSeg += "\tadd\t$v1, $v1, 1\n";
+                break;
+        }
+
         popRegistersS();
 
         DSCP dscp = new DSCP(PrimitiveType.BOOL, null);
