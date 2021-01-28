@@ -3,10 +3,10 @@ int main() {
 
     while(true){
         a = 2;
-        for(true;true;true){
-        }
-            break;
+        Print(a);
+        continue;
         a = 3;
+        Print(a);
     }
 
     Print(a);

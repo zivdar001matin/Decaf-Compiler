@@ -91,6 +91,9 @@ public class CodeGen {
             case BREAK_STATEMENT:
                 cgenBreak(node);
                 break;
+            case CONTINUE_STATEMENT:
+                cgenContinue(node);
+                break;
             case EQUAL:
             case NOT_EQUAL:
                 cgenEqNeq(node);
@@ -384,6 +387,7 @@ public class CodeGen {
 
         String entry = "LoopStmt_" + SymbolTable.getCurrentScope().getLoopStmtCounter();
         String labelNameFirst = spaghettiStack + "_" + entry + "_start";
+        String labelNameUpdate = spaghettiStack + "_" + entry + "_update";
         String labelNameEnd = spaghettiStack + "_" + entry + "_end";
 
         spaghettiStack.enterScope(entry, BlockType.LOOP);
@@ -398,6 +402,10 @@ public class CodeGen {
 
         // branch taken if condition is false
         textSeg += "\tbeq\t$v1, 0, " + labelNameEnd + '\n';
+
+        // label for continue statement
+        textSeg += labelNameUpdate + ":\n";
+
         cgen(node.getChild(1));
 
         textSeg += "\tb\t" + labelNameFirst + '\n';
@@ -442,6 +450,15 @@ public class CodeGen {
     private static void cgenBreak(Node node) throws Exception {
         String entry = "LoopStmt_" + SymbolTable.getCurrentScope().getParent().getLoopStmtCounter();
         String labelNameEnd = SymbolTable.getCurrentScope().getParent() + "_" + entry + "_end";
+        textSeg += "\tb\t" + labelNameEnd + "\n";
+
+        // continue parsing
+        cgen(node.getChild(0));
+    }
+
+    private static void cgenContinue(Node node) throws Exception {
+        String entry = "LoopStmt_" + SymbolTable.getCurrentScope().getParent().getLoopStmtCounter();
+        String labelNameEnd = SymbolTable.getCurrentScope().getParent() + "_" + entry + "_update";
         textSeg += "\tb\t" + labelNameEnd + "\n";
 
         // continue parsing
