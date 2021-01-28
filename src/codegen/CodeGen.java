@@ -500,8 +500,8 @@ public class CodeGen {
 
         // branch taken if condition is false
         textSeg += "\tbeq\t$v1, 0, " + labelNameEnd + '\n';
-        cgen(node.getChild(2));
         cgen(node.getChild(3));
+        cgen(node.getChild(2));
 
         textSeg += "\tb\t" + labelNameFirst + '\n';
         textSeg += labelNameEnd + ":\n";
