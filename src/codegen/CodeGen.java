@@ -55,6 +55,9 @@ public class CodeGen {
             case ASSIGN:
                 cgenAssign(node);
                 break;
+            case READ_INTEGER:
+                cgenReadInteger(node);
+                break;
             case EXPRESSION_STATEMENT:
                 cgenExpressionStatement(node);
                 break;
@@ -231,6 +234,18 @@ public class CodeGen {
         //continue code generating
         if (node.getChildren().size() == 3)  // for-loops doesn't have 3rd child
             cgen(node.getChild(2));
+    }
+
+    private static void cgenReadInteger(Node node) throws Exception {
+        DSCP dscp = new DSCP(PrimitiveType.INT, null);
+        dscp.setValue("readInteger()");
+        node.setDSCP(dscp);
+        pushRegistersA();
+        textSeg += "\tli\t$v0, 5\n";
+        textSeg += "\tsyscall\n";
+        textSeg += "\tmove\t$v1, $v0\n";
+        popRegistersA();
+        ((ExpressionNode) node.getParent()).setIsIdentifier();
     }
 
     private static void cgenVariableDecl(Node node) throws Exception {
