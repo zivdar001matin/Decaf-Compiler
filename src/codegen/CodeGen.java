@@ -25,20 +25,23 @@ public class CodeGen {
         dataSeg += "\tbool_1: \t.asciiz \t\"true\"\n";
         dataSeg += "\tzeroDouble: \t.double \t0.0\n";
         textSeg += "\tldc1\t$f0, zeroDouble\n";
-        textSeg +=  "PrintBool:\n" +
-                    "\tbeq\t$a0, 0, Print_Bool0\n" +
-                    "\tla\t$v1, bool_1\n" +
-                    "\tb\tPrint_Bool1\n" +
-                    "Print_Bool0:\n" +
-                    "\tla\t$v1, bool_0\n" +
-                    "Print_Bool1:\n" +
-                    "\tjr\t$ra\n";
+        textSeg += "PrintBool:\n" +
+                "\tbeq\t$a0, 0, Print_Bool0\n" +
+                "\tla\t$v1, bool_1\n" +
+                "\tb\tPrint_Bool1\n" +
+                "Print_Bool0:\n" +
+                "\tla\t$v1, bool_0\n" +
+                "Print_Bool1:\n" +
+                "\tjr\t$ra\n";
     }
 
     public static void cgen(Node node) throws Exception {
         switch (node.getNodeType()) {
+            case START:
+                cgenStart(node);
+                break;
             case METHOD_DECLARATION:
-                cgenMethodDeclaration(node);
+                cgenMethodDeclaration(node, false);
                 break;
             case BLOCK:
                 cgenBlock(node);
@@ -118,29 +121,46 @@ public class CodeGen {
         }
     }
 
-    private static void cgenMethodDeclaration(Node node) throws Exception {
+    private static void cgenStart(Node node) throws Exception {
+
+        // first pass -> Define Functions
+        for (Node child : node.getChildren()) {
+            if (child.getNodeType().equals(NodeType.METHOD_DECLARATION))
+                cgenMethodDeclaration(child, true);
+        }
+
+        // second pass -> Code generate
+        for (Node child : node.getChildren()) {
+            cgen(child);
+        }
+    }
+
+    private static void cgenMethodDeclaration(Node node, boolean isFirstPass) throws Exception {
         //type
         PrimitiveNode returnNode = (PrimitiveNode) node.getChild(0);
         Type methodType = returnNode.getType();
         //identifier
         IdentifierNode identifierNode = (IdentifierNode) node.getChild(1);
-        String methodName = identifierNode.getValue();  //TODO add to vTable
-        textSeg += methodName + ":\n";
-        //arguments
-        spaghettiStack.enterScope(String.valueOf(node.getChild(1)), BlockType.METHOD);
-        cgen(node.getChild(2));
-        //body
-        cgen(node.getChild(3));
-        if (methodName.equals("main")) {
-            textSeg += "\t# This line is going to signal end of program.\n";
-            textSeg += "\tli\t$v0, 10\n";
-            textSeg += "\tsyscall\n";
-        } else {
-            textSeg += "\tjr\t$ra\n";
-        }
+        String methodName = identifierNode.getValue();
 
-        CodeForFunct code = new CodeForFunct(methodName, "", methodType);
-        vTable.addFunction(methodName, code);
+        if (isFirstPass) {
+            CodeForFunct code = new CodeForFunct(methodName, "", methodType);
+            vTable.addFunction(methodName, code);
+        } else {
+            textSeg += methodName + ":\n";
+            //arguments
+            spaghettiStack.enterScope(String.valueOf(node.getChild(1)), BlockType.METHOD);
+            cgen(node.getChild(2));
+            //body
+            cgen(node.getChild(3));
+            if (methodName.equals("main")) {
+                textSeg += "\t# This line is going to signal end of program.\n";
+                textSeg += "\tli\t$v0, 10\n";
+                textSeg += "\tsyscall\n";
+            } else {
+                textSeg += "\tjr\t$ra\n";
+            }
+        }
     }
 
     private static void cgenLiteral(Literal node) throws Exception {
@@ -262,7 +282,7 @@ public class CodeGen {
         Type type = widen(leftChild, rightChild, false);
 
         if (type.equals(PrimitiveType.INT)) {
-            switch (node.getNodeType()){
+            switch (node.getNodeType()) {
                 case ADDITION:
                     textSeg += "\tadd\t$v1, $s0, $s2\n";
                     break;
@@ -352,12 +372,12 @@ public class CodeGen {
 
         //  find method declaration
         Node nodeCrawler = node;
-        while (!nodeCrawler.getNodeType().equals(NodeType.METHOD_DECLARATION)){
+        while (!nodeCrawler.getNodeType().equals(NodeType.METHOD_DECLARATION)) {
             nodeCrawler = nodeCrawler.getParent();
         }
 
-        PrimitiveType returnType = (PrimitiveType) ((PrimitiveNode)nodeCrawler.getChild(0)).getType();
-        if(!node.getChild(0).getDSCP().getType().equals(returnType))
+        PrimitiveType returnType = (PrimitiveType) ((PrimitiveNode) nodeCrawler.getChild(0)).getType();
+        if (!node.getChild(0).getDSCP().getType().equals(returnType))
             throw new Exception("Return value doesn't match!");
 
         // continue parsing
@@ -532,7 +552,7 @@ public class CodeGen {
         Type type = widen(leftChild, rightChild, false);
 
         if (type.equals(PrimitiveType.INT)) {
-            switch (node.getNodeType()){
+            switch (node.getNodeType()) {
                 case GREATER_THAN:
                     textSeg += "\tsgt\t$v1, $s0, $s2\n";
                     break;
@@ -565,18 +585,18 @@ public class CodeGen {
         textSeg += "\tmove\t$s0, $v1\n";
 
         ExpressionNode rightChild = null;
-        if(!node.getNodeType().equals(NodeType.BOOLEAN_NOT)){
+        if (!node.getNodeType().equals(NodeType.BOOLEAN_NOT)) {
             rightChild = (ExpressionNode) node.getChild(1);
             cgen(rightChild);
             textSeg += "\tmove\t$s2, $v1\n";
             widen(leftChild, rightChild, true);
-        }else {
-            if(!leftChild.getChild(0).getDSCP().getType().equals(PrimitiveType.BOOL))
+        } else {
+            if (!leftChild.getChild(0).getDSCP().getType().equals(PrimitiveType.BOOL))
                 throw new Exception("can't do BOOLEAN_NOT on " + leftChild.getDSCP().getType());
         }
 
 
-        switch (node.getNodeType()){
+        switch (node.getNodeType()) {
             case BOOLEAN_AND:
                 textSeg += "\tand\t$v1, $s0, $s2\n";
                 break;
