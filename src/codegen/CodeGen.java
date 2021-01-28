@@ -515,7 +515,8 @@ public class CodeGen {
         textSeg += "\tb\t" + labelNameEnd + "\n";
 
         // continue parsing
-        cgen(node.getChild(0));
+        if (node.getChildren().size() != 0)
+            cgen(node.getChild(0));
     }
 
     private static void cgenContinue(Node node) throws Exception {
