@@ -381,7 +381,10 @@ public class CodeGen {
         }
 
         PrimitiveType returnType = (PrimitiveType) ((PrimitiveNode) nodeCrawler.getChild(0)).getType();
-        if (!node.getChild(0).getDSCP().getType().equals(returnType))
+        if(node.getChild(0).getDSCP() == null){
+            if(!returnType.equals(PrimitiveType.VOID))
+                throw new Exception("Return value hasn't declared!");
+        } else if (!node.getChild(0).getDSCP().getType().equals(returnType))
             throw new Exception("Return value doesn't match!");
 
         // continue parsing

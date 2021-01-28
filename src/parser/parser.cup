@@ -153,7 +153,7 @@ FunctionDecl ::= Type:t Identifier:i LPAREN Formals:f RPAREN StmtBlock:s
                     :}
                | VOID Identifier:i LPAREN Formals:f RPAREN StmtBlock:s
                     {:
-                        Node t = new SimpleNode(NodeType.VOID);
+                        Node t = new PrimitiveNode(NodeType.VOID, PrimitiveType.VOID);
                         RESULT = new SimpleNode(NodeType.METHOD_DECLARATION);
                         RESULT.addChild(t, i, f, s);
                         t.setParent(RESULT);
