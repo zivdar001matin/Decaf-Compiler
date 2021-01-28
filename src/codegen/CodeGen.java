@@ -4,6 +4,7 @@ import codegen.ast.*;
 import codegen.ast.literal.Literal;
 import codegen.symboltable.BlockType;
 import codegen.symboltable.DSCP;
+import codegen.symboltable.Scope;
 import codegen.symboltable.SymbolTable;
 import codegen.vtable.CodeForFunct;
 import codegen.vtable.VTable;
@@ -510,8 +511,20 @@ public class CodeGen {
     }
 
     private static void cgenBreak(Node node) throws Exception {
-        String entry = "LoopStmt_" + SymbolTable.getCurrentScope().getParent().getLoopStmtCounter();
-        String labelNameEnd = SymbolTable.getCurrentScope().getParent() + "_" + entry + "_end";
+
+        // Find Loop Block to get correct labels
+        Scope scopeCrawler = SymbolTable.getCurrentScope();
+        Node nodeCrawler = node;
+        while (!scopeCrawler.getBlockType().equals(BlockType.LOOP)){
+            while (!nodeCrawler.getNodeType().equals(NodeType.BLOCK)){
+                nodeCrawler = nodeCrawler.getParent();
+            }
+            nodeCrawler = nodeCrawler.getParent();
+            scopeCrawler = scopeCrawler.getParent();
+        }
+
+        String entry = "LoopStmt_" + scopeCrawler.getParent().getLoopStmtCounter();
+        String labelNameEnd = scopeCrawler.getParent() + "_" + entry + "_end";
         textSeg += "\tb\t" + labelNameEnd + "\n";
 
         // continue parsing
