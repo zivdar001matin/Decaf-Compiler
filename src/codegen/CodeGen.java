@@ -363,9 +363,6 @@ public class CodeGen {
                     textSeg += "\tsw\t$ra, 0($sp)\n";
                     textSeg += "\tjal\tPrintBool\n";
                     textSeg += "\tlw\t$ra, 0($sp)\n";
-                    textSeg += "\tli\t$v0, 4\n";
-                    textSeg += "\tmove\t$a0, $v1\n";
-                    textSeg += "\tsyscall\n";
                 case STRING:
                     textSeg += "\tli\t$v0, 4\n";
                     textSeg += "\tmove\t$a0, $v1\n";
