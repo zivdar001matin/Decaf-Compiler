@@ -150,12 +150,15 @@ public class CodeGen {
 
         if (isFirstPass) {
             CodeForFunct code = new CodeForFunct(methodName, "", methodType);
+            spaghettiStack.enterScope(String.valueOf(node.getChild(1)), BlockType.METHOD, true);
             vTable.addFunction(methodName, code);
+            cgen(node.getChild(2));
+            spaghettiStack.leaveScope();
         } else {
             textSeg += methodName + ":\n";
             //arguments
-            spaghettiStack.enterScope(String.valueOf(node.getChild(1)), BlockType.METHOD);
-            cgen(node.getChild(2));
+            spaghettiStack.enterScope(String.valueOf(node.getChild(1)), BlockType.METHOD, false);
+//            cgen(node.getChild(2));
             //body
             cgen(node.getChild(3));
             if (methodName.equals("main")) {
@@ -260,6 +263,9 @@ public class CodeGen {
             DSCP dscp = new DSCP(typePrimitive, identifierNode);
             dscp.setArgumentTrue(SymbolTable.getCurrentScope().getArgumentCounter());
             spaghettiStack.addEntry(identifierNode.getValue(), dscp);
+
+            // Save primitive type to vTable function->arguments
+            vTable.getFunction(node.getParent().getParent().getParent().getChild(1).toString()).addArgument((PrimitiveType)typePrimitive);
         } else { // inside body declaration
 //        dscp.setConstant(); //TODO
             DSCP dscp = new DSCP(typePrimitive, identifierNode);
@@ -416,7 +422,7 @@ public class CodeGen {
         String entryElse = "ElseStmt_" + SymbolTable.getCurrentScope().getConditionStmtCounter();    // Scope name for Else
         String labelNameElse = spaghettiStack + "_" + entryElse;    // Else Label for branch
 
-        spaghettiStack.enterScope(entry, BlockType.CONDITION);
+        spaghettiStack.enterScope(entry, BlockType.CONDITION, true);
 
         cgen(node.getChild(0)); //  calculate condition -> return $v1
         DSCP conditionDscp = node.getChild(0).getDSCP();
@@ -437,7 +443,7 @@ public class CodeGen {
         if (node.getChildren().size() == 3) {     // if
             cgen(node.getChild(2)); // continue code generating
         } else {                                 // if-else
-            spaghettiStack.enterScope(entryElse, BlockType.CONDITION);
+            spaghettiStack.enterScope(entryElse, BlockType.CONDITION, true);
             cgen(node.getChild(2)); // else block
             textSeg += labelNameElse + ":\n";
             cgen(node.getChild(3)); // continue code generating
@@ -453,7 +459,7 @@ public class CodeGen {
         String labelNameUpdate = spaghettiStack + "_" + entry + "_update";
         String labelNameEnd = spaghettiStack + "_" + entry + "_end";
 
-        spaghettiStack.enterScope(entry, BlockType.LOOP);
+        spaghettiStack.enterScope(entry, BlockType.LOOP, true);
 
         textSeg += labelNameFirst + ":\n";
 
@@ -487,7 +493,7 @@ public class CodeGen {
         String labelNameUpdate = spaghettiStack + "_" + entry + "_update";
         String labelNameEnd = spaghettiStack + "_" + entry + "_end";
 
-        spaghettiStack.enterScope(entry, BlockType.LOOP);
+        spaghettiStack.enterScope(entry, BlockType.LOOP, true);
 
         cgen(node.getChild(0));
 

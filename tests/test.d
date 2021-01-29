@@ -1,21 +1,28 @@
+int mult(int a, int b) {
+    return a * b;
+}
+
+int div(int b, int a) {
+    return a / b;
+}
+
+int add(int a, int b) {
+    return a + b;
+}
+
 int main() {
     int a;
     int b;
-    int i;
+    int c;
 
-    b = 0;
-    for(i = 1; true; i = i + 1) {
-        a = ReadInteger();
-        if (a < 0){
-            continue;
-        } else {
-            if ( a > 100)
-                break;
-        }
-        b = b + a;
-    }
+    a = 2;
+    b = 3;
 
-    //Print("Sum of ", i, " items is: ", b);
-    Print(i);
-    Print(b);
+    c = add(a, b);
+    Print(c);
+
+    c = mult(a, b) + div(a, mult(a, b));
+    Print(c);
+
+    Print(mult(a, b) + div(a, mult(a, b)) + 2);
 }

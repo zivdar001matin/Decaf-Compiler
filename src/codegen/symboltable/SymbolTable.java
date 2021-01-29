@@ -65,10 +65,21 @@ public class SymbolTable {
      * Remember to use when you are going to enter a scope.
      *
      * @param name name of the current scope. It can be function name, class name, etc.
+     * @param blockType use for continue and break statements.
+     * @param isFirstPass use for prevent defining a scope twice. use for check function argumentTypes
      */
-    public void enterScope(String name, BlockType blockType) {
-        Scope newScope = new Scope(name + "Scope", currentScope, blockType);
-        currentScope.addChild(newScope);
+    public void enterScope(String name, BlockType blockType, boolean isFirstPass) {
+        Scope newScope = null;
+        if (isFirstPass) {
+            newScope = new Scope(name + "Scope", currentScope, blockType);
+            currentScope.addChild(newScope);
+        } else {
+            for (Scope child : currentScope.getChildren()) {
+                newScope = child;
+                if (child.getName().equals(name + "Scope"))
+                    break;
+            }
+        }
         currentScope = newScope;
     }
 

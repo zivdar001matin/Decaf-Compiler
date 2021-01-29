@@ -68,6 +68,10 @@ public class Scope {
         this.loopStmtCounter++;
     }
 
+    ArrayList<Scope> getChildren() {
+        return this.children;
+    }
+
     @Override
     public String toString() {
         return name;
