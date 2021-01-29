@@ -390,6 +390,10 @@ public class CodeGen {
             cgenAllChildren(node.getChild(0).getChild(i));
             popRegistersA();
             textSeg += "\tmove\t$a" + i + ", $v1\n";
+
+            String functionName = String.valueOf(node.getParent().getChild(0));
+            if(!node.getChild(0).getChild(i).getDSCP().getType().equals(vTable.getFunction(functionName).getArgument(i)))
+                throw new Exception("Function Call " + functionName + " Argument types doesn't match to the function!");
         }
     }
 

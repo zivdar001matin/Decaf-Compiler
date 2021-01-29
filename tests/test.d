@@ -1,28 +1,9 @@
-int mult(int a, int b) {
-    return a * b;
+int mult(int c, int d){
+    return c * d;
 }
-
-int div(int b, int a) {
-    return a / b;
-}
-
-int add(int a, int b) {
-    return a + b;
-}
-
 int main() {
-    int a;
-    int b;
-    int c;
+    bool c;
+    int d;
 
-    a = 2;
-    b = 3;
-
-    c = add(a, b);
-    Print(c);
-
-    c = mult(a, b) + div(a, mult(a, b));
-    Print(c);
-
-    Print(mult(a, b) + div(a, mult(a, b)) + 2);
+    d = mult(c, d);
 }
