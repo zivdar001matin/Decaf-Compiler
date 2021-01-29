@@ -49,6 +49,7 @@ import parser.sym;
     Exp = (e|E){Sign}?[0-9][0-9]*
     DoubleLiteral = {Sign}?{Numpart}{Exp}?
 
+    StringLiteral = \"[^(\\n|\\r)]~\"
 
 %state STRING
 
@@ -98,7 +99,7 @@ import parser.sym;
     /* literals */
     {IntegerLiteral}      { return token(sym.T_INTLITERAL);}
     {DoubleLiteral}       { return token(sym.T_DOUBLELITERAL);}
-    \"                    { string.setLength(0); yybegin(STRING); }
+    {StringLiteral}       { return token(sym.T_STRINGLITERAL); }
     /* operators */
 	"="					  { return token(sym.ASSIGN); }
     "=="				  { return token(sym.EQ); }
@@ -131,16 +132,4 @@ import parser.sym;
     "{"                  {return token(sym.OPENAC);}
     "}"                  {return token(sym.CLOSEAC);}
 
-}
-
-<STRING> {
-    \"                    { yybegin(YYINITIAL);
-                            string = new StringBuffer();
-                            return token(sym.T_STRINGLITERAL);}
-    [^\n\r\"\\]+          { string.append( yytext() ); }
-    \\t                   { string.append("\t"); }
-    \\n                   { string.append("\n"); }
-    \\r                   { string.append("\r"); }
-    \\\"                  { string.append("\""); }
-    \\                    { string.append("\\"); }
 }
