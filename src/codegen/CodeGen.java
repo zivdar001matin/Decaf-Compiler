@@ -243,6 +243,10 @@ public class CodeGen {
         if (!identifierDSCP.getType().equals(expressionNode.getDSCP().getType()))
             throw new Error("Type of assign doesn't match " + identifierDSCP.getType() + " -> " + expressionNode.getDSCP().getType());
 
+        if (expressionNode.getDSCP().getType().equals(PrimitiveType.STRING)){
+            identifierDSCP.setValue(expressionNode.getResultName());
+        }
+
         textSeg += "\tsw\t$v1  " + spaghettiStack.getEntryScope(entry).toString() + "." + entry + "\t\t\t\t\t\t# End assign\n";
 
         //continue code generating
@@ -313,6 +317,7 @@ public class CodeGen {
         }
 
         Type type = widen(leftChild, rightChild, false);
+        DSCP dscp = new DSCP(type, null);
 
         if (type.equals(PrimitiveType.INT)) {
             switch (node.getNodeType()) {
@@ -334,10 +339,19 @@ public class CodeGen {
             }
         } else if (type.equals(PrimitiveType.DOUBLE)) {
             //TODO
+        } else if (type.equals(PrimitiveType.STRING)) {
+            if (!node.getNodeType().equals(NodeType.ADDITION))
+                throw new Exception("You can just + strings!");
+            String finalString = (leftChild.getResultName() + rightChild.getResultName()).replaceAll("\"", "");
+            dscp.setValue(finalString);
+            String stringLabel = spaghettiStack + "_StringLiteral" + SymbolTable.getCurrentScope().getStringLiteralCounter();
+            dataSeg += "\t" + stringLabel + ":\t.asciiz\t\"" + dscp.getValue() + "\"\n";
+            textSeg += "\tla\t$v1, " + stringLabel + '\n';
+            SymbolTable.getCurrentScope().addStringLiteralCounter();
+            System.out.println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
         }
         popRegistersS();
 
-        DSCP dscp = new DSCP(type, null);
         node.setDSCP(dscp);
         ExpressionNode parent = (ExpressionNode) node.getParent();
         parent.setIsIdentifier();
@@ -739,7 +753,7 @@ public class CodeGen {
     private static Type widen(ExpressionNode leftChild, ExpressionNode rightChild, boolean isLogical) throws Exception {
         if (leftChild.getDSCP().getType().equals(rightChild.getDSCP().getType())) {
             Type type = leftChild.getDSCP().getType();
-            if ((type.equals(PrimitiveType.INT) || type.equals(PrimitiveType.DOUBLE)) && !isLogical)
+            if ((type.equals(PrimitiveType.INT) || type.equals(PrimitiveType.DOUBLE) || type.equals(PrimitiveType.STRING)) && !isLogical)
                 return type;
             else if (isLogical)
                 return type;
