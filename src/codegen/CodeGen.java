@@ -611,6 +611,23 @@ public class CodeGen {
         else if (node.getNodeType().equals(NodeType.NOT_EQUAL))
             textSeg += "\tsne\t$v1, $s0, $s2\n";
 
+        if (type.equals(PrimitiveType.STRING)){
+            String leftValue = leftChild.getDSCP().getValue();
+            String rightValue = rightChild.getDSCP().getValue();
+            if (node.getNodeType().equals(NodeType.EQUAL)){
+                if (leftValue.equals(rightValue))
+                    textSeg += "\taddi\t$v1, $zero, 1\n";
+                else
+                    textSeg += "\taddi\t$v1, $zero, 0\n";
+            } else {
+                if (leftValue.equals(rightValue))
+                    textSeg += "\taddi\t$v1, $zero, 0\n";
+                else
+                    textSeg += "\taddi\t$v1, $zero, 1\n";
+            }
+
+        }
+
         popRegistersS();
 
         DSCP dscp = new DSCP(PrimitiveType.BOOL, null);
