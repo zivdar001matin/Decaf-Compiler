@@ -3,9 +3,9 @@ int main() {
     string input2;
     string inp;
 
+    inp = ReadLine();
     input = ReadLine();
     input2 = ReadLine();
-    inp = ReadLine();
 
     Print(inp);
     Print(input, input2);

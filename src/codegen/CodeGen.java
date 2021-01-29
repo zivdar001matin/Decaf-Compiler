@@ -414,10 +414,21 @@ public class CodeGen {
             }
         }
 
-        // insert newline
-        textSeg += "\tli\t$v0, 4\n";
-        textSeg += "\tla\t$a0, newLine\n";
-        textSeg += "\tsyscall\n";
+        boolean conditionIsString = false;
+        try{
+            if (node.getChild(0).getChild(0).getDSCP().getType().equals(PrimitiveType.STRING)) {
+                conditionIsString = true;
+            }
+        } catch (Exception e) {
+            // ignore
+        }
+
+        if (!conditionIsString) {
+            // insert newline
+            textSeg += "\tli\t$v0, 4\n";
+            textSeg += "\tla\t$a0, newLine\n";
+            textSeg += "\tsyscall\n";
+        }
 
         // continue parsing
         cgen(node.getChild(1));
