@@ -26,6 +26,7 @@ public class CodeGen {
         dataSeg += "\tbool_1: \t.asciiz \t\"true\"\n";
         dataSeg += "\tzeroDouble: \t.double \t0.0\n";
         textSeg += "\tldc1\t$f0, zeroDouble\n";
+        textSeg += "\tjal\tmain\n";
         textSeg += "PrintBool:\n" +
                 "\tbeq\t$a0, 0, Print_Bool0\n" +
                 "\tla\t$v1, bool_1\n" +
@@ -362,6 +363,10 @@ public class CodeGen {
                     textSeg += "\tsw\t$ra, 0($sp)\n";
                     textSeg += "\tjal\tPrintBool\n";
                     textSeg += "\tlw\t$ra, 0($sp)\n";
+                    textSeg += "\tli\t$v0, 4\n";
+                    textSeg += "\tmove\t$a0, $v1\n";
+                    textSeg += "\tsyscall\n";
+                case STRING:
                     textSeg += "\tli\t$v0, 4\n";
                     textSeg += "\tmove\t$a0, $v1\n";
                     textSeg += "\tsyscall\n";
