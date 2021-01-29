@@ -37,12 +37,12 @@ public class ExpressionNode extends SimpleNode {
             type = this.getChild(0).getDSCP().getType();
             resultName = this.getChild(0).getDSCP().getValue();
             this.setDSCP(this.getChild(0).getDSCP());
-        } else if (this.getChild(0).getNodeType().equals(NodeType.READ_LINE)){
+        } else if (this.getChild(0).getNodeType().equals(NodeType.READ_LINE)) {
             type = this.getChild(0).getDSCP().getType();
             resultName = "\"ReadLine()\"";
         } else {
             //EXPR -> LITERAL
-            if (!this.getChild(0).getDSCP().getValue().equals("readInteger()")){
+            if (!this.getChild(0).getDSCP().getValue().equals("readInteger()")) {
                 Literal literal = (Literal) this.getChild(0);
                 resultName = this.getChild(0).toString();
                 type = literal.getType();

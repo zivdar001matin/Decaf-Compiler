@@ -31,16 +31,16 @@ public class CodeForFunct {
         this.arguments = new ArrayList<>();
     }
 
-    public void addArgument(PrimitiveType primitiveType){
+    public void addArgument(PrimitiveType primitiveType) {
         arguments.add(new Argument(argumentCounter++, primitiveType));
     }
 
-    public PrimitiveType getArgument(int placeInArguments){
+    public PrimitiveType getArgument(int placeInArguments) {
         return arguments.get(placeInArguments).type;
     }
 }
 
-class Argument{
+class Argument {
 
     int place;
     PrimitiveType type;

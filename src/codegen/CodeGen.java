@@ -184,7 +184,7 @@ public class CodeGen {
         dscp.setValue(String.valueOf(node));
         node.setDSCP(dscp);
 
-        if (dscp.getType().equals(PrimitiveType.STRING)){
+        if (dscp.getType().equals(PrimitiveType.STRING)) {
             String stringLabel = spaghettiStack + "_StringLiteral" + SymbolTable.getCurrentScope().getStringLiteralCounter();
             dataSeg += "\t" + stringLabel + ":\t.asciiz\t" + dscp.getValue() + '\n';
             textSeg += "\tla\t$v1, " + stringLabel + '\n';
@@ -250,12 +250,12 @@ public class CodeGen {
         if (!identifierDSCP.getType().equals(expressionNode.getDSCP().getType()))
             throw new Error("Type of assign doesn't match " + identifierDSCP.getType() + " -> " + expressionNode.getDSCP().getType());
 
-        if (expressionNode.getDSCP().getType().equals(PrimitiveType.STRING)){
+        if (expressionNode.getDSCP().getType().equals(PrimitiveType.STRING)) {
             identifierDSCP.setValue(expressionNode.getResultName());
         }
 
-        if (expressionNode.getResultName().equals("\"ReadLine()\"")){
-            String stringLabel = "readLine_number" + (readLineCounter-1);   // because we want  read line that we ++ it
+        if (expressionNode.getResultName().equals("\"ReadLine()\"")) {
+            String stringLabel = "readLine_number" + (readLineCounter - 1);   // because we want  read line that we ++ it
             textSeg += "\tla\t$v1, " + stringLabel + '\n';
         }
 
@@ -283,7 +283,7 @@ public class CodeGen {
         DSCP dscp = new DSCP(PrimitiveType.STRING, null);
         dscp.setValue("readLine()");
         node.setDSCP(dscp);
-        ((ExpressionNode)node.getParent()).setIsIdentifier();
+        ((ExpressionNode) node.getParent()).setIsIdentifier();
         pushRegistersA();
         textSeg += "\tli\t$v0, 8\n";
         textSeg += "\tla\t$a0, " + "readLine_number" + readLineCounter++ + '\n';
@@ -307,7 +307,7 @@ public class CodeGen {
             spaghettiStack.addEntry(identifierNode.getValue(), dscp);
 
             // Save primitive type to vTable function->arguments
-            vTable.getFunction(node.getParent().getParent().getParent().getChild(1).toString()).addArgument((PrimitiveType)typePrimitive);
+            vTable.getFunction(node.getParent().getParent().getParent().getChild(1).toString()).addArgument((PrimitiveType) typePrimitive);
         } else { // inside body declaration
 //        dscp.setConstant(); //TODO
             DSCP dscp = new DSCP(typePrimitive, identifierNode);
@@ -376,7 +376,6 @@ public class CodeGen {
             dataSeg += "\t" + stringLabel + ":\t.asciiz\t\"" + dscp.getValue() + "\"\n";
             textSeg += "\tla\t$v1, " + stringLabel + '\n';
             SymbolTable.getCurrentScope().addStringLiteralCounter();
-            System.out.println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
         }
         popRegistersS();
 
@@ -415,7 +414,7 @@ public class CodeGen {
         }
 
         boolean conditionIsString = false;
-        try{
+        try {
             if (node.getChild(0).getChild(0).getDSCP().getType().equals(PrimitiveType.STRING)) {
                 conditionIsString = true;
             }
@@ -456,7 +455,7 @@ public class CodeGen {
             textSeg += "\tmove\t$a" + i + ", $v1\n";
 
             String functionName = String.valueOf(node.getParent().getChild(0));
-            if(!node.getChild(0).getChild(i).getDSCP().getType().equals(vTable.getFunction(functionName).getArgument(i)))
+            if (!node.getChild(0).getChild(i).getDSCP().getType().equals(vTable.getFunction(functionName).getArgument(i)))
                 throw new Exception("Function Call " + functionName + " Argument types doesn't match to the function!");
         }
     }
@@ -471,8 +470,8 @@ public class CodeGen {
         }
 
         PrimitiveType returnType = (PrimitiveType) ((PrimitiveNode) nodeCrawler.getChild(0)).getType();
-        if(node.getChild(0).getDSCP() == null){
-            if(!returnType.equals(PrimitiveType.VOID))
+        if (node.getChild(0).getDSCP() == null) {
+            if (!returnType.equals(PrimitiveType.VOID))
                 throw new Exception("Return value hasn't declared!");
         } else if (!node.getChild(0).getDSCP().getType().equals(returnType))
             throw new Exception("Return value doesn't match!");
@@ -594,8 +593,8 @@ public class CodeGen {
         // Find Loop Block to get correct labels
         Scope scopeCrawler = SymbolTable.getCurrentScope();
         Node nodeCrawler = node;
-        while (!scopeCrawler.getBlockType().equals(BlockType.LOOP)){
-            while (!nodeCrawler.getNodeType().equals(NodeType.BLOCK)){
+        while (!scopeCrawler.getBlockType().equals(BlockType.LOOP)) {
+            while (!nodeCrawler.getNodeType().equals(NodeType.BLOCK)) {
                 nodeCrawler = nodeCrawler.getParent();
             }
             nodeCrawler = nodeCrawler.getParent();
@@ -616,8 +615,8 @@ public class CodeGen {
         // Find Loop Block to get correct labels
         Scope scopeCrawler = SymbolTable.getCurrentScope();
         Node nodeCrawler = node;
-        while (!scopeCrawler.getBlockType().equals(BlockType.LOOP)){
-            while (!nodeCrawler.getNodeType().equals(NodeType.BLOCK)){
+        while (!scopeCrawler.getBlockType().equals(BlockType.LOOP)) {
+            while (!nodeCrawler.getNodeType().equals(NodeType.BLOCK)) {
                 nodeCrawler = nodeCrawler.getParent();
             }
             nodeCrawler = nodeCrawler.getParent();
@@ -650,10 +649,10 @@ public class CodeGen {
         else if (node.getNodeType().equals(NodeType.NOT_EQUAL))
             textSeg += "\tsne\t$v1, $s0, $s2\n";
 
-        if (type.equals(PrimitiveType.STRING)){
+        if (type.equals(PrimitiveType.STRING)) {
             String leftValue = leftChild.getDSCP().getValue();
             String rightValue = rightChild.getDSCP().getValue();
-            if (node.getNodeType().equals(NodeType.EQUAL)){
+            if (node.getNodeType().equals(NodeType.EQUAL)) {
                 if (leftValue.equals(rightValue))
                     textSeg += "\taddi\t$v1, $zero, 1\n";
                 else

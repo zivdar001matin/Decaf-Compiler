@@ -64,8 +64,8 @@ public class SymbolTable {
     /**
      * Remember to use when you are going to enter a scope.
      *
-     * @param name name of the current scope. It can be function name, class name, etc.
-     * @param blockType use for continue and break statements.
+     * @param name        name of the current scope. It can be function name, class name, etc.
+     * @param blockType   use for continue and break statements.
      * @param isFirstPass use for prevent defining a scope twice. use for check function argumentTypes
      */
     public void enterScope(String name, BlockType blockType, boolean isFirstPass) {
