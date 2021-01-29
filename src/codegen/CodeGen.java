@@ -20,6 +20,10 @@ public class CodeGen {
     public static String dataSeg = ".data\n";
     public static String textSeg = ".text\n";
 
+    private static int readLineCounter = 0;
+
+    private static final int USER_INPUT_SIZE = 20;
+
     static {
         dataSeg += "\tnewLine: \t.asciiz \t\"\\n\"\n";
         dataSeg += "\tbool_0: \t.asciiz \t\"false\"\n";
@@ -59,6 +63,9 @@ public class CodeGen {
                 break;
             case READ_INTEGER:
                 cgenReadInteger(node);
+                break;
+            case READ_LINE:
+                cgenReadLine(node);
                 break;
             case EXPRESSION_STATEMENT:
                 cgenExpressionStatement(node);
@@ -247,6 +254,11 @@ public class CodeGen {
             identifierDSCP.setValue(expressionNode.getResultName());
         }
 
+        if (expressionNode.getResultName().equals("\"ReadLine()\"")){
+            String stringLabel = "readLine_number" + (readLineCounter-1);   // because we want  read line that we ++ it
+            textSeg += "\tla\t$v1, " + stringLabel + '\n';
+        }
+
         textSeg += "\tsw\t$v1  " + spaghettiStack.getEntryScope(entry).toString() + "." + entry + "\t\t\t\t\t\t# End assign\n";
 
         //continue code generating
@@ -260,6 +272,22 @@ public class CodeGen {
         node.setDSCP(dscp);
         pushRegistersA();
         textSeg += "\tli\t$v0, 5\n";
+        textSeg += "\tsyscall\n";
+        textSeg += "\tmove\t$v1, $v0\n";
+        popRegistersA();
+        ((ExpressionNode) node.getParent()).setIsIdentifier();
+    }
+
+    private static void cgenReadLine(Node node) throws Exception {
+        dataSeg += "\treadLine_number" + readLineCounter + ":\t.space\t" + USER_INPUT_SIZE + '\n';
+        DSCP dscp = new DSCP(PrimitiveType.STRING, null);
+        dscp.setValue("readLine()");
+        node.setDSCP(dscp);
+        ((ExpressionNode)node.getParent()).setIsIdentifier();
+        pushRegistersA();
+        textSeg += "\tli\t$v0, 8\n";
+        textSeg += "\tla\t$a0, " + "readLine_number" + readLineCounter++ + '\n';
+        textSeg += "\tli\t$a1, " + USER_INPUT_SIZE + '\n';
         textSeg += "\tsyscall\n";
         textSeg += "\tmove\t$v1, $v0\n";
         popRegistersA();

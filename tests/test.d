@@ -1,21 +1,13 @@
 int main() {
-    int b;
-    string c;
-    string cc;
-    string d;
+    string input;
+    string input2;
+    string inp;
 
-    b = 0;
-    c = "c";
-    cc = "c";
-    d = "d";
+    input = ReadLine();
+    input2 = ReadLine();
+    inp = ReadLine();
 
-    Print("a" != "a");
-    Print(b == "a");    // Semantic Error!
-    Print(c == "c");
-    Print(c == "d");
-    Print(c != "c");
-    Print(c != "d");
-    Print(c != cc);
-    Print(c == d);
-
+    Print(inp);
+    Print(input, input2);
+    Print("ByeWorld!");
 }
