@@ -175,7 +175,16 @@ public class CodeGen {
         DSCP dscp = new DSCP(node.getType(), null);
         dscp.setValue(String.valueOf(node));
         node.setDSCP(dscp);
-        textSeg += "\tli\t$v1, " + dscp.getValue() + '\n';
+
+        if (dscp.getType().equals(PrimitiveType.STRING)){
+            String stringLabel = spaghettiStack + "_StringLiteral" + SymbolTable.getCurrentScope().getStringLiteralCounter();
+            dataSeg += "\t" + stringLabel + ":\t.asciiz\t" + dscp.getValue() + '\n';
+            textSeg += "\tla\t$v1, " + stringLabel + '\n';
+            SymbolTable.getCurrentScope().addStringLiteralCounter();
+        } else {    // integer and boolean
+            textSeg += "\tli\t$v1, " + dscp.getValue() + '\n';
+        }
+
         ((ExpressionNode) node.getParent()).setIsIdentifier();
 //        if (dscp.getType().equals(PrimitiveType.BOOL))
 //            textSeg += "\tli\t$v1, " + dscp.getValue() + '\n';

@@ -12,9 +12,7 @@ public class StringLiteralNode extends Literal {
 
     @Override
     public String toString() {
-        return "StringLiteralNode{" +
-                "value='" + value + '\'' +
-                '}';
+        return value;
     }
 
     public String getValue() {

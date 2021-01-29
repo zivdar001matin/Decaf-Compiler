@@ -12,7 +12,7 @@ public enum PrimitiveType implements Type {
     FLOAT("", ".float", 4),
     //todo
     VOID("", "void", 0),
-    STRING("\"\"", ".ascii", 0);
+    STRING("0", ".word", 0);
 
     private final String initialValue;
     private final String signature;

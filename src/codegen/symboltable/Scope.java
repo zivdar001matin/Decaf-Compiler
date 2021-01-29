@@ -11,6 +11,7 @@ public class Scope {
     private int argumentCounter;
     private int conditionStmtCounter;
     private int loopStmtCounter;
+    private int stringLiteralCounter;
     private ArrayList<Scope> children;
     private final BlockType blockType;
 
@@ -66,6 +67,14 @@ public class Scope {
 
     public void addLoopStmtCounter() {
         this.loopStmtCounter++;
+    }
+
+    public int getStringLiteralCounter() {
+        return stringLiteralCounter;
+    }
+
+    public void addStringLiteralCounter() {
+        this.stringLiteralCounter++;
     }
 
     ArrayList<Scope> getChildren() {
