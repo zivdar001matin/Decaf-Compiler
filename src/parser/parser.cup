@@ -36,7 +36,6 @@ terminal ASSIGN, EQ, PLUS;
 /* punctuations */
 terminal MINUS, PROD, DIV, MOD, LESS, LESSEQ, GT, GTEQ, NOTEQ, NOT, AND, OR, SEMI, COMMA, DOT, LBRACK, BRACK, RBRACK, LPAREN, RPAREN, OPENAC, CLOSEAC;
 
-non terminal Node Initial;
 non terminal Node Program;
 non terminal Node Decl;
 non terminal Node VariableDecl,Variable;
