@@ -6,8 +6,8 @@ import codegen.ast.Type;
 import java.util.ArrayList;
 
 public class CodeForFunct {
-    private final String functName; // todo check is necessary or not
-    private final String code;      // todo check is necessary or not
+    private final String functName;
+    private final String code;
     private final Type returnType;
     private final ArrayList<Argument> arguments;
     private int argumentCounter = 0;

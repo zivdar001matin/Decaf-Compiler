@@ -313,7 +313,6 @@ public class CodeGen {
             // Save primitive type to vTable function->arguments
             vTable.getFunction(node.getParent().getParent().getParent().getChild(1).toString()).addArgument((PrimitiveType) typePrimitive);
         } else { // inside body declaration
-//        dscp.setConstant(); //TODO
             DSCP dscp = new DSCP(typePrimitive, identifierNode);
             spaghettiStack.addEntry(identifierNode.getValue(), dscp);
         }

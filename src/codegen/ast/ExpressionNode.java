@@ -18,7 +18,7 @@ public class ExpressionNode extends SimpleNode {
         return isIdentifier;
     }
 
-    public void setIsIdentifier() throws Exception { //todo check this
+    public void setIsIdentifier() throws Exception {
         if (this.getChild(0).getNodeType() == NodeType.VAR_USE) {
             //EXPR -> VAR_USE -> ID
             IdentifierNode id = ((IdentifierNode) this.getChild(0).getChild(0));

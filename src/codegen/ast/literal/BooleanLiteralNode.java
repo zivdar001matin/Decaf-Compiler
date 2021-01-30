@@ -12,7 +12,7 @@ public class BooleanLiteralNode extends Literal {
         intVal = this.value ? 1 : 0;
     }
 
-    public int getIntVal() { //todo
+    public int getIntVal() {
         return intVal;
     }
 
