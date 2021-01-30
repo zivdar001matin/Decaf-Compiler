@@ -12,6 +12,13 @@ public class CodeForFunct {
     private final ArrayList<Argument> arguments;
     private int argumentCounter = 0;
 
+    public CodeForFunct(String functName, String code, Type returnType) {
+        this.functName = functName;
+        this.code = code;
+        this.returnType = returnType;
+        this.arguments = new ArrayList<>();
+    }
+
     public Type getReturnType() {
         return returnType;
     }
@@ -22,13 +29,6 @@ public class CodeForFunct {
 
     public String getFunctName() {
         return functName;
-    }
-
-    public CodeForFunct(String functName, String code, Type returnType) {
-        this.functName = functName;
-        this.code = code;
-        this.returnType = returnType;
-        this.arguments = new ArrayList<>();
     }
 
     public void addArgument(PrimitiveType primitiveType) {

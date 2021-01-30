@@ -9,9 +9,9 @@ import java.util.List;
 
 public class SimpleNode implements Node {
 
+    private final NodeType nodeType;
     private List<Node> children = new ArrayList<>();
     private Node parent;
-    private final NodeType nodeType;
     private DSCP dscp;
 
     public SimpleNode(NodeType nodeType) {
@@ -24,13 +24,13 @@ public class SimpleNode implements Node {
     }
 
     @Override
-    public void setDSCP(DSCP dscp) {
-        this.dscp = dscp;
+    public DSCP getDSCP() {
+        return this.dscp;
     }
 
     @Override
-    public DSCP getDSCP() {
-        return this.dscp;
+    public void setDSCP(DSCP dscp) {
+        this.dscp = dscp;
     }
 
     @Override
@@ -54,13 +54,13 @@ public class SimpleNode implements Node {
     }
 
     @Override
-    public void setChildren(Node... nodes) {
-        children = Arrays.asList(nodes);
+    public List<Node> getChildren() {
+        return children;
     }
 
     @Override
-    public List<Node> getChildren() {
-        return children;
+    public void setChildren(Node... nodes) {
+        children = Arrays.asList(nodes);
     }
 
     @Override
@@ -69,12 +69,12 @@ public class SimpleNode implements Node {
     }
 
     @Override
-    public void setParent(Node parent) {
-        this.parent = parent;
+    public Node getParent() {
+        return parent;
     }
 
     @Override
-    public Node getParent() {
-        return parent;
+    public void setParent(Node parent) {
+        this.parent = parent;
     }
 }

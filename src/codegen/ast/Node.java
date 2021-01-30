@@ -12,14 +12,14 @@ public interface Node {
     NodeType getNodeType();
 
     /**
-     * Sets the symbol info.
-     */
-    void setDSCP(DSCP dscp);
-
-    /**
      * Gets the symbol info.
      */
     DSCP getDSCP();
+
+    /**
+     * Sets the symbol info.
+     */
+    void setDSCP(DSCP dscp);
 
 //    /**
 //     * Accepts a simple visitor.

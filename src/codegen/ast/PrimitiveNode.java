@@ -1,7 +1,7 @@
 package codegen.ast;
 
 public class PrimitiveNode extends SimpleNode {
-    private Type type;
+    private final Type type;
 
     public PrimitiveNode(NodeType nodeType, Type type) {
         super(nodeType);

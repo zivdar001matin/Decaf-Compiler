@@ -6,7 +6,7 @@ import codegen.ast.Type;
 
 public abstract class Literal extends SimpleNode {
 
-    private Type type;
+    private final Type type;
 
     public Literal(Type type) {
         super(NodeType.LITERAL);

@@ -8,12 +8,12 @@ public class Scope {
     private final HashMap<String, DSCP> scope;
     private final Scope parent;
     private final String name;
+    private final BlockType blockType;
     private int argumentCounter;
     private int conditionStmtCounter;
     private int loopStmtCounter;
     private int stringLiteralCounter;
-    private ArrayList<Scope> children;
-    private final BlockType blockType;
+    private final ArrayList<Scope> children;
 
     public Scope(String name, Scope parent, BlockType blockType) {
         this.scope = new HashMap<>();
