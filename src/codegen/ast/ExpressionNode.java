@@ -1,5 +1,6 @@
 package codegen.ast;
 
+import codegen.SemanticError;
 import codegen.ast.literal.Literal;
 
 import java.util.stream.Stream;
@@ -27,7 +28,7 @@ public class ExpressionNode extends SimpleNode {
                 resultName = id.getValue();
             }
             if (id.getDSCP() == null)
-                throw new Exception(id.getValue() + " not declared");
+                throw new SemanticError(id.getValue() + " not declared");
             type = id.getDSCP().getType();
         } else if (Stream.of(NodeType.ADDITION, NodeType.SUBTRACTION, NodeType.MULTIPLICATION, NodeType.DIVISION, NodeType.MOD).anyMatch(nodeType -> this.getChild(0).getNodeType().equals(nodeType))) {
             type = this.getChild(0).getDSCP().getType();

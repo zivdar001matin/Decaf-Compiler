@@ -252,7 +252,7 @@ public class CodeGen {
         DSCP identifierDSCP = spaghettiStack.getDSCP(entry);
 
         if (!identifierDSCP.getType().equals(expressionNode.getDSCP().getType()))
-            throw new Error("Type of assign doesn't match " + identifierDSCP.getType() + " -> " + expressionNode.getDSCP().getType());
+            throw new SemanticError("Type of assign doesn't match " + identifierDSCP.getType() + " -> " + expressionNode.getDSCP().getType());
 
         if (expressionNode.getDSCP().getType().equals(PrimitiveType.STRING)) {
             identifierDSCP.setValue(expressionNode.getResultName());
@@ -373,7 +373,7 @@ public class CodeGen {
             //TODO
         } else if (type.equals(PrimitiveType.STRING)) {
             if (!node.getNodeType().equals(NodeType.ADDITION))
-                throw new Exception("You can just + strings!");
+                throw new SemanticError("You can just concat strings!");
             String finalString = (leftChild.getResultName() + rightChild.getResultName()).replaceAll("\"", "");
             dscp.setValue(finalString);
             String stringLabel = spaghettiStack + "_StringLiteral" + SymbolTable.getCurrentScope().getStringLiteralCounter();
@@ -460,7 +460,7 @@ public class CodeGen {
 
             String functionName = String.valueOf(node.getParent().getChild(0));
             if (!node.getChild(0).getChild(i).getDSCP().getType().equals(vTable.getFunction(functionName).getArgument(i)))
-                throw new Exception("Function Call " + functionName + " Argument types doesn't match to the function!");
+                throw new SemanticError("Function Call " + functionName + " Argument types doesn't match to the function!");
         }
     }
 
@@ -476,10 +476,10 @@ public class CodeGen {
         PrimitiveType returnType = (PrimitiveType) ((PrimitiveNode) nodeCrawler.getChild(0)).getType();
         if (node.getChild(0).getDSCP() == null) {
             if (!returnType.equals(PrimitiveType.VOID)) {
-                throw new Exception("Return value hasn't declared!");
+                throw new SemanticError("Return value hasn't declared!");
             }
         } else if (!node.getChild(0).getDSCP().getType().equals(returnType)) {
-            throw new Exception("Return value doesn't match!");
+            throw new SemanticError("Return value doesn't match!");
         }
 
         String methodName = ((IdentifierNode) nodeCrawler.getChild(1)).getValue();
@@ -511,7 +511,7 @@ public class CodeGen {
         cgen(node.getChild(0)); //  calculate condition -> return $v1
         DSCP conditionDscp = node.getChild(0).getDSCP();
         if (!conditionDscp.getType().equals(PrimitiveType.BOOL)) {
-            throw new Exception("Condition isn't boolean ");
+            throw new SemanticError("Condition isn't boolean ");
         }
 
         // branch taken if condition is false
@@ -550,7 +550,7 @@ public class CodeGen {
         cgen(node.getChild(0)); //  calculate condition -> return $v1
         DSCP conditionDscp = node.getChild(0).getDSCP();
         if (!conditionDscp.getType().equals(PrimitiveType.BOOL)) {
-            throw new Exception("Condition isn't boolean ");
+            throw new SemanticError("Condition isn't boolean ");
         }
 
         // branch taken if condition is false
@@ -586,7 +586,7 @@ public class CodeGen {
         cgen(node.getChild(1)); //  calculate condition -> return $v1
         DSCP conditionDscp = node.getChild(1).getDSCP();
         if (!conditionDscp.getType().equals(PrimitiveType.BOOL)) {
-            throw new Exception("Condition isn't boolean ");
+            throw new SemanticError("Condition isn't boolean ");
         }
 
         // branch taken if condition is false
@@ -753,7 +753,7 @@ public class CodeGen {
             widen(leftChild, rightChild, true);
         } else {
             if (!leftChild.getChild(0).getDSCP().getType().equals(PrimitiveType.BOOL))
-                throw new Exception("can't do BOOLEAN_NOT on " + leftChild.getDSCP().getType());
+                throw new SemanticError("can't do BOOLEAN_NOT on " + leftChild.getDSCP().getType());
         }
 
 
@@ -829,9 +829,9 @@ public class CodeGen {
                 return type;
             else if (isLogical)
                 return type;
-            throw new Exception("can't do operation on " + type);
+            throw new SemanticError("can't do operation on " + type);
         }
-        throw new Exception("can't do operation on " + leftChild.getType() + " and " + rightChild.getType());
+        throw new SemanticError("can't do operation on " + leftChild.getType() + " and " + rightChild.getType());
     }
 
     public static void compile() throws IOException {

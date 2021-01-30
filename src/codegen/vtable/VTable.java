@@ -1,5 +1,7 @@
 package codegen.vtable;
 
+import codegen.SemanticError;
+
 import java.util.HashMap;
 
 public class VTable {
@@ -16,7 +18,7 @@ public class VTable {
     public CodeForFunct getFunction(String name) throws Exception {
         CodeForFunct code = table.get(name);
         if (code == null) {
-            throw new Exception("Function " + name + " not defined!");
+            throw new SemanticError("Function " + name + " not defined!");
         }
         return code;
     }

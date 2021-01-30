@@ -1,35 +1,33 @@
 import codegen.CodeGen;
+import codegen.SemanticError;
 import codegen.ast.Node;
-import codegen.ast.RootNode;
-import parser.parser;
-import scanner.Scanner;
+import parser.*;
+import scanner.*;
 
-import java.io.File;
 import java.io.FileReader;
-
-import static codegen.CodeGen.cgen;
 
 public class Compiler {
     public static void main(String[] args) throws Exception {
-        FileReader fr = new FileReader(new File("tests/test.d"));
+        FileReader fr = new FileReader("tests/test.d");
         Scanner scanner = new Scanner(fr);
         parser parser = new parser(scanner);
-//        System.err.close();
-//        try {
-        parser.parse();
-        RootNode root = parser.getRoot();
-//        System.out.println("OK");
-//        printTree(parser.getRoot());
-        cgen(parser.getRoot());
-        CodeGen.compile();
-        System.out.println("cgen Completed!");
-        System.out.println("####################### asm code ######################");
-        System.out.print(CodeGen.getDataSeg());
-        System.out.print(CodeGen.getTextSeg());
-        System.out.println("#######################################################");
-//        }catch (Exception e){
-//            System.out.println("Syntax Error");
-//        }
+        boolean isSemanticError = false;
+        try {
+            parser.parse();
+            CodeGen.cgen(parser.getRoot());
+            CodeGen.compile();
+            System.out.println("####################### asm code ######################");
+            System.out.print(CodeGen.getDataSeg());
+            System.out.print(CodeGen.getTextSeg());
+            System.out.println("#######################################################");
+        }catch (SemanticError e){
+            isSemanticError = true;
+            throw e;
+        }catch (Exception e){
+            if (isSemanticError)
+                throw e;
+            throw new SyntaxError(e.getMessage());
+        }
     }
 
     private static void printTree(Node node) {

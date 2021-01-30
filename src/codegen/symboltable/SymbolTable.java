@@ -1,5 +1,7 @@
 package codegen.symboltable;
 
+import codegen.SemanticError;
+
 public class SymbolTable {
 
     public SymbolTable() {
@@ -25,7 +27,7 @@ public class SymbolTable {
                 else break;
             }
         }
-        throw new Exception(entry + " not defined!");
+        throw new SemanticError(entry + " not defined!");
     }
 
     /**
@@ -46,7 +48,7 @@ public class SymbolTable {
                 else break;
             }
         }
-        throw new Exception(entry + " not defined!");
+        throw new SemanticError(entry + " not defined!");
     }
 
     /**
@@ -56,7 +58,7 @@ public class SymbolTable {
      */
     public void addEntry(String entry, DSCP dscp) throws Exception {
         if (currentScope.getScope().containsKey(entry)) {
-            throw new Exception("current scope already contains an entry for " + entry);
+            throw new SemanticError("current scope already contains an entry for " + entry);
         }
         currentScope.getScope().put(entry, dscp);
     }
