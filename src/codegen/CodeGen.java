@@ -164,6 +164,8 @@ public class CodeGen {
             spaghettiStack.leaveScope();
         } else {
             textSeg += methodName + ":\n";
+
+            pushRegistersA();
             //arguments
             spaghettiStack.enterScope(String.valueOf(node.getChild(1)), BlockType.METHOD, false);
 //            cgen(node.getChild(2));
@@ -174,6 +176,7 @@ public class CodeGen {
                 textSeg += "\tli\t$v0, 10\n";
                 textSeg += "\tsyscall\n";
             } else {
+                popRegistersA();
                 textSeg += "\tjr\t$ra\n";
             }
         }
@@ -183,6 +186,7 @@ public class CodeGen {
         DSCP dscp = new DSCP(node.getType(), null);
         dscp.setValue(String.valueOf(node));
         node.setDSCP(dscp);
+        node.getParent().setDSCP(dscp);
 
         if (dscp.getType().equals(PrimitiveType.STRING)) {
             String stringLabel = spaghettiStack + "_StringLiteral" + SymbolTable.getCurrentScope().getStringLiteralCounter();
@@ -254,7 +258,7 @@ public class CodeGen {
             identifierDSCP.setValue(expressionNode.getResultName());
         }
 
-        if (expressionNode.getResultName().equals("\"ReadLine()\"")) {
+        if ((expressionNode.getResultName()!=null) && expressionNode.getResultName().equals("\"ReadLine()\"")) {
             String stringLabel = "readLine_number" + (readLineCounter - 1);   // because we want  read line that we ++ it
             textSeg += "\tla\t$v1, " + stringLabel + '\n';
         }
@@ -471,10 +475,23 @@ public class CodeGen {
 
         PrimitiveType returnType = (PrimitiveType) ((PrimitiveNode) nodeCrawler.getChild(0)).getType();
         if (node.getChild(0).getDSCP() == null) {
-            if (!returnType.equals(PrimitiveType.VOID))
+            if (!returnType.equals(PrimitiveType.VOID)) {
                 throw new Exception("Return value hasn't declared!");
-        } else if (!node.getChild(0).getDSCP().getType().equals(returnType))
+            }
+        } else if (!node.getChild(0).getDSCP().getType().equals(returnType)) {
             throw new Exception("Return value doesn't match!");
+        }
+
+        String methodName = ((IdentifierNode) nodeCrawler.getChild(1)).getValue();
+
+        if (methodName.equals("main")) {
+            textSeg += "\t# This line is going to signal end of program.\n";
+            textSeg += "\tli\t$v0, 10\n";
+            textSeg += "\tsyscall\n";
+        } else {
+            popRegistersA();
+            textSeg += "\tjr\t$ra\n";
+        }
 
         // continue parsing
         cgen(node.getChild(1));
