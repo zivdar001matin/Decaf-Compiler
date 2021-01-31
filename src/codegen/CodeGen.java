@@ -11,6 +11,7 @@ import codegen.vtable.VTable;
 
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.Writer;
 
 public class CodeGen {
 
@@ -833,10 +834,17 @@ public class CodeGen {
         throw new SemanticError("can't do operation on " + leftChild.getType() + " and " + rightChild.getType());
     }
 
-    public static void compile() throws IOException {
+    public static void compile(RootNode root) throws Exception {
+        cgen(root);
         FileWriter out = new FileWriter("out.asm");
         out.write(dataSeg + textSeg);
         out.close();
+    }
+
+    public static void compile(RootNode root, Writer writer) throws Exception {
+        cgen(root);
+        writer.write(dataSeg);
+        writer.write(textSeg);
     }
 
     public static String getDataSeg() {
