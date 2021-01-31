@@ -25,18 +25,27 @@ public class Compiler {
         Scanner scanner = new Scanner(fr);
         parser parser = new parser(scanner);
 
+        String errorCode = null;
+        boolean isError = false;
+
         try {
             parser.parse();
         } catch (Exception e){
             // ignore
-            SyntaxError.writeError(writer);
+            errorCode = SyntaxError.writeError();
+            isError = true;
         }
 
         try {
             CodeGen.compile(parser.getRoot(), writer);
         } catch (Exception e){
             // ignore
-            SemanticError.writeError(writer);
+            errorCode = SemanticError.writeError();
+            isError = true;
+        }
+
+        if (isError) {
+            writer.write(errorCode);
         }
     }
 }
