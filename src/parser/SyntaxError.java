@@ -40,7 +40,7 @@ public class SyntaxError extends Exception {
                         "\t# This line is going to signal end of program.\n" +
                         "\tli\t$v0, 10\n" +
                         "\tsyscall\n";
-        FileWriter out = new FileWriter("out.asm");
+        FileWriter out = new FileWriter("tests/out.asm");
         out.write(assemblyCode);
         out.close();
         throw new SyntaxError(message, this.getCause());

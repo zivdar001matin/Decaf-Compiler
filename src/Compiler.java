@@ -7,7 +7,7 @@ import java.io.*;
 
 public class Compiler {
     public static void main(String[] args) throws Exception {
-        FileReader fr = new FileReader("tests/test.d");
+        FileReader fr = new FileReader("tests/manual/test.d");
         Scanner scanner = new Scanner(fr);
         parser parser = new parser(scanner);
 

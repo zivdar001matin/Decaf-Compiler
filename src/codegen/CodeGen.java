@@ -825,7 +825,7 @@ public class CodeGen {
 
     public static void compile(RootNode root) throws Exception {
         cgen(root);
-        FileWriter out = new FileWriter("out.asm");
+        FileWriter out = new FileWriter("tests/out.asm");
         out.write(dataSeg + textSeg);
         out.close();
     }

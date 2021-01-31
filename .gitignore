@@ -7,10 +7,6 @@ out/
 # Videos and stuff that I used for learning
 Source for project/
 
-# Test adn scripts should be updated so until then ignoring them :D #TODO
-**/testsANDscripts/
-tests
-
 # Files made with Flex and CUP
 src/scanner/Scanner.java
 src/Scanner.java~
