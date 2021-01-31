@@ -10,20 +10,16 @@ import codegen.vtable.CodeForFunct;
 import codegen.vtable.VTable;
 
 import java.io.FileWriter;
-import java.io.IOException;
 import java.io.Writer;
 
 public class CodeGen {
 
     private static final SymbolTable spaghettiStack = new SymbolTable();
     private static final VTable vTable = new VTable();
-
+    private static final int USER_INPUT_SIZE = 20;
     public static String dataSeg = ".data\n";
     public static String textSeg = ".text\n";
-
     private static int readLineCounter = 0;
-
-    private static final int USER_INPUT_SIZE = 20;
 
     static {
         dataSeg += "\tnewLine: \t.asciiz \t\"\\n\"\n";
@@ -259,7 +255,7 @@ public class CodeGen {
             identifierDSCP.setValue(expressionNode.getResultName());
         }
 
-        if ((expressionNode.getResultName()!=null) && expressionNode.getResultName().equals("\"ReadLine()\"")) {
+        if ((expressionNode.getResultName() != null) && expressionNode.getResultName().equals("\"ReadLine()\"")) {
             String stringLabel = "readLine_number" + (readLineCounter - 1);   // because we want  read line that we ++ it
             textSeg += "\tla\t$v1, " + stringLabel + '\n';
         }

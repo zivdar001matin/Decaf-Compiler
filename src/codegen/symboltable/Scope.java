@@ -9,11 +9,11 @@ public class Scope {
     private final Scope parent;
     private final String name;
     private final BlockType blockType;
+    private final ArrayList<Scope> children;
     private int argumentCounter;
     private int conditionStmtCounter;
     private int loopStmtCounter;
     private int stringLiteralCounter;
-    private final ArrayList<Scope> children;
 
     public Scope(String name, Scope parent, BlockType blockType) {
         this.scope = new HashMap<>();

@@ -4,8 +4,8 @@ import codegen.ast.Node;
 import codegen.ast.Type;
 
 public class DSCP {
-    private Type type;
     private final Node node;
+    private Type type;
     private String value;
     private boolean isArgument;
     private boolean isFunction; // Shows that node is Function and can't be constant folded.

@@ -1,9 +1,12 @@
 import codegen.CodeGen;
 import codegen.SemanticError;
-import parser.*;
-import scanner.*;
+import parser.SyntaxError;
+import parser.parser;
+import scanner.Scanner;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileReader;
+import java.io.Writer;
 
 public class Compiler {
     public static void main(String[] args) throws Exception {
@@ -13,7 +16,7 @@ public class Compiler {
 
         try {
             parser.parse();
-        } catch (Exception e){
+        } catch (Exception e) {
             throw new SyntaxError(e.getMessage());
         }
 
@@ -30,7 +33,7 @@ public class Compiler {
 
         try {
             parser.parse();
-        } catch (Exception e){
+        } catch (Exception e) {
             // ignore
             errorCode = SyntaxError.writeError();
             isError = true;
@@ -38,7 +41,7 @@ public class Compiler {
 
         try {
             CodeGen.compile(parser.getRoot(), writer);
-        } catch (Exception e){
+        } catch (Exception e) {
             // ignore
             errorCode = SemanticError.writeError();
             isError = true;

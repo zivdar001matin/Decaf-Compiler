@@ -4,13 +4,12 @@ import codegen.SemanticError;
 
 public class SymbolTable {
 
-    public SymbolTable() {
-        currentScope = root;
-    }
-
     //    private static final ArrayList<Scope> scopes = new ArrayList<>();
     private static final Scope root = new Scope("RootScope", null, BlockType.ROOT);
     private static Scope currentScope;
+    public SymbolTable() {
+        currentScope = root;
+    }
 
     public static Scope getCurrentScope() {
         return currentScope;
