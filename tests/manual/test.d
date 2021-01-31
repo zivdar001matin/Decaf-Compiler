@@ -1,12 +1,12 @@
-
-int factor(int a){
-    if (a <= 1){
-        return 1;
-    }
-    return factor(a - 1) * a;
-}
 int main() {
-    int b;
-    b = factor(3);
-    Print(b);
+    int i;
+    i = 0;
+    while (i < 10) {
+        if (i == 4) {
+            i = i + 1;
+            continue;
+        }
+        Print(i);
+        i = i + 1;
+    }
 }

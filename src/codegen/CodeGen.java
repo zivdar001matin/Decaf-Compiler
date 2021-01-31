@@ -578,9 +578,9 @@ public class CodeGen {
         textSeg += "\tbeq\t$v1, 0, " + labelNameEnd + '\n';
 
         // label for continue statement
-        textSeg += labelNameUpdate + ":\n";
-
         cgen(node.getChild(3));
+
+        textSeg += labelNameUpdate + ":\n";
         cgen(node.getChild(2));
 
         textSeg += "\tb\t" + labelNameFirst + '\n';
